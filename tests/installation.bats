@@ -42,30 +42,30 @@ teardown() {
   run "$INSTALL_SCRIPT" --prefix "$TEST_DIR/install"
   assert_success
   
-  # Verify lib directory was created
-  [ -d "$TEST_DIR/install/lib" ]
+  # Verify lib directory was created (now under lib/specswift)
+  [ -d "$TEST_DIR/install/lib/specswift" ]
   
   # Verify workflows were copied
-  [ -d "$TEST_DIR/install/lib/workflows" ]
-  [ -d "$TEST_DIR/install/lib/workflows/en" ]
-  [ -d "$TEST_DIR/install/lib/workflows/pt" ]
+  [ -d "$TEST_DIR/install/lib/specswift/lib/workflows" ]
+  [ -d "$TEST_DIR/install/lib/specswift/lib/workflows/en" ]
+  [ -d "$TEST_DIR/install/lib/specswift/lib/workflows/pt" ]
   
   # Verify templates were copied
-  [ -d "$TEST_DIR/install/lib/templates" ]
+  [ -d "$TEST_DIR/install/lib/specswift/lib/templates" ]
   
   # Verify scripts were copied
-  [ -d "$TEST_DIR/install/lib/scripts" ]
+  [ -d "$TEST_DIR/install/lib/specswift/lib/scripts" ]
 }
 
 @test "install.sh copies docs directory" {
   run "$INSTALL_SCRIPT" --prefix "$TEST_DIR/install"
   assert_success
   
-  # Verify docs directory was created
-  [ -d "$TEST_DIR/install/docs" ]
+  # Verify docs directory was created (now under lib/specswift)
+  [ -d "$TEST_DIR/install/lib/specswift/docs" ]
   
   # Verify SPECSWIFT-WORKFLOWS.md was copied
-  [ -f "$TEST_DIR/install/docs/SPECSWIFT-WORKFLOWS.md" ]
+  [ -f "$TEST_DIR/install/lib/specswift/docs/SPECSWIFT-WORKFLOWS.md" ]
 }
 
 @test "install.sh creates symbolic link" {
@@ -98,8 +98,8 @@ teardown() {
   run "$INSTALL_SCRIPT" --uninstall --prefix "$TEST_DIR/install"
   assert_success
   
-  # Verify lib directory was removed
-  [ ! -d "$TEST_DIR/install/lib" ]
+  # Verify specswift lib directory was removed
+  [ ! -d "$TEST_DIR/install/lib/specswift" ]
 }
 
 @test "installed specswift works" {

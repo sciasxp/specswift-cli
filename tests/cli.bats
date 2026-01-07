@@ -166,13 +166,17 @@ teardown() {
 }
 
 @test "bin/specswift reads from VERSION file" {
-  VERSION=$(cat VERSION)
-  run grep "VERSION=\"$VERSION\"" bin/specswift
+  # Verify that specswift uses VERSION file dynamically
+  run grep "VERSION_FILE=" bin/specswift
+  assert_success
+  run grep 'cat "$VERSION_FILE"' bin/specswift
   assert_success
 }
 
 @test "install.sh reads from VERSION file" {
-  VERSION=$(cat VERSION)
-  run grep "VERSION=\"$VERSION\"" install.sh
+  # Verify that install.sh uses VERSION file dynamically
+  run grep "VERSION_FILE=" install.sh
+  assert_success
+  run grep 'cat "$VERSION_FILE"' install.sh
   assert_success
 }

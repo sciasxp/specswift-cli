@@ -16,7 +16,7 @@ set -e
 VERSION_FILE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/VERSION"
 VERSION="$(cat "$VERSION_FILE" 2>/dev/null || echo "1.0.0")"
 INSTALL_PREFIX="${HOME}/.local"
-SPECSWIFT_HOME="${HOME}/.specswift"
+SPECSWIFT_HOME=""  # Will be set based on INSTALL_PREFIX
 REPO_URL="https://github.com/sciasxp/specswift-cli"
 
 # =============================================================================
@@ -39,6 +39,7 @@ print_warning() { echo -e "${YELLOW}⚠${NC} $1"; }
 # =============================================================================
 UNINSTALL=false
 LOCAL_INSTALL=false
+FORCE_INSTALL=false
 SOURCE_DIR=""
 
 while [[ $# -gt 0 ]]; do
@@ -56,6 +57,10 @@ while [[ $# -gt 0 ]]; do
             SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
             shift
             ;;
+        --force)
+            FORCE_INSTALL=true
+            shift
+            ;;
         --help|-h)
             cat << 'EOF'
 SpecSwift CLI Installer
@@ -66,6 +71,7 @@ USO:
 OPÇÕES:
     --prefix <dir>   Diretório de instalação (default: ~/.local)
     --local          Instalar a partir do diretório local (não baixar)
+    --force          Sobrescrever instalação existente
     --uninstall      Remover instalação do SpecSwift
     --help, -h       Mostrar ajuda
 
@@ -88,6 +94,9 @@ EOF
             ;;
     esac
 done
+
+# Set SPECSWIFT_HOME based on INSTALL_PREFIX
+SPECSWIFT_HOME="$INSTALL_PREFIX/lib/specswift"
 
 # =============================================================================
 # Uninstall
@@ -113,6 +122,13 @@ do_uninstall() {
 # Install
 # =============================================================================
 do_install() {
+    # Check for existing installation
+    if [[ -f "$INSTALL_PREFIX/bin/specswift" && "$FORCE_INSTALL" != true ]]; then
+        print_error "SpecSwift já está instalado em $INSTALL_PREFIX/bin/specswift"
+        print_info "Use --force para sobrescrever ou --uninstall para remover primeiro"
+        exit 1
+    fi
+
     echo -e "${BOLD}${BLUE}"
     cat << 'BANNER'
    ____                  ____          _  __ _   
@@ -126,6 +142,11 @@ BANNER
     echo -e "  Installing SpecSwift CLI v$VERSION"
     echo ""
 
+    # Clean existing installation if force
+    if [[ "$FORCE_INSTALL" == true && -d "$SPECSWIFT_HOME" ]]; then
+        rm -rf "$SPECSWIFT_HOME"
+    fi
+
     # Criar diretórios
     mkdir -p "$INSTALL_PREFIX/bin"
     mkdir -p "$SPECSWIFT_HOME"
@@ -137,6 +158,7 @@ BANNER
         # Copiar estrutura (incluindo subpastas de idiomas)
         cp -r "$SOURCE_DIR/lib" "$SPECSWIFT_HOME/"
         cp -r "$SOURCE_DIR/docs" "$SPECSWIFT_HOME/"
+        cp "$SOURCE_DIR/VERSION" "$SPECSWIFT_HOME/"
         mkdir -p "$SPECSWIFT_HOME/bin"
         cp "$SOURCE_DIR/bin/specswift" "$SPECSWIFT_HOME/bin/"
     else
@@ -159,6 +181,7 @@ BANNER
             # Copiar estrutura completa (incluindo subpastas de idiomas)
             cp -r "$tmp_dir/specswift-cli/lib" "$SPECSWIFT_HOME/"
             cp -r "$tmp_dir/specswift-cli/docs" "$SPECSWIFT_HOME/"
+            cp "$tmp_dir/specswift-cli/VERSION" "$SPECSWIFT_HOME/"
             mkdir -p "$SPECSWIFT_HOME/bin"
             cp "$tmp_dir/specswift-cli/bin/specswift" "$SPECSWIFT_HOME/bin/"
         else

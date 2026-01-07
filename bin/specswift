@@ -20,11 +20,18 @@ set -e
 # =============================================================================
 # Configuration
 # =============================================================================
-VERSION_FILE="$SPECSWIFT_ROOT/../VERSION"
-VERSION="$(cat "$VERSION_FILE" 2>/dev/null || echo "1.0.0")"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Resolve symlinks to get the real script location
+SCRIPT_PATH="${BASH_SOURCE[0]}"
+while [[ -L "$SCRIPT_PATH" ]]; do
+    SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_PATH")" && pwd)"
+    SCRIPT_PATH="$(readlink "$SCRIPT_PATH")"
+    [[ "$SCRIPT_PATH" != /* ]] && SCRIPT_PATH="$SCRIPT_DIR/$SCRIPT_PATH"
+done
+SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_PATH")" && pwd)"
 SPECSWIFT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 LIB_DIR="$SPECSWIFT_ROOT/lib"
+VERSION_FILE="$SPECSWIFT_ROOT/VERSION"
+VERSION="$(cat "$VERSION_FILE" 2>/dev/null || echo "1.0.0")"
 
 # =============================================================================
 # Language Configuration
@@ -61,6 +68,7 @@ L() {
             "opt_verbose") echo "Output detalhado" ;;
             "opt_quiet") echo "Apenas erros" ;;
             "opt_lang") echo "Definir idioma (en/pt)" ;;
+            "opt_template") echo "Template do projeto Xcode (swiftui-ios, swiftui-macos)" ;;
             "examples") echo "EXEMPLOS" ;;
             "example_create_ios") echo "# Criar novo projeto iOS" ;;
             "example_install_existing") echo "# Instalar em projeto existente" ;;
@@ -123,6 +131,25 @@ L() {
             "to_create_new_feature") echo "para criar uma nova feature" ;;
             # Makefile
             "makefile_created") echo "Makefile criado" ;;
+            "xcode_project_created") echo "Projeto Xcode criado" ;;
+            "xcodegen_not_found") echo "xcodegen não encontrado. Instale com: brew install xcodegen" ;;
+            "generating_xcode_project") echo "Gerando projeto Xcode" ;;
+            "template_not_found") echo "Template não encontrado" ;;
+            "available_templates") echo "Templates disponíveis" ;;
+            "xcode_project") echo "Projeto Xcode" ;;
+            # Dependencies
+            "checking_dependencies") echo "Verificando dependências" ;;
+            "installing_homebrew") echo "Instalando Homebrew" ;;
+            "homebrew_installed") echo "Homebrew instalado" ;;
+            "homebrew_found") echo "Homebrew encontrado" ;;
+            "installing_dependency") echo "Instalando" ;;
+            "dependency_installed") echo "instalado com sucesso" ;;
+            "dependency_found") echo "encontrado" ;;
+            "dependency_install_failed") echo "Falha ao instalar" ;;
+            "skip_dependency_install") echo "Pulando instalação de dependências (use --no-deps para desativar)" ;;
+            "all_dependencies_ok") echo "Todas as dependências estão instaladas" ;;
+            "install_dependencies_prompt") echo "Deseja instalar as dependências faltantes?" ;;
+            "yes_no") echo "[S/n]" ;;
             *) echo "$key" ;;
         esac
     else
@@ -148,6 +175,7 @@ L() {
             "opt_verbose") echo "Detailed output" ;;
             "opt_quiet") echo "Errors only" ;;
             "opt_lang") echo "Set language (en/pt)" ;;
+            "opt_template") echo "Xcode project template (swiftui-ios, swiftui-macos)" ;;
             "examples") echo "EXAMPLES" ;;
             "example_create_ios") echo "# Create new iOS project" ;;
             "example_install_existing") echo "# Install in existing project" ;;
@@ -210,6 +238,25 @@ L() {
             "to_create_new_feature") echo "to create a new feature" ;;
             # Makefile
             "makefile_created") echo "Makefile created" ;;
+            "xcode_project_created") echo "Xcode project created" ;;
+            "xcodegen_not_found") echo "xcodegen not found. Install with: brew install xcodegen" ;;
+            "generating_xcode_project") echo "Generating Xcode project" ;;
+            "template_not_found") echo "Template not found" ;;
+            "available_templates") echo "Available templates" ;;
+            "xcode_project") echo "Xcode Project" ;;
+            # Dependencies
+            "checking_dependencies") echo "Checking dependencies" ;;
+            "installing_homebrew") echo "Installing Homebrew" ;;
+            "homebrew_installed") echo "Homebrew installed" ;;
+            "homebrew_found") echo "Homebrew found" ;;
+            "installing_dependency") echo "Installing" ;;
+            "dependency_installed") echo "installed successfully" ;;
+            "dependency_found") echo "found" ;;
+            "dependency_install_failed") echo "Failed to install" ;;
+            "skip_dependency_install") echo "Skipping dependency installation (use --no-deps to disable)" ;;
+            "all_dependencies_ok") echo "All dependencies are installed" ;;
+            "install_dependencies_prompt") echo "Do you want to install missing dependencies?" ;;
+            "yes_no") echo "[Y/n]" ;;
             *) echo "$key" ;;
         esac
     fi
@@ -236,6 +283,142 @@ print_warning() { echo -e "${YELLOW}⚠${NC} $1"; }
 print_error() { echo -e "${RED}✗${NC} $1" >&2; }
 print_info() { echo -e "${CYAN}→${NC} $1"; }
 print_dim() { echo -e "${DIM}$1${NC}"; }
+
+# =============================================================================
+# Dependency Management
+# =============================================================================
+_install_homebrew() {
+    print_info "$(L "installing_homebrew")..."
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    
+    # Add Homebrew to PATH for Apple Silicon Macs
+    if [[ -f "/opt/homebrew/bin/brew" ]]; then
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+    elif [[ -f "/usr/local/bin/brew" ]]; then
+        eval "$(/usr/local/bin/brew shellenv)"
+    fi
+    
+    if command -v brew &> /dev/null; then
+        print_success "$(L "homebrew_installed")"
+        return 0
+    else
+        print_error "$(L "dependency_install_failed") Homebrew"
+        return 1
+    fi
+}
+
+_install_brew_package() {
+    local package="$1"
+    local package_name="${2:-$package}"
+    
+    print_info "$(L "installing_dependency") $package_name..."
+    if brew install "$package" 2>/dev/null; then
+        print_success "$package_name $(L "dependency_installed")"
+        return 0
+    else
+        print_error "$(L "dependency_install_failed") $package_name"
+        return 1
+    fi
+}
+
+_check_and_install_dependencies() {
+    local ios_mode="${1:-false}"
+    local xcode_template="${2:-}"
+    local auto_install="${3:-true}"
+    local verbose="${4:-false}"
+    
+    print_header "🔧 $(L "checking_dependencies")"
+    
+    local missing_deps=()
+    local has_homebrew=false
+    
+    # Check Homebrew
+    if command -v brew &> /dev/null; then
+        print_success "Homebrew $(L "dependency_found")"
+        has_homebrew=true
+    else
+        print_warning "Homebrew $(L "not_found")"
+        missing_deps+=("homebrew")
+    fi
+    
+    # Check Git
+    if command -v git &> /dev/null; then
+        [[ "$verbose" == true ]] && print_success "Git $(L "dependency_found")"
+    else
+        print_warning "Git $(L "not_found")"
+        missing_deps+=("git")
+    fi
+    
+    # Check xcodegen (required if using --template)
+    if [[ -n "$xcode_template" ]]; then
+        if command -v xcodegen &> /dev/null; then
+            print_success "xcodegen $(L "dependency_found")"
+        else
+            print_warning "xcodegen $(L "not_found")"
+            missing_deps+=("xcodegen")
+        fi
+    fi
+    
+    # Check xcbeautify (optional but recommended for iOS)
+    if [[ "$ios_mode" == true ]]; then
+        if command -v xcbeautify &> /dev/null; then
+            [[ "$verbose" == true ]] && print_success "xcbeautify $(L "dependency_found")"
+        else
+            [[ "$verbose" == true ]] && print_dim "  xcbeautify $(L "not_found") ($(L "optional"))"
+            # Don't add to missing_deps as it's optional
+        fi
+    fi
+    
+    # If no missing dependencies, we're done
+    if [[ ${#missing_deps[@]} -eq 0 ]]; then
+        print_success "$(L "all_dependencies_ok")"
+        return 0
+    fi
+    
+    # If auto_install is false, just warn and continue
+    if [[ "$auto_install" != true ]]; then
+        return 0
+    fi
+    
+    # Ask user for permission to install
+    echo ""
+    echo -e "${YELLOW}$(L "install_dependencies_prompt")${NC} $(L "yes_no")"
+    read -r response
+    
+    # Default to yes for English, sim for Portuguese
+    if [[ "$LANG_CODE" == "pt" ]]; then
+        if [[ "$response" =~ ^[Nn]$ ]]; then
+            print_info "$(L "skip_dependency_install")"
+            return 0
+        fi
+    else
+        if [[ "$response" =~ ^[Nn]$ ]]; then
+            print_info "$(L "skip_dependency_install")"
+            return 0
+        fi
+    fi
+    
+    # Install Homebrew first if missing
+    if [[ " ${missing_deps[*]} " =~ " homebrew " ]]; then
+        if ! _install_homebrew; then
+            print_error "Cannot continue without Homebrew"
+            return 1
+        fi
+        has_homebrew=true
+        # Remove homebrew from missing_deps
+        missing_deps=("${missing_deps[@]/homebrew}")
+    fi
+    
+    # Install remaining dependencies via Homebrew
+    for dep in "${missing_deps[@]}"; do
+        if [[ -n "$dep" && "$has_homebrew" == true ]]; then
+            _install_brew_package "$dep"
+        fi
+    done
+    
+    echo ""
+    return 0
+}
 
 # =============================================================================
 # Banner
@@ -274,7 +457,10 @@ $(L "commands"):
 
 $(L "global_options"):
     --ios                $(L "opt_ios")
+    --template <name>    $(L "opt_template")
+    --bundle-id <prefix> Bundle ID prefix (default: example)
     --no-git             $(L "opt_no_git")
+    --no-deps            Skip dependency check/installation
     --force              $(L "opt_force")
     --lang <en|pt>       $(L "opt_lang")
     -v, --verbose        $(L "opt_verbose")
@@ -283,6 +469,12 @@ $(L "global_options"):
 $(L "examples"):
     $(L "example_create_ios")
     specswift init ~/Projects/my-app --ios
+
+    # Create iOS project with Xcode project
+    specswift init ~/Projects/my-app --template swiftui-ios --bundle-id mycompany
+
+    # Create macOS project with Xcode project
+    specswift init ~/Projects/my-mac-app --template swiftui-macos
 
     $(L "example_install_existing")
     cd ~/Projects/existing-project
@@ -372,6 +564,12 @@ cmd_doctor() {
         print_dim "  xcbeautify $(L "not_found") ($(L "optional_ios"))"
     fi
 
+    if command -v xcodegen &> /dev/null; then
+        print_success "xcodegen: $(xcodegen --version 2>/dev/null || echo "$(L "installed")")"
+    else
+        print_dim "  xcodegen $(L "not_found") ($(L "optional") - brew install xcodegen)"
+    fi
+
     # Check current project (if in one)
     if [[ -d ".windsurf" ]]; then
         echo ""
@@ -409,14 +607,38 @@ cmd_init() {
     local init_git=true
     local force=false
     local verbose=false
+    local xcode_template=""
+    local bundle_prefix=""
+    local check_deps=true
 
     # Parse arguments
     while [[ $# -gt 0 ]]; do
         case "$1" in
             --ios) ios_mode=true; shift ;;
             --no-git) init_git=false; shift ;;
+            --no-deps) check_deps=false; shift ;;
             --force) force=true; shift ;;
             -v|--verbose) verbose=true; shift ;;
+            --template)
+                if [[ -n "$2" && ! "$2" =~ ^- ]]; then
+                    xcode_template="$2"
+                    ios_mode=true  # Automatically enable iOS mode when using template
+                    shift 2
+                else
+                    print_error "$(L "template_not_found")"
+                    echo "$(L "available_templates"): swiftui-ios, swiftui-macos"
+                    exit 1
+                fi
+                ;;
+            --bundle-id)
+                if [[ -n "$2" && ! "$2" =~ ^- ]]; then
+                    bundle_prefix="$2"
+                    shift 2
+                else
+                    print_error "Bundle ID prefix required"
+                    exit 1
+                fi
+                ;;
             -*)
                 print_error "$(L "unknown_option"): $1"
                 exit 1
@@ -437,6 +659,12 @@ cmd_init() {
     fi
 
     show_banner
+    
+    # Check and install dependencies
+    if [[ "$check_deps" == true ]]; then
+        _check_and_install_dependencies "$ios_mode" "$xcode_template" true "$verbose"
+    fi
+    
     print_header "📦 $(L "creating_new_project")"
 
     # Create directory
@@ -444,13 +672,26 @@ cmd_init() {
     target_dir="$(cd "$target_dir" && pwd)"
     print_success "$(L "directory"): $target_dir"
 
+    # Extract project name from directory
+    local project_name=$(basename "$target_dir")
+    
+    # Default bundle prefix if not provided
+    if [[ -z "$bundle_prefix" ]]; then
+        bundle_prefix="example"
+    fi
+
+    # Create Xcode project if template specified
+    if [[ -n "$xcode_template" ]]; then
+        _create_xcode_project "$target_dir" "$xcode_template" "$project_name" "$bundle_prefix" "$verbose"
+    fi
+
     # Copiar estrutura
     _copy_workflows "$target_dir" "$verbose"
     _copy_rules "$target_dir" "$ios_mode" "$verbose"
     _copy_templates "$target_dir" "$verbose"
     _copy_scripts "$target_dir" "$verbose"
     _copy_documentation "$target_dir" "$ios_mode" "$verbose"
-    _create_makefile "$target_dir" "$ios_mode"
+    _create_makefile "$target_dir" "$ios_mode" "$project_name" "$xcode_template"
 
     # Git
     if [[ "$init_git" == true ]]; then
@@ -458,7 +699,7 @@ cmd_init() {
     fi
 
     # Summary
-    _print_init_summary "$target_dir" "$ios_mode"
+    _print_init_summary "$target_dir" "$ios_mode" "$xcode_template" "$project_name"
 }
 
 # =============================================================================
@@ -469,12 +710,14 @@ cmd_install() {
     local ios_mode=false
     local force=false
     local verbose=false
+    local check_deps=true
 
     # Parse arguments
     while [[ $# -gt 0 ]]; do
         case "$1" in
             --ios) ios_mode=true; shift ;;
             --force) force=true; shift ;;
+            --no-deps) check_deps=false; shift ;;
             -v|--verbose) verbose=true; shift ;;
             -*)
                 print_error "$(L "unknown_option"): $1"
@@ -485,6 +728,12 @@ cmd_install() {
     done
 
     show_banner
+    
+    # Check and install dependencies
+    if [[ "$check_deps" == true ]]; then
+        _check_and_install_dependencies "$ios_mode" "" true "$verbose"
+    fi
+    
     print_header "📥 $(L "installing_specswift")"
     print_info "$(L "directory"): $target_dir"
 
@@ -699,6 +948,8 @@ _copy_documentation() {
 _create_makefile() {
     local target="$1"
     local ios_mode="$2"
+    local project_name="${3:-YourApp}"
+    local xcode_template="${4:-}"
 
     if [[ -f "$target/Makefile" ]]; then
         return
@@ -706,14 +957,21 @@ _create_makefile() {
 
     print_header "⚙️  Makefile"
 
-    if [[ "$ios_mode" == true ]]; then
-        cat > "$target/Makefile" << 'MAKEFILE'
-# iOS Project Makefile
-# Customize SCHEME, PROJECT and DESTINATION for your project
+    # Determine destination based on template
+    local destination="platform=iOS\\ Simulator,name=iPhone\\ 16,OS=latest"
+    if [[ "$xcode_template" == "swiftui-macos" ]]; then
+        destination="platform=macOS"
+    fi
 
-SCHEME = YourApp
-PROJECT = YourApp.xcodeproj
-DESTINATION = platform=iOS\ Simulator,name=iPhone\ 16,OS=latest
+    if [[ "$ios_mode" == true ]]; then
+        local safe_project_name=$(echo "$project_name" | sed 's/[^a-zA-Z0-9]//g')
+        cat > "$target/Makefile" << MAKEFILE
+# iOS/macOS Project Makefile
+# Generated by SpecSwift CLI
+
+SCHEME = $safe_project_name
+PROJECT = $safe_project_name.xcodeproj
+DESTINATION = $destination
 
 .PHONY: help build test clean
 
@@ -724,29 +982,29 @@ help:
 	@echo "  make clean  - Clean artifacts"
 
 build:
-	@set -o pipefail && xcodebuild \
-		-project "$(PROJECT)" \
-		-scheme "$(SCHEME)" \
-		-destination "$(DESTINATION)" \
-		build | xcbeautify || xcodebuild \
-		-project "$(PROJECT)" \
-		-scheme "$(SCHEME)" \
-		-destination "$(DESTINATION)" \
+	@set -o pipefail && xcodebuild \\
+		-project "\$(PROJECT)" \\
+		-scheme "\$(SCHEME)" \\
+		-destination "\$(DESTINATION)" \\
+		build | xcbeautify || xcodebuild \\
+		-project "\$(PROJECT)" \\
+		-scheme "\$(SCHEME)" \\
+		-destination "\$(DESTINATION)" \\
 		build
 
 test:
-	@set -o pipefail && xcodebuild \
-		-project "$(PROJECT)" \
-		-scheme "$(SCHEME)" \
-		-destination "$(DESTINATION)" \
-		test | xcbeautify || xcodebuild \
-		-project "$(PROJECT)" \
-		-scheme "$(SCHEME)" \
-		-destination "$(DESTINATION)" \
+	@set -o pipefail && xcodebuild \\
+		-project "\$(PROJECT)" \\
+		-scheme "\$(SCHEME)" \\
+		-destination "\$(DESTINATION)" \\
+		test | xcbeautify || xcodebuild \\
+		-project "\$(PROJECT)" \\
+		-scheme "\$(SCHEME)" \\
+		-destination "\$(DESTINATION)" \\
 		test
 
 clean:
-	@xcodebuild clean -project "$(PROJECT)" -scheme "$(SCHEME)"
+	@xcodebuild clean -project "\$(PROJECT)" -scheme "\$(SCHEME)"
 	@rm -rf DerivedData .build
 MAKEFILE
     else
@@ -774,6 +1032,84 @@ MAKEFILE
     fi
 
     print_success "$(L "makefile_created")"
+}
+
+# =============================================================================
+# Xcode Project Creation
+# =============================================================================
+_create_xcode_project() {
+    local target="$1"
+    local template="$2"
+    local project_name="$3"
+    local bundle_prefix="$4"
+    local verbose="${5:-false}"
+
+    # Check if xcodegen is installed
+    local has_xcodegen=true
+    if ! command -v xcodegen &> /dev/null; then
+        has_xcodegen=false
+    fi
+
+    # Validate template
+    local template_dir="$LIB_DIR/xcode-templates/$template"
+    if [[ ! -d "$template_dir" ]]; then
+        print_error "$(L "template_not_found"): $template"
+        echo ""
+        echo "$(L "available_templates"):"
+        for dir in "$LIB_DIR/xcode-templates"/*/; do
+            if [[ -d "$dir" ]]; then
+                echo "  - $(basename "$dir")"
+            fi
+        done
+        return 1
+    fi
+
+    print_header "📱 $(L "xcode_project")"
+    print_info "$(L "generating_xcode_project"): $template"
+
+    # Copy template files
+    cp -R "$template_dir"/* "$target/"
+
+    # Replace placeholders in all files
+    local safe_project_name=$(echo "$project_name" | sed 's/[^a-zA-Z0-9]//g')
+    local safe_bundle_prefix=$(echo "$bundle_prefix" | sed 's/[^a-zA-Z0-9]//g' | tr '[:upper:]' '[:lower:]')
+
+    # Find and replace in all text files
+    find "$target" -type f \( -name "*.swift" -o -name "*.yml" -o -name "*.plist" -o -name "*.entitlements" \) | while read -r file; do
+        if [[ -f "$file" ]]; then
+            sed -i '' "s/{{PROJECT_NAME}}/$safe_project_name/g" "$file" 2>/dev/null || true
+            sed -i '' "s/{{BUNDLE_PREFIX}}/$safe_bundle_prefix/g" "$file" 2>/dev/null || true
+        fi
+    done
+
+    # Rename files that contain {{PROJECT_NAME}} in their name
+    find "$target" -depth -name "*{{PROJECT_NAME}}*" | while read -r file; do
+        local newname=$(echo "$file" | sed "s/{{PROJECT_NAME}}/$safe_project_name/g")
+        mv "$file" "$newname" 2>/dev/null || true
+    done
+
+    # Run xcodegen if available
+    cd "$target"
+    if [[ "$has_xcodegen" == true ]]; then
+        if xcodegen generate --quiet 2>/dev/null; then
+            print_success "$(L "xcode_project_created"): $safe_project_name.xcodeproj"
+            [[ "$verbose" == true ]] && print_info "Template: $template"
+        else
+            # Try without --quiet for older versions
+            if xcodegen generate 2>/dev/null; then
+                print_success "$(L "xcode_project_created"): $safe_project_name.xcodeproj"
+            else
+                print_error "xcodegen failed"
+                return 1
+            fi
+        fi
+    else
+        print_warning "$(L "xcodegen_not_found")"
+        print_info "Source files created. Run 'xcodegen generate' after installing xcodegen."
+        print_dim "  brew install xcodegen"
+    fi
+
+    return 0
 }
 
 _init_git() {
@@ -820,12 +1156,22 @@ GITIGNORE
 _print_init_summary() {
     local target="$1"
     local ios_mode="$2"
+    local xcode_template="${3:-}"
+    local project_name="${4:-}"
 
     echo ""
     print_header "✅ $(L "project_created")"
     echo ""
     echo -e "${BOLD}$(L "structure"):${NC}"
     echo "  $target/"
+    
+    # Show Xcode project if created
+    if [[ -n "$xcode_template" && -d "$target/$project_name.xcodeproj" ]]; then
+        echo "  ├── $project_name.xcodeproj"
+        echo "  ├── Sources/"
+        echo "  ├── Tests/"
+    fi
+    
     echo "  ├── .windsurf/"
     echo "  │   ├── workflows/    $(ls -1 "$target/.windsurf/workflows" 2>/dev/null | wc -l | tr -d ' ') $(L "files")"
     echo "  │   └── rules/        $(ls -1 "$target/.windsurf/rules" 2>/dev/null | wc -l | tr -d ' ') $(L "files")"
@@ -837,10 +1183,18 @@ _print_init_summary() {
     echo "  └── .gitignore"
     echo ""
     echo -e "${BOLD}$(L "next_steps"):${NC}"
-    echo "  1. cd $target"
-    echo "  2. windsurf ."
-    echo -e "  3. ${CYAN}/specswift.constitution${NC} - $(L "run_to_configure")"
-    echo -e "  4. ${CYAN}/specswift.create-prd${NC} - $(L "run_to_create_feature")"
+    
+    if [[ -n "$xcode_template" ]]; then
+        echo "  1. cd $target"
+        echo "  2. open $project_name.xcodeproj  # or: windsurf ."
+        echo -e "  3. ${CYAN}/specswift.constitution${NC} - $(L "run_to_configure")"
+        echo -e "  4. ${CYAN}/specswift.create-prd${NC} - $(L "run_to_create_feature")"
+    else
+        echo "  1. cd $target"
+        echo "  2. windsurf ."
+        echo -e "  3. ${CYAN}/specswift.constitution${NC} - $(L "run_to_configure")"
+        echo -e "  4. ${CYAN}/specswift.create-prd${NC} - $(L "run_to_create_feature")"
+    fi
 }
 
 _print_install_summary() {
