@@ -13,7 +13,8 @@ set -e
 # =============================================================================
 # Configurações
 # =============================================================================
-VERSION="1.0.0"
+VERSION_FILE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/VERSION"
+VERSION="$(cat "$VERSION_FILE" 2>/dev/null || echo "1.0.0")"
 INSTALL_PREFIX="${HOME}/.local"
 SPECSWIFT_HOME="${HOME}/.specswift"
 REPO_URL="https://github.com/sciasxp/specswift-cli"

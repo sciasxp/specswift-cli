@@ -1,0 +1,100 @@
+name: Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  lint:
+    name: Lint Scripts
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Install shellcheck
+        run: brew install shellcheck
+      
+      - name: Run shellcheck
+        run: |
+          shellcheck bin/specswift
+          shellcheck lib/scripts/*.sh
+          shellcheck install.sh
+          shellcheck scripts/validate-workflows.sh
+
+  validate-workflows:
+    name: Validate Workflow Consistency
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Validate workflows
+        run: ./scripts/validate-workflows.sh
+
+  test-cli:
+    name: Test CLI Commands
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Install BATS
+        run: brew install bats-core
+      
+      - name: Run BATS tests
+        run: bats tests/
+
+  test-installation:
+    name: Test Installation
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Test local installation
+        run: |
+          ./install.sh --prefix /tmp/specswift-test
+          /tmp/specswift-test/bin/specswift version
+          /tmp/specswift-test/bin/specswift doctor
+          
+      - name: Test uninstallation
+        run: |
+          ./install.sh --uninstall --prefix /tmp/specswift-test
+          [ ! -f /tmp/specswift-test/bin/specswift ] && echo "Uninstall successful" || exit 1
+
+  version-check:
+    name: Verify Version Consistency
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Extract version from VERSION file
+        id: version
+        run: echo "version=$(cat VERSION)" >> $GITHUB_OUTPUT
+      
+      - name: Verify version in bin/specswift
+        run: |
+          VERSION=$(cat VERSION)
+          if ! grep -q "VERSION=\"$VERSION\"" bin/specswift; then
+            echo "Version mismatch in bin/specswift"
+            exit 1
+          fi
+          echo "✓ Version in bin/specswift matches VERSION file"
+      
+      - name: Verify version in install.sh
+        run: |
+          VERSION=$(cat VERSION)
+          if ! grep -q "VERSION=\"$VERSION\"" install.sh; then
+            echo "Version mismatch in install.sh"
+            exit 1
+          fi
+          echo "✓ Version in install.sh matches VERSION file"
