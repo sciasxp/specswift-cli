@@ -565,17 +565,26 @@ _copy_workflows() {
     print_header "📋 $(L "workflows")"
     mkdir -p "$target/.windsurf/workflows"
 
+    # Use workflows from the selected language folder
+    local wf_src="$LIB_DIR/workflows/$LANG_CODE"
+    # Fallback to English if the specific language folder doesn't exist
+    if [[ ! -d "$wf_src" ]]; then
+        wf_src="$LIB_DIR/workflows/en"
+    fi
+
     local count=0
-    for file in "$LIB_DIR/workflows"/*.md; do
-        if [[ -f "$file" ]]; then
-            local basename=$(basename "$file")
-            if [[ "$overwrite" == true || ! -f "$target/.windsurf/workflows/$basename" ]]; then
-                cp "$file" "$target/.windsurf/workflows/"
-                [[ "$verbose" == true ]] && print_success "$basename"
-                ((count++))
+    if [[ -d "$wf_src" ]]; then
+        for file in "$wf_src"/*.md; do
+            if [[ -f "$file" ]]; then
+                local basename=$(basename "$file")
+                if [[ "$overwrite" == true || ! -f "$target/.windsurf/workflows/$basename" ]]; then
+                    cp "$file" "$target/.windsurf/workflows/"
+                    [[ "$verbose" == true ]] && print_success "$basename"
+                    ((count++))
+                fi
             fi
-        fi
-    done
+        done
+    fi
     print_info "$count $(L "workflows_copied")"
 }
 
@@ -587,13 +596,20 @@ _copy_rules() {
     print_header "📏 $(L "rules")"
     mkdir -p "$target/.windsurf/rules"
 
+    # Use rules from the selected language folder
+    local rules_src="$LIB_DIR/rules/$LANG_CODE"
+    # Fallback to English if the specific language folder doesn't exist
+    if [[ ! -d "$rules_src" ]]; then
+        rules_src="$LIB_DIR/rules/en"
+    fi
+
     # Generic rules
     local generic_rules=("api-design-guidelines.md" "accessibility-guidelines.md")
     local count=0
 
     for rule in "${generic_rules[@]}"; do
-        if [[ -f "$LIB_DIR/rules/$rule" ]]; then
-            cp "$LIB_DIR/rules/$rule" "$target/.windsurf/rules/"
+        if [[ -f "$rules_src/$rule" ]]; then
+            cp "$rules_src/$rule" "$target/.windsurf/rules/"
             [[ "$verbose" == true ]] && print_success "$rule"
             ((count++))
         fi
@@ -603,8 +619,8 @@ _copy_rules() {
     if [[ "$ios_mode" == true ]]; then
         local ios_rules=("swift-coding-style.md" "swift-concurrency.md" "makefile-usage.md")
         for rule in "${ios_rules[@]}"; do
-            if [[ -f "$LIB_DIR/rules/$rule" ]]; then
-                cp "$LIB_DIR/rules/$rule" "$target/.windsurf/rules/"
+            if [[ -f "$rules_src/$rule" ]]; then
+                cp "$rules_src/$rule" "$target/.windsurf/rules/"
                 [[ "$verbose" == true ]] && print_success "$rule (iOS)"
                 ((count++))
             fi
@@ -623,17 +639,26 @@ _copy_templates() {
     mkdir -p "$target/_docs/templates"
     mkdir -p "$target/_docs/specs"
 
+    # Use templates from the selected language folder
+    local template_src="$LIB_DIR/templates/$LANG_CODE"
+    # Fallback to English if the specific language folder doesn't exist
+    if [[ ! -d "$template_src" ]]; then
+        template_src="$LIB_DIR/templates/en"
+    fi
+
     local count=0
-    for file in "$LIB_DIR/templates"/*.md; do
-        if [[ -f "$file" ]]; then
-            local basename=$(basename "$file")
-            if [[ "$overwrite" == true || ! -f "$target/_docs/templates/$basename" ]]; then
-                cp "$file" "$target/_docs/templates/"
-                [[ "$verbose" == true ]] && print_success "$basename"
-                ((count++))
+    if [[ -d "$template_src" ]]; then
+        for file in "$template_src"/*.md; do
+            if [[ -f "$file" ]]; then
+                local basename=$(basename "$file")
+                if [[ "$overwrite" == true || ! -f "$target/_docs/templates/$basename" ]]; then
+                    cp "$file" "$target/_docs/templates/"
+                    [[ "$verbose" == true ]] && print_success "$basename"
+                    ((count++))
+                fi
             fi
-        fi
-    done
+        done
+    fi
     print_info "$count $(L "templates_copied")"
 }
 

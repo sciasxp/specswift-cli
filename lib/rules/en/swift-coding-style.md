@@ -1,5 +1,5 @@
 ---
-description: Swift coding standards—formatting, naming, documentation. K&R style, 120-char limit, Apple guidelines. Supports Swift 6.2+ Approachable Concurrency and earlier versions.
+description: Swift coding standards—formatting, naming, documentation. K&R style, 120-char limit, Apple guidelines. Supports Swift 6.2+ Approachable Concurrency.
 trigger: glob
 globs: .swift
 ---
@@ -66,10 +66,7 @@ if condition {
 **Properties:** One per statement. Omit `get` for read-only computed properties.
 **Enums:** One case per line. Comma-delimited only if no associated values and self-documenting.
 **Trailing Closures:** Always use for single closure argument. No empty `()`.
-**Trailing Commas:** Required in multiline collections.
 **Switch:** `case` at same level as `switch`. Statements inside indented **+4**.
-**For-Where:** Use `where` if loop body is single `if` test.
-**Pattern Matching:** Place `let`/`var` before each element. Never distributed across pattern.
 
 </programming_practices>
 
@@ -99,37 +96,8 @@ nonisolated struct ImageProcessor {
 - Protect mutable global/static variables with `@MainActor`
 - Prefer `@MainActor static let shared` for singletons
 - Avoid unprotected mutable global state
-**Default Behavior:**
-- Async functions continue on the caller's actor by default (no implicit offloading)
-- This eliminates data races in most single-threaded code
-- Explicitly offload only when performance requires background work
 
 </concurrency_swift_6_2_plus>
-
-<concurrency_pre_6_2>
-
-## ⚡ Swift < 6.2 Concurrency
-
-For projects targeting Swift versions before 6.2, follow these practices:
-
-**Actor Isolation:**
-- Mark UI-related classes with `@MainActor`
-- Use `nonisolated` for background workers and stateless services
-- Use `actor` for types managing shared mutable state
-**Async/Await:**
-- Prefer `async`/`await` over completion handlers
-- Use `Task` to bridge from synchronous to asynchronous code
-- Avoid `Task.detached` unless necessary; prefer `Task { ... }`
-**Sendable Conformance:**
-- Mark types that cross actor boundaries as `Sendable`
-- Ensure all properties are `Sendable` or immutable
-- Use value types (structs, enums) when possible
-**Explicit Offloading:**
-- Use `DispatchQueue.global().async` or `Task.detached` for background work
-- Always return to `@MainActor` for UI updates
-- Document which actor a function expects to run on
-
-</concurrency_pre_6_2>
 
 <naming>
 
@@ -138,31 +106,8 @@ For projects targeting Swift versions before 6.2, follow these practices:
 **Follow Apple's API Design Guidelines:** Clarity > brevity. Name by role, not type.
 **Static/Class Properties:** Not suffixed with type name. Use `shared` or `default` for singletons.
 **Global Constants:** `lowerCamelCase`, no Hungarian notation.
-**Delegate Methods:** First arg unlabeled (source object). Returns `Void`: verb phrase. Returns `Bool`: conditional verb. Returns other: noun phrase.
 
 </naming>
-
-<avoid>
-
-## 🚫 Avoid
-
-**Force Unwrapping:** Strongly discouraged. Comment explaining invariant if used.
-**Implicitly Unwrapped Optionals:** Avoid. Only for `@IBOutlet` or test fixtures.
-**Custom Operators:** Avoid unless clear domain meaning and significantly improves readability.
-
-</avoid>
-
-<advanced_patterns>
-
-## 🔧 Advanced Patterns
-
-**Access Levels:** Never specify on `extension`; specify per member.
-**Nesting:** Nest types for scoped relationships. Use caseless `enum` for namespacing constants.
-**Guards:** Use for early exits. Keeps main logic flush left.
-**Literals:** Specify type explicitly when not default. Use `:` or `as` coercion, not initializer.
-
-
-</advanced_patterns>
 
 <documentation>
 
@@ -171,6 +116,5 @@ For projects targeting Swift versions before 6.2, follow these practices:
 **Format:** Use `///` (not `/** */`). Summary first, then paragraphs.
 **Tags:** `Parameter(s)`, `Returns`, `Throws` (in order). Never empty descriptions.
 **Markup:** Backticks for code, `*italic*`, `**bold**`. Code blocks with triple backticks.
-**Coverage:** Document all `open`/`public` declarations. Exceptions: self-explanatory enum cases, overrides (unless new behavior), tests, extensions (unless clarifying).
 
 </documentation>

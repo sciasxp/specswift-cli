@@ -60,11 +60,11 @@ specswift doctor
 Creates a new project with complete SpecSwift structure.
 
 ```bash
-# Basic project
+# Basic project (English by default)
 specswift init ~/Projects/my-app
 
-# iOS/Swift project
-specswift init ~/Projects/my-ios-app --ios
+# iOS/Swift project in Portuguese
+specswift init ~/Projects/my-ios-app --ios --lang pt
 
 # Without Git initialization
 specswift init ~/Projects/my-app --no-git
@@ -74,10 +74,10 @@ specswift init ~/Projects/my-app --no-git
 ```
 my-app/
 ├── .windsurf/
-│   ├── workflows/     # SpecSwift workflows
-│   └── rules/         # Code rules
+│   ├── workflows/     # Localized SpecSwift workflows
+│   └── rules/         # Localized code rules
 ├── _docs/
-│   ├── templates/     # PRD, TechSpec, Tasks templates
+│   ├── templates/     # Localized document templates
 │   ├── scripts/       # Automation scripts
 │   └── specs/         # Feature specs directory
 ├── Makefile           # Build/test commands
@@ -91,11 +91,11 @@ Adds SpecSwift to an existing project.
 ```bash
 cd ~/Projects/existing-project
 
-# Basic installation
+# Basic installation (English)
 specswift install
 
-# With iOS configurations
-specswift install --ios
+# With iOS configurations in Portuguese
+specswift install --ios --lang pt
 
 # Force overwrite
 specswift install --force
@@ -164,6 +164,7 @@ windsurf .
 | `/specswift.implement` | Execute implementation |
 | `/specswift.yolo` | Automatic mode (PRD → TechSpec → Tasks) |
 | `/specswift.taskstoissues` | Convert tasks to GitHub Issues |
+| `/specswift.bug-investigation` | Structured workflow for investigating and fixing bugs |
 
 ## 📁 Project Structure
 
@@ -172,9 +173,9 @@ specswift-cli/
 ├── bin/
 │   └── specswift          # Main CLI
 ├── lib/
-│   ├── workflows/         # Windsurf workflows
-│   ├── templates/         # Document templates
-│   ├── rules/             # Code rules
+│   ├── workflows/         # Localized Windsurf workflows (en/pt)
+│   ├── templates/         # Localized document templates (en/pt)
+│   ├── rules/             # Localized code rules (en/pt)
 │   └── scripts/           # Helper scripts
 ├── docs/
 │   └── SPECSWIFT-WORKFLOWS.md
@@ -274,11 +275,11 @@ specswift doctor
 Cria um novo projeto com toda a estrutura SpecSwift configurada.
 
 ```bash
-# Projeto básico
+# Projeto básico (Inglês por padrão)
 specswift init ~/Projetos/meu-app
 
-# Projeto iOS/Swift
-specswift init ~/Projetos/meu-app-ios --ios
+# Projeto iOS/Swift em Português
+specswift init ~/Projetos/meu-app-ios --ios --lang pt
 
 # Sem inicialização Git
 specswift init ~/Projetos/meu-app --no-git
@@ -288,10 +289,10 @@ specswift init ~/Projetos/meu-app --no-git
 ```
 meu-app/
 ├── .windsurf/
-│   ├── workflows/     # Workflows SpecSwift
-│   └── rules/         # Rules de código
+│   ├── workflows/     # Workflows SpecSwift localizados
+│   └── rules/         # Rules de código localizadas
 ├── _docs/
-│   ├── templates/     # Templates PRD, TechSpec, Tasks
+│   ├── templates/     # Templates de documentos localizados
 │   ├── scripts/       # Scripts de automação
 │   └── specs/         # Diretório para features
 ├── Makefile           # Comandos de build/test
@@ -305,11 +306,11 @@ Adiciona SpecSwift a um projeto que já existe.
 ```bash
 cd ~/Projetos/projeto-existente
 
-# Instalação básica
+# Instalação básica (Inglês)
 specswift install
 
-# Com configurações iOS
-specswift install --ios
+# Com configurações iOS em Português
+specswift install --ios --lang pt
 
 # Forçar sobrescrita
 specswift install --force
@@ -337,8 +338,8 @@ specswift doctor
 ### Novo Projeto
 
 ```bash
-# 1. Criar projeto
-specswift init ~/Projetos/novo-app --ios
+# 1. Criar projeto (ex: em Português)
+specswift init ~/Projetos/novo-app --ios --lang pt
 
 # 2. Abrir no Windsurf
 cd ~/Projetos/novo-app
@@ -358,8 +359,8 @@ windsurf .
 # 1. Navegar até o projeto
 cd ~/Projetos/meu-projeto-existente
 
-# 2. Instalar SpecSwift
-specswift install --ios
+# 2. Instalar SpecSwift (ex: em Português)
+specswift install --ios --lang pt
 
 # 3. Abrir no Windsurf e seguir o fluxo
 windsurf .
@@ -378,6 +379,7 @@ windsurf .
 | `/specswift.implement` | Executar implementação |
 | `/specswift.yolo` | Modo automático (PRD → TechSpec → Tasks) |
 | `/specswift.taskstoissues` | Converter tasks em GitHub Issues |
+| `/specswift.bug-investigation` | Fluxo estruturado para investigar e corrigir bugs |
 
 ## 📁 Estrutura do Projeto
 
@@ -386,9 +388,9 @@ specswift-cli/
 ├── bin/
 │   └── specswift          # CLI principal
 ├── lib/
-│   ├── workflows/         # Workflows do Windsurf
-│   ├── templates/         # Templates de documentos
-│   ├── rules/             # Rules de código
+│   ├── workflows/         # Workflows do Windsurf localizados (en/pt)
+│   ├── templates/         # Templates de documentos localizados (en/pt)
+│   ├── rules/             # Rules de código localizadas (en/pt)
 │   └── scripts/           # Scripts auxiliares
 ├── docs/
 │   └── SPECSWIFT-WORKFLOWS.md

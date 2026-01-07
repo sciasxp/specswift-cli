@@ -1,5 +1,5 @@
 ---
-description: Enforce explicit Swift concurrency isolation for services in Panel Flow/Services/ to ensure thread safety and compatibility with Swift 6.2 and @Observable ViewModels.
+description: Enforce explicit Swift concurrency isolation for services to ensure thread safety and compatibility with Swift 6.2 and @Observable ViewModels.
 trigger: always_on
 ---
 
@@ -12,7 +12,7 @@ trigger: always_on
 The project uses Swift 6.2 with strict concurrency checks enabled. Swift 6.2 introduces "Approachable Concurrency," which simplifies data-race safety by keeping code single-threaded by default until explicitly offloaded. We need a consistent strategy for service isolation and background work.
 
 ## Rule
-All Service classes/structs in `Panel Flow/Services/` must explicitly define their isolation level to ensure thread safety and optimal performance.
+All Service classes/structs must explicitly define their isolation level to ensure thread safety and optimal performance.
 
 ### 1. MainActor Isolated Services (Default)
 Services that interact with UI, `ModelContext` (SwiftData), or other `@MainActor` components should be marked with `@MainActor`.
