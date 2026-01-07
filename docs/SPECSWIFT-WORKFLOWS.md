@@ -31,6 +31,9 @@ SpecSwift is a set of workflows that guide the complete feature development proc
 │                                                          │              │
 │                                                          ▼              │
 │                                                  /specswift.implement    │
+│                                                          │              │
+│                                                          ▼              │
+│                                                   /specswift.retro       │
 │                                                                          │
 └─────────────────────────────────────────────────────────────────────────┘
 
@@ -77,10 +80,10 @@ The main flow is ideal for features that require human review and conscious deci
 
 **Purpose**: Identify and resolve ambiguities in PRD through targeted questions.
 
-**When to use**:
-- PRD has `[PRECISA ESCLARECIMENTO]` markers
-- Requirements are vague or incomplete
-- Want more clarity before technical design
+**Features**:
+- Interactive Q&A loop (max 5 questions)
+- **Visual Clarification**: Generates SwiftUI previews or ASCII wireframes for UI ambiguities
+- **Flow Prototyping**: Generates Mermaid/ASCII diagrams for complex logic
 
 **Input**: None (uses PRD from current branch)
 ```
@@ -167,6 +170,8 @@ The main flow is ideal for features that require human review and conscious deci
 - Tests executed
 - Tasks marked as completed
 
+**Next Step**: `/specswift.retro`
+
 ---
 
 ## Automatic Flow (YOLO Mode)
@@ -244,6 +249,22 @@ PRD → CLARIFY → TECHSPEC → TASKS → ANALYZE
 
 ---
 
+### `/specswift.retro` - Post-Implementation Retrospective
+
+**Purpose**: Analyze completed feature against specifications to generate lessons learned.
+
+**Input**: None (uses artifacts from current branch)
+
+```
+/specswift.retro
+```
+
+**Result**:
+- `_docs/retro/[FEATURE].md` report
+- Insights for constitution updates
+
+---
+
 ## Artifacts Structure
 
 All artifacts are stored in `_docs/specs/[SHORT_NAME]/`:
@@ -279,6 +300,7 @@ _docs/specs/add-search-feature/
 | Validate before implementing | `/specswift.analyze` |
 | Implement | `/specswift.implement` |
 | Export to GitHub | `/specswift.taskstoissues` |
+| Retrospective | `/specswift.retro` |
 
 ---
 
@@ -286,27 +308,27 @@ _docs/specs/add-search-feature/
 
 ### New Project
 ```
-constitution → create-prd → create-techspec → tasks → analyze → implement
+constitution → create-prd → create-techspec → tasks → analyze → implement → retro
 ```
 
 ### Critical/Complex Feature
 ```
-create-prd → clarify → create-techspec → tasks → analyze → implement
+create-prd → clarify → create-techspec → tasks → analyze → implement → retro
 ```
 
 ### Simple/Well-Defined Feature
 ```
-create-prd → create-techspec → tasks → implement
+create-prd → create-techspec → tasks → implement → retro
 ```
 
 ### Spike/Prototyping
 ```
-yolo → (review artifacts) → implement
+yolo → (review artifacts) → implement → retro
 ```
 
 ### Bug Fix
 ```
-create-prd --type fix → create-techspec → tasks → implement
+create-prd --type fix → create-techspec → tasks → implement → retro
 ```
 
 ---
@@ -348,6 +370,9 @@ O SpecSwift é um conjunto de workflows que guiam o processo completo de desenvo
 │                                                          │              │
 │                                                          ▼              │
 │                                                  /specswift.implement    │
+│                                                          │              │
+│                                                          ▼              │
+│                                                   /specswift.retro       │
 │                                                                          │
 └─────────────────────────────────────────────────────────────────────────┘
 
@@ -394,10 +419,10 @@ O fluxo principal é ideal para features que requerem revisão humana e decisõe
 
 **Propósito**: Identificar e resolver ambiguidades no PRD através de perguntas direcionadas.
 
-**Quando usar**:
-- PRD tem marcadores `[PRECISA ESCLARECIMENTO]`
-- Requisitos estão vagos ou incompletos
-- Deseja maior clareza antes do design técnico
+**Funcionalidades**:
+- Loop de perguntas e respostas interativas (máx 5 perguntas)
+- **Esclarecimento Visual**: Gera previews SwiftUI ou wireframes ASCII para ambiguidades de UI
+- **Prototipagem de Fluxo**: Gera diagramas Mermaid/ASCII para lógica complexa
 
 **Entrada**: Nenhuma (usa PRD da branch atual)
 ```
@@ -484,6 +509,8 @@ O fluxo principal é ideal para features que requerem revisão humana e decisõe
 - Testes executados
 - Tasks marcadas como concluídas
 
+**Próximo Passo**: `/specswift.retro`
+
 ---
 
 ## Fluxo Automático (YOLO Mode)
@@ -561,6 +588,22 @@ PRD → CLARIFY → TECHSPEC → TASKS → ANALYZE
 
 ---
 
+### `/specswift.retro` - Retrospectiva Pós-Implementação
+
+**Propósito**: Analisar feature concluída contra especificações para gerar lições aprendidas.
+
+**Entrada**: Nenhuma (usa artefatos da branch atual)
+
+```
+/specswift.retro
+```
+
+**Resultado**:
+- Relatório `_docs/retro/[FEATURE].md`
+- Insights para atualização da constituição
+
+---
+
 ## Estrutura de Artefatos
 
 Todos os artefatos são armazenados em `_docs/specs/[SHORT_NAME]/`:
@@ -572,7 +615,7 @@ _docs/specs/add-search-feature/
 ├── tasks.md               # Lista de tarefas
 ├── research.md            # Pesquisa técnica
 ├── ui-design.md           # Design de UI
-├── data-model.md          # Modelo de dados
+├── data-model.md          # Data model
 ├── quickstart.md          # Guia de início rápido
 ├── .agent.md              # Contexto para implementação
 ├── checklists/
@@ -596,6 +639,7 @@ _docs/specs/add-search-feature/
 | Validar antes de implementar | `/specswift.analyze` |
 | Implementar | `/specswift.implement` |
 | Exportar para GitHub | `/specswift.taskstoissues` |
+| Retrospectiva | `/specswift.retro` |
 
 ---
 
@@ -603,27 +647,27 @@ _docs/specs/add-search-feature/
 
 ### Projeto Novo
 ```
-constitution → create-prd → create-techspec → tasks → analyze → implement
+constitution → create-prd → create-techspec → tasks → analyze → implement → retro
 ```
 
 ### Feature Crítica/Complexa
 ```
-create-prd → clarify → create-techspec → tasks → analyze → implement
+create-prd → clarify → create-techspec → tasks → analyze → implement → retro
 ```
 
 ### Feature Simples/Bem Definida
 ```
-create-prd → create-techspec → tasks → implement
+create-prd → create-techspec → tasks → implement → retro
 ```
 
 ### Spike/Prototipagem
 ```
-yolo → (revisar artefatos) → implement
+yolo → (revisar artefatos) → implement → retro
 ```
 
-### Correção de Bug
+### Feature de Correção de Bug
 ```
-create-prd --type fix → create-techspec → tasks → implement
+create-prd --type fix → create-techspec → tasks → implement → retro
 ```
 
 ---

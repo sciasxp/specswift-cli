@@ -100,8 +100,12 @@ Execution steps:
     - Favor clarifications that reduce downstream rework risk or prevent misaligned acceptance tests.
     - If more than 5 categories remain unresolved, select top 5 by (Impact * Uncertainty) heuristic.
 
-4. Sequential questions loop (interactive):
+4. **Sequential questions loop (interactive)**:
     - Present EXACTLY ONE question at a time.
+    - **Visual Clarification (Prototyping)**:
+       - If the ambiguity is related to **UI/Layout**, optionally generate a minimal **SwiftUI Preview** snippet or ASCII wireframe to visualize the difference between options.
+       - If the ambiguity is related to **Logic/Flow**, optionally generate a **Mermaid/ASCII** flowchart to demonstrate the behavior.
+       - Present this visual aid BEFORE the options table.
     - For multiple-choice questions:
        - **Analyze all options** and determine the **most suitable option** based on:
           - Best practices for the project type

@@ -102,6 +102,10 @@ Passos de execução:
 
 4. Loop de perguntas sequenciais (interativo):
     - Apresente EXATAMENTE UMA pergunta por vez.
+    - **Esclarecimento Visual (Prototipagem)**:
+       - Se a ambiguidade for relacionada a **UI/Layout**, opcionalmente gere um snippet mínimo de **SwiftUI Preview** ou wireframe ASCII para visualizar a diferença entre as opções.
+       - Se a ambiguidade for relacionada a **Lógica/Fluxo**, opcionalmente gere um fluxograma **Mermaid/ASCII** para demonstrar o comportamento.
+       - Apresente este auxílio visual ANTES da tabela de opções.
     - Para perguntas de múltipla escolha:
        - **Analise todas as opções** e determine a **opção mais adequada** baseada em:
           - Melhores práticas para o tipo de projeto
