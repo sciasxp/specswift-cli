@@ -1,0 +1,893 @@
+#!/usr/bin/env bash
+#
+# SpecSwift CLI - Command line tool for feature specification
+#
+# Commands:
+#   specswift init <dir>      Create new project with SpecSwift
+#   specswift install         Install SpecSwift in existing project
+#   specswift update          Update workflows and templates
+#   specswift doctor          Check installation
+#   specswift help            Show help
+#
+# Language:
+#   Default: English (en)
+#   Set SPECSWIFT_LANG=pt for Portuguese
+#   Or use --lang pt option
+#
+
+set -e
+
+# =============================================================================
+# Configuration
+# =============================================================================
+VERSION="1.0.0"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SPECSWIFT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+LIB_DIR="$SPECSWIFT_ROOT/lib"
+
+# =============================================================================
+# Language Configuration
+# =============================================================================
+# Default language is English, can be overridden by:
+# 1. --lang option (highest priority)
+# 2. SPECSWIFT_LANG environment variable
+# 3. Default: en
+LANG_CODE="${SPECSWIFT_LANG:-en}"
+
+# Get localized string (bash 3.2 compatible - no associative arrays)
+L() {
+    local key="$1"
+    
+    if [[ "$LANG_CODE" == "pt" ]]; then
+        case "$key" in
+            # General
+            "unknown_option") echo "Opção desconhecida" ;;
+            "unknown_command") echo "Comando desconhecido" ;;
+            "run_help") echo "Execute 'specswift help' para ver comandos disponíveis" ;;
+            # Help
+            "usage") echo "USO" ;;
+            "commands") echo "COMANDOS" ;;
+            "cmd_init") echo "Criar novo projeto com estrutura SpecSwift completa" ;;
+            "cmd_install") echo "Instalar SpecSwift em projeto existente (diretório atual)" ;;
+            "cmd_update") echo "Atualizar workflows e templates para versão mais recente" ;;
+            "cmd_doctor") echo "Verificar instalação e dependências" ;;
+            "cmd_version") echo "Mostrar versão" ;;
+            "cmd_help") echo "Mostrar esta ajuda" ;;
+            "global_options") echo "OPÇÕES GLOBAIS" ;;
+            "opt_ios") echo "Aplicar configurações específicas para iOS/Swift" ;;
+            "opt_no_git") echo "Não inicializar/modificar repositório Git" ;;
+            "opt_force") echo "Sobrescrever arquivos existentes" ;;
+            "opt_verbose") echo "Output detalhado" ;;
+            "opt_quiet") echo "Apenas erros" ;;
+            "opt_lang") echo "Definir idioma (en/pt)" ;;
+            "examples") echo "EXEMPLOS" ;;
+            "example_create_ios") echo "# Criar novo projeto iOS" ;;
+            "example_install_existing") echo "# Instalar em projeto existente" ;;
+            "example_update") echo "# Atualizar workflows" ;;
+            "example_check") echo "# Verificar instalação" ;;
+            "recommended_flow") echo "FLUXO RECOMENDADO" ;;
+            "in_windsurf") echo "No Windsurf" ;;
+            "documentation") echo "DOCUMENTAÇÃO" ;;
+            "after_install_see") echo "Após instalação, veja" ;;
+            # Doctor
+            "checking_installation") echo "Verificando Instalação" ;;
+            "workflows") echo "Workflows" ;;
+            "templates") echo "Templates" ;;
+            "rules") echo "Rules" ;;
+            "files") echo "arquivos" ;;
+            "tools") echo "Ferramentas" ;;
+            "not_found") echo "não encontrado" ;;
+            "optional") echo "opcional" ;;
+            "required_ios_only") echo "necessário apenas para iOS" ;;
+            "optional_ios") echo "opcional para iOS" ;;
+            "installed") echo "instalado" ;;
+            "current_project") echo "Projeto Atual" ;;
+            "workflows_not_installed") echo "Workflows não instalados neste projeto" ;;
+            "templates_installed") echo "Templates instalados" ;;
+            "templates_not_installed") echo "Templates não instalados" ;;
+            "incomplete_install") echo "Instalação incompleta. Execute: specswift update" ;;
+            "all_ok") echo "Tudo OK!" ;;
+            # Init
+            "creating_new_project") echo "Criando Novo Projeto" ;;
+            "directory") echo "Diretório" ;;
+            "target_dir_not_specified") echo "Diretório de destino não especificado" ;;
+            "usage_init") echo "Uso: specswift init <diretório> [--ios] [--no-git]" ;;
+            # Install
+            "installing_specswift") echo "Instalando SpecSwift" ;;
+            "already_installed") echo "SpecSwift já instalado" ;;
+            "use_force_or_update") echo "Use --force para sobrescrever ou 'specswift update' para atualizar" ;;
+            "existing_makefile_kept") echo "Makefile existente mantido" ;;
+            # Update
+            "updating_specswift") echo "Atualizando SpecSwift" ;;
+            "not_installed_in_project") echo "SpecSwift não está instalado neste projeto" ;;
+            "run_install_first") echo "Execute 'specswift install' primeiro" ;;
+            "updated_to_version") echo "SpecSwift atualizado para" ;;
+            # Copy functions
+            "workflows_copied") echo "workflows copiados" ;;
+            "rules_copied") echo "rules copiadas" ;;
+            "templates_copied") echo "templates copiados" ;;
+            "scripts_copied") echo "scripts copiados" ;;
+            # Git
+            "git_repo_exists") echo "Repositório Git já existe" ;;
+            "repo_initialized") echo "Repositório inicializado" ;;
+            "gitignore_created") echo ".gitignore criado" ;;
+            # Summary
+            "project_created") echo "Projeto Criado!" ;;
+            "structure") echo "Estrutura" ;;
+            "next_steps") echo "Próximos passos" ;;
+            "run_to_configure") echo "Execute para configurar documentação" ;;
+            "run_to_create_feature") echo "Execute para criar uma feature" ;;
+            "specswift_installed") echo "SpecSwift Instalado!" ;;
+            "run_in_windsurf") echo "Execute no Windsurf para configurar documentação base" ;;
+            "to_create_new_feature") echo "para criar uma nova feature" ;;
+            # Makefile
+            "makefile_created") echo "Makefile criado" ;;
+            *) echo "$key" ;;
+        esac
+    else
+        # English (default)
+        case "$key" in
+            # General
+            "unknown_option") echo "Unknown option" ;;
+            "unknown_command") echo "Unknown command" ;;
+            "run_help") echo "Run 'specswift help' to see available commands" ;;
+            # Help
+            "usage") echo "USAGE" ;;
+            "commands") echo "COMMANDS" ;;
+            "cmd_init") echo "Create new project with complete SpecSwift structure" ;;
+            "cmd_install") echo "Install SpecSwift in existing project (current directory)" ;;
+            "cmd_update") echo "Update workflows and templates to latest version" ;;
+            "cmd_doctor") echo "Check installation and dependencies" ;;
+            "cmd_version") echo "Show version" ;;
+            "cmd_help") echo "Show this help" ;;
+            "global_options") echo "GLOBAL OPTIONS" ;;
+            "opt_ios") echo "Apply iOS/Swift specific configurations" ;;
+            "opt_no_git") echo "Don't initialize/modify Git repository" ;;
+            "opt_force") echo "Overwrite existing files" ;;
+            "opt_verbose") echo "Detailed output" ;;
+            "opt_quiet") echo "Errors only" ;;
+            "opt_lang") echo "Set language (en/pt)" ;;
+            "examples") echo "EXAMPLES" ;;
+            "example_create_ios") echo "# Create new iOS project" ;;
+            "example_install_existing") echo "# Install in existing project" ;;
+            "example_update") echo "# Update workflows" ;;
+            "example_check") echo "# Check installation" ;;
+            "recommended_flow") echo "RECOMMENDED FLOW" ;;
+            "in_windsurf") echo "In Windsurf" ;;
+            "documentation") echo "DOCUMENTATION" ;;
+            "after_install_see") echo "After installation, see" ;;
+            # Doctor
+            "checking_installation") echo "Checking Installation" ;;
+            "workflows") echo "Workflows" ;;
+            "templates") echo "Templates" ;;
+            "rules") echo "Rules" ;;
+            "files") echo "files" ;;
+            "tools") echo "Tools" ;;
+            "not_found") echo "not found" ;;
+            "optional") echo "optional" ;;
+            "required_ios_only") echo "required for iOS only" ;;
+            "optional_ios") echo "optional for iOS" ;;
+            "installed") echo "installed" ;;
+            "current_project") echo "Current Project" ;;
+            "workflows_not_installed") echo "Workflows not installed in this project" ;;
+            "templates_installed") echo "Templates installed" ;;
+            "templates_not_installed") echo "Templates not installed" ;;
+            "incomplete_install") echo "Incomplete installation. Run: specswift update" ;;
+            "all_ok") echo "All OK!" ;;
+            # Init
+            "creating_new_project") echo "Creating New Project" ;;
+            "directory") echo "Directory" ;;
+            "target_dir_not_specified") echo "Target directory not specified" ;;
+            "usage_init") echo "Usage: specswift init <directory> [--ios] [--no-git]" ;;
+            # Install
+            "installing_specswift") echo "Installing SpecSwift" ;;
+            "already_installed") echo "SpecSwift already installed" ;;
+            "use_force_or_update") echo "Use --force to overwrite or 'specswift update' to update" ;;
+            "existing_makefile_kept") echo "Existing Makefile kept" ;;
+            # Update
+            "updating_specswift") echo "Updating SpecSwift" ;;
+            "not_installed_in_project") echo "SpecSwift is not installed in this project" ;;
+            "run_install_first") echo "Run 'specswift install' first" ;;
+            "updated_to_version") echo "SpecSwift updated to" ;;
+            # Copy functions
+            "workflows_copied") echo "workflows copied" ;;
+            "rules_copied") echo "rules copied" ;;
+            "templates_copied") echo "templates copied" ;;
+            "scripts_copied") echo "scripts copied" ;;
+            # Git
+            "git_repo_exists") echo "Git repository already exists" ;;
+            "repo_initialized") echo "Repository initialized" ;;
+            "gitignore_created") echo ".gitignore created" ;;
+            # Summary
+            "project_created") echo "Project Created!" ;;
+            "structure") echo "Structure" ;;
+            "next_steps") echo "Next steps" ;;
+            "run_to_configure") echo "Run to configure documentation" ;;
+            "run_to_create_feature") echo "Run to create a feature" ;;
+            "specswift_installed") echo "SpecSwift Installed!" ;;
+            "run_in_windsurf") echo "Run in Windsurf to configure base documentation" ;;
+            "to_create_new_feature") echo "to create a new feature" ;;
+            # Makefile
+            "makefile_created") echo "Makefile created" ;;
+            *) echo "$key" ;;
+        esac
+    fi
+}
+
+# =============================================================================
+# Cores
+# =============================================================================
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
+DIM='\033[2m'
+NC='\033[0m'
+
+# =============================================================================
+# Funções de output
+# =============================================================================
+print_header() { echo -e "\n${BOLD}${BLUE}$1${NC}"; }
+print_success() { echo -e "${GREEN}✓${NC} $1"; }
+print_warning() { echo -e "${YELLOW}⚠${NC} $1"; }
+print_error() { echo -e "${RED}✗${NC} $1" >&2; }
+print_info() { echo -e "${CYAN}→${NC} $1"; }
+print_dim() { echo -e "${DIM}$1${NC}"; }
+
+# =============================================================================
+# Banner
+# =============================================================================
+show_banner() {
+    echo -e "${BOLD}${BLUE}"
+    cat << 'BANNER'
+   ____                  ____          _  __ _   
+  / ___| _ __   ___  ___/ ___|_      _(_)/ _| |_ 
+  \___ \| '_ \ / _ \/ __\___ \ \ /\ / / | |_| __|
+   ___) | |_) |  __/ (__ ___) \ V  V /| |  _| |_ 
+  |____/| .__/ \___|\___|____/ \_/\_/ |_|_|  \__|
+        |_|                                      
+BANNER
+    echo -e "${NC}"
+    echo -e "${DIM}  Version $VERSION - Feature Specification Toolkit${NC}"
+    echo ""
+}
+
+# =============================================================================
+# Help
+# =============================================================================
+show_help() {
+    show_banner
+    cat << EOF
+$(L "usage"):
+    specswift <command> [options]
+
+$(L "commands"):
+    init <directory>     $(L "cmd_init")
+    install              $(L "cmd_install")
+    update               $(L "cmd_update")
+    doctor               $(L "cmd_doctor")
+    version              $(L "cmd_version")
+    help                 $(L "cmd_help")
+
+$(L "global_options"):
+    --ios                $(L "opt_ios")
+    --no-git             $(L "opt_no_git")
+    --force              $(L "opt_force")
+    --lang <en|pt>       $(L "opt_lang")
+    -v, --verbose        $(L "opt_verbose")
+    -q, --quiet          $(L "opt_quiet")
+
+$(L "examples"):
+    $(L "example_create_ios")
+    specswift init ~/Projects/my-app --ios
+
+    $(L "example_install_existing")
+    cd ~/Projects/existing-project
+    specswift install --ios
+
+    $(L "example_update")
+    specswift update
+
+    $(L "example_check")
+    specswift doctor
+
+$(L "recommended_flow"):
+    1. specswift init ~/new-project --ios
+    2. cd ~/new-project && windsurf .
+    3. $(L "in_windsurf"): /specswift.constitution
+    4. $(L "in_windsurf"): /specswift.create-prd "feature description"
+
+$(L "documentation"):
+    $(L "after_install_see"): _docs/SPECSWIFT-WORKFLOWS.md
+
+EOF
+}
+
+# =============================================================================
+# Version
+# =============================================================================
+show_version() {
+    echo "SpecSwift CLI v$VERSION"
+}
+
+# =============================================================================
+# Doctor - Check installation
+# =============================================================================
+cmd_doctor() {
+    show_banner
+    print_header "🔍 $(L "checking_installation")"
+
+    local has_errors=false
+
+    # Check SpecSwift structure
+    echo ""
+    echo -e "${BOLD}SpecSwift CLI:${NC}"
+    
+    if [[ -d "$LIB_DIR/workflows" ]]; then
+        local wf_count=$(ls -1 "$LIB_DIR/workflows"/*.md 2>/dev/null | wc -l | tr -d ' ')
+        print_success "$(L "workflows"): $wf_count $(L "files")"
+    else
+        print_error "$(L "workflows") $(L "not_found")"
+        has_errors=true
+    fi
+
+    if [[ -d "$LIB_DIR/templates" ]]; then
+        local tpl_count=$(ls -1 "$LIB_DIR/templates"/*.md 2>/dev/null | wc -l | tr -d ' ')
+        print_success "$(L "templates"): $tpl_count $(L "files")"
+    else
+        print_error "$(L "templates") $(L "not_found")"
+        has_errors=true
+    fi
+
+    if [[ -d "$LIB_DIR/rules" ]]; then
+        local rules_count=$(ls -1 "$LIB_DIR/rules"/*.md 2>/dev/null | wc -l | tr -d ' ')
+        print_success "$(L "rules"): $rules_count $(L "files")"
+    else
+        print_error "$(L "rules") $(L "not_found")"
+        has_errors=true
+    fi
+
+    # Check external tools
+    echo ""
+    echo -e "${BOLD}$(L "tools"):${NC}"
+    
+    if command -v git &> /dev/null; then
+        print_success "Git: $(git --version | head -1)"
+    else
+        print_warning "Git $(L "not_found") ($(L "optional"))"
+    fi
+
+    if command -v xcodebuild &> /dev/null; then
+        print_success "Xcode: $(xcodebuild -version | head -1)"
+    else
+        print_dim "  Xcode $(L "not_found") ($(L "required_ios_only"))"
+    fi
+
+    if command -v xcbeautify &> /dev/null; then
+        print_success "xcbeautify: $(L "installed")"
+    else
+        print_dim "  xcbeautify $(L "not_found") ($(L "optional_ios"))"
+    fi
+
+    # Check current project (if in one)
+    if [[ -d ".windsurf" ]]; then
+        echo ""
+        echo -e "${BOLD}$(L "current_project"):${NC}"
+        
+        if [[ -d ".windsurf/workflows" ]]; then
+            local proj_wf=$(ls -1 .windsurf/workflows/specswift.*.md 2>/dev/null | wc -l | tr -d ' ')
+            print_success "SpecSwift workflows: $proj_wf"
+        else
+            print_warning "$(L "workflows_not_installed")"
+        fi
+
+        if [[ -d "_docs/templates" ]]; then
+            print_success "$(L "templates_installed")"
+        else
+            print_warning "$(L "templates_not_installed")"
+        fi
+    fi
+
+    echo ""
+    if [[ "$has_errors" == true ]]; then
+        print_error "$(L "incomplete_install")"
+        return 1
+    else
+        print_success "$(L "all_ok")"
+    fi
+}
+
+# =============================================================================
+# Init - Create new project
+# =============================================================================
+cmd_init() {
+    local target_dir=""
+    local ios_mode=false
+    local init_git=true
+    local force=false
+    local verbose=false
+
+    # Parse arguments
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --ios) ios_mode=true; shift ;;
+            --no-git) init_git=false; shift ;;
+            --force) force=true; shift ;;
+            -v|--verbose) verbose=true; shift ;;
+            -*)
+                print_error "$(L "unknown_option"): $1"
+                exit 1
+                ;;
+            *)
+                if [[ -z "$target_dir" ]]; then
+                    target_dir="$1"
+                fi
+                shift
+                ;;
+        esac
+    done
+
+    if [[ -z "$target_dir" ]]; then
+        print_error "$(L "target_dir_not_specified")"
+        echo "$(L "usage_init")"
+        exit 1
+    fi
+
+    show_banner
+    print_header "📦 $(L "creating_new_project")"
+
+    # Create directory
+    mkdir -p "$target_dir"
+    target_dir="$(cd "$target_dir" && pwd)"
+    print_success "$(L "directory"): $target_dir"
+
+    # Copiar estrutura
+    _copy_workflows "$target_dir" "$verbose"
+    _copy_rules "$target_dir" "$ios_mode" "$verbose"
+    _copy_templates "$target_dir" "$verbose"
+    _copy_scripts "$target_dir" "$verbose"
+    _copy_documentation "$target_dir" "$ios_mode" "$verbose"
+    _create_makefile "$target_dir" "$ios_mode"
+
+    # Git
+    if [[ "$init_git" == true ]]; then
+        _init_git "$target_dir"
+    fi
+
+    # Summary
+    _print_init_summary "$target_dir" "$ios_mode"
+}
+
+# =============================================================================
+# Install - Install in existing project
+# =============================================================================
+cmd_install() {
+    local target_dir="$(pwd)"
+    local ios_mode=false
+    local force=false
+    local verbose=false
+
+    # Parse arguments
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --ios) ios_mode=true; shift ;;
+            --force) force=true; shift ;;
+            -v|--verbose) verbose=true; shift ;;
+            -*)
+                print_error "$(L "unknown_option"): $1"
+                exit 1
+                ;;
+            *) shift ;;
+        esac
+    done
+
+    show_banner
+    print_header "📥 $(L "installing_specswift")"
+    print_info "$(L "directory"): $target_dir"
+
+    # Check if already exists
+    if [[ -d "$target_dir/.windsurf/workflows" && "$force" != true ]]; then
+        local existing=$(ls -1 "$target_dir/.windsurf/workflows"/specswift.*.md 2>/dev/null | wc -l | tr -d ' ')
+        if [[ "$existing" -gt 0 ]]; then
+            print_warning "$(L "already_installed") ($existing workflows)"
+            echo ""
+            echo "$(L "use_force_or_update")"
+            exit 1
+        fi
+    fi
+
+    # Copy structure (without overwriting project files)
+    _copy_workflows "$target_dir" "$verbose"
+    _copy_rules "$target_dir" "$ios_mode" "$verbose"
+    _copy_templates "$target_dir" "$verbose"
+    _copy_scripts "$target_dir" "$verbose"
+    _copy_documentation "$target_dir" "$ios_mode" "$verbose"
+
+    # Don't create Makefile if it already exists
+    if [[ ! -f "$target_dir/Makefile" ]]; then
+        _create_makefile "$target_dir" "$ios_mode"
+    else
+        print_info "$(L "existing_makefile_kept")"
+    fi
+
+    # Summary
+    _print_install_summary "$target_dir"
+}
+
+# =============================================================================
+# Update - Update workflows and templates
+# =============================================================================
+cmd_update() {
+    local target_dir="$(pwd)"
+    local verbose=false
+
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -v|--verbose) verbose=true; shift ;;
+            *) shift ;;
+        esac
+    done
+
+    show_banner
+    print_header "🔄 $(L "updating_specswift")"
+
+    if [[ ! -d "$target_dir/.windsurf" ]]; then
+        print_error "$(L "not_installed_in_project")"
+        echo "$(L "run_install_first")"
+        exit 1
+    fi
+
+    # Update workflows (always overwrite)
+    _copy_workflows "$target_dir" "$verbose" true
+
+    # Update templates
+    _copy_templates "$target_dir" "$verbose" true
+
+    # Update documentation
+    if [[ -f "$LIB_DIR/../docs/SPECSWIFT-WORKFLOWS.md" ]]; then
+        cp "$LIB_DIR/../docs/SPECSWIFT-WORKFLOWS.md" "$target_dir/_docs/" 2>/dev/null || true
+    fi
+
+    echo ""
+    print_success "$(L "updated_to_version") v$VERSION"
+}
+
+# =============================================================================
+# Helper copy functions
+# =============================================================================
+_copy_workflows() {
+    local target="$1"
+    local verbose="${2:-false}"
+    local overwrite="${3:-false}"
+
+    print_header "📋 $(L "workflows")"
+    mkdir -p "$target/.windsurf/workflows"
+
+    local count=0
+    for file in "$LIB_DIR/workflows"/*.md; do
+        if [[ -f "$file" ]]; then
+            local basename=$(basename "$file")
+            if [[ "$overwrite" == true || ! -f "$target/.windsurf/workflows/$basename" ]]; then
+                cp "$file" "$target/.windsurf/workflows/"
+                [[ "$verbose" == true ]] && print_success "$basename"
+                ((count++))
+            fi
+        fi
+    done
+    print_info "$count $(L "workflows_copied")"
+}
+
+_copy_rules() {
+    local target="$1"
+    local ios_mode="$2"
+    local verbose="${3:-false}"
+
+    print_header "📏 $(L "rules")"
+    mkdir -p "$target/.windsurf/rules"
+
+    # Generic rules
+    local generic_rules=("api-design-guidelines.md" "accessibility-guidelines.md")
+    local count=0
+
+    for rule in "${generic_rules[@]}"; do
+        if [[ -f "$LIB_DIR/rules/$rule" ]]; then
+            cp "$LIB_DIR/rules/$rule" "$target/.windsurf/rules/"
+            [[ "$verbose" == true ]] && print_success "$rule"
+            ((count++))
+        fi
+    done
+
+    # iOS rules
+    if [[ "$ios_mode" == true ]]; then
+        local ios_rules=("swift-coding-style.md" "swift-concurrency.md" "makefile-usage.md")
+        for rule in "${ios_rules[@]}"; do
+            if [[ -f "$LIB_DIR/rules/$rule" ]]; then
+                cp "$LIB_DIR/rules/$rule" "$target/.windsurf/rules/"
+                [[ "$verbose" == true ]] && print_success "$rule (iOS)"
+                ((count++))
+            fi
+        done
+    fi
+
+    print_info "$count $(L "rules_copied")"
+}
+
+_copy_templates() {
+    local target="$1"
+    local verbose="${2:-false}"
+    local overwrite="${3:-false}"
+
+    print_header "📄 $(L "templates")"
+    mkdir -p "$target/_docs/templates"
+    mkdir -p "$target/_docs/specs"
+
+    local count=0
+    for file in "$LIB_DIR/templates"/*.md; do
+        if [[ -f "$file" ]]; then
+            local basename=$(basename "$file")
+            if [[ "$overwrite" == true || ! -f "$target/_docs/templates/$basename" ]]; then
+                cp "$file" "$target/_docs/templates/"
+                [[ "$verbose" == true ]] && print_success "$basename"
+                ((count++))
+            fi
+        fi
+    done
+    print_info "$count $(L "templates_copied")"
+}
+
+_copy_scripts() {
+    local target="$1"
+    local verbose="${2:-false}"
+
+    print_header "🔧 Scripts"
+    mkdir -p "$target/_docs/scripts/bash"
+
+    local count=0
+    for file in "$LIB_DIR/scripts"/*.sh; do
+        if [[ -f "$file" ]]; then
+            cp "$file" "$target/_docs/scripts/bash/"
+            chmod +x "$target/_docs/scripts/bash/$(basename "$file")"
+            [[ "$verbose" == true ]] && print_success "$(basename "$file")"
+            ((count++))
+        fi
+    done
+    print_info "$count $(L "scripts_copied")"
+}
+
+_copy_documentation() {
+    local target="$1"
+    local ios_mode="$2"
+    local verbose="${3:-false}"
+
+    print_header "📚 $(L "documentation")"
+    mkdir -p "$target/_docs"
+
+    if [[ -f "$LIB_DIR/../docs/SPECSWIFT-WORKFLOWS.md" ]]; then
+        cp "$LIB_DIR/../docs/SPECSWIFT-WORKFLOWS.md" "$target/_docs/"
+        print_success "SPECSWIFT-WORKFLOWS.md"
+    fi
+}
+
+_create_makefile() {
+    local target="$1"
+    local ios_mode="$2"
+
+    if [[ -f "$target/Makefile" ]]; then
+        return
+    fi
+
+    print_header "⚙️  Makefile"
+
+    if [[ "$ios_mode" == true ]]; then
+        cat > "$target/Makefile" << 'MAKEFILE'
+# iOS Project Makefile
+# Customize SCHEME, PROJECT and DESTINATION for your project
+
+SCHEME = YourApp
+PROJECT = YourApp.xcodeproj
+DESTINATION = platform=iOS\ Simulator,name=iPhone\ 16,OS=latest
+
+.PHONY: help build test clean
+
+help:
+	@echo "Available commands:"
+	@echo "  make build  - Project build"
+	@echo "  make test   - Run tests"
+	@echo "  make clean  - Clean artifacts"
+
+build:
+	@set -o pipefail && xcodebuild \
+		-project "$(PROJECT)" \
+		-scheme "$(SCHEME)" \
+		-destination "$(DESTINATION)" \
+		build | xcbeautify || xcodebuild \
+		-project "$(PROJECT)" \
+		-scheme "$(SCHEME)" \
+		-destination "$(DESTINATION)" \
+		build
+
+test:
+	@set -o pipefail && xcodebuild \
+		-project "$(PROJECT)" \
+		-scheme "$(SCHEME)" \
+		-destination "$(DESTINATION)" \
+		test | xcbeautify || xcodebuild \
+		-project "$(PROJECT)" \
+		-scheme "$(SCHEME)" \
+		-destination "$(DESTINATION)" \
+		test
+
+clean:
+	@xcodebuild clean -project "$(PROJECT)" -scheme "$(SCHEME)"
+	@rm -rf DerivedData .build
+MAKEFILE
+    else
+        cat > "$target/Makefile" << 'MAKEFILE'
+# Project Makefile
+# Customize for your project
+
+.PHONY: help build test clean
+
+help:
+	@echo "Available commands:"
+	@echo "  make build  - Project build"
+	@echo "  make test   - Run tests"
+	@echo "  make clean  - Clean artifacts"
+
+build:
+	@echo "Configure the build command for your project"
+
+test:
+	@echo "Configure the test command for your project"
+
+clean:
+	@echo "Configure the clean command for your project"
+MAKEFILE
+    fi
+
+    print_success "$(L "makefile_created")"
+}
+
+_init_git() {
+    local target="$1"
+
+    print_header "🔀 Git"
+
+    if [[ -d "$target/.git" ]]; then
+        print_info "$(L "git_repo_exists")"
+        return
+    fi
+
+    cd "$target"
+    git init -q
+    print_success "$(L "repo_initialized")"
+
+    if [[ ! -f ".gitignore" ]]; then
+        cat > ".gitignore" << 'GITIGNORE'
+# macOS
+.DS_Store
+*.swp
+
+# IDE
+.vscode/
+.idea/
+
+# Build
+build/
+.build/
+DerivedData/
+
+# Dependencies
+node_modules/
+Pods/
+
+# Environment
+.env
+.env.local
+GITIGNORE
+        print_success "$(L "gitignore_created")"
+    fi
+}
+
+_print_init_summary() {
+    local target="$1"
+    local ios_mode="$2"
+
+    echo ""
+    print_header "✅ $(L "project_created")"
+    echo ""
+    echo -e "${BOLD}$(L "structure"):${NC}"
+    echo "  $target/"
+    echo "  ├── .windsurf/"
+    echo "  │   ├── workflows/    $(ls -1 "$target/.windsurf/workflows" 2>/dev/null | wc -l | tr -d ' ') $(L "files")"
+    echo "  │   └── rules/        $(ls -1 "$target/.windsurf/rules" 2>/dev/null | wc -l | tr -d ' ') $(L "files")"
+    echo "  ├── _docs/"
+    echo "  │   ├── templates/"
+    echo "  │   ├── scripts/"
+    echo "  │   └── specs/"
+    echo "  ├── Makefile"
+    echo "  └── .gitignore"
+    echo ""
+    echo -e "${BOLD}$(L "next_steps"):${NC}"
+    echo "  1. cd $target"
+    echo "  2. windsurf ."
+    echo -e "  3. ${CYAN}/specswift.constitution${NC} - $(L "run_to_configure")"
+    echo -e "  4. ${CYAN}/specswift.create-prd${NC} - $(L "run_to_create_feature")"
+}
+
+_print_install_summary() {
+    local target="$1"
+
+    echo ""
+    print_header "✅ $(L "specswift_installed")"
+    echo ""
+    echo -e "${BOLD}$(L "next_steps"):${NC}"
+    echo -e "  1. ${CYAN}/specswift.constitution${NC} - $(L "run_in_windsurf")"
+    echo -e "  2. ${CYAN}/specswift.create-prd${NC} - $(L "to_create_new_feature")"
+    echo ""
+    echo -e "$(L "documentation"): ${CYAN}_docs/SPECSWIFT-WORKFLOWS.md${NC}"
+}
+
+# =============================================================================
+# Main
+# =============================================================================
+
+# Parse global --lang option before main command
+_parse_global_options() {
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --lang)
+                if [[ -n "$2" && "$2" =~ ^(en|pt)$ ]]; then
+                    LANG_CODE="$2"
+                    shift 2
+                else
+                    echo "Invalid language. Use: --lang en or --lang pt"
+                    exit 1
+                fi
+                ;;
+            *)
+                REMAINING_ARGS+=("$1")
+                shift
+                ;;
+        esac
+    done
+}
+
+REMAINING_ARGS=()
+_parse_global_options "$@"
+set -- "${REMAINING_ARGS[@]}"
+
+main() {
+    local command="${1:-help}"
+    shift 2>/dev/null || true
+
+    case "$command" in
+        init)
+            cmd_init "$@"
+            ;;
+        install)
+            cmd_install "$@"
+            ;;
+        update)
+            cmd_update "$@"
+            ;;
+        doctor)
+            cmd_doctor "$@"
+            ;;
+        version|--version|-V)
+            show_version
+            ;;
+        help|--help|-h)
+            show_help
+            ;;
+        *)
+            print_error "$(L "unknown_command"): $command"
+            echo "$(L "run_help")"
+            exit 1
+            ;;
+    esac
+}
+
+main "$@"
