@@ -133,7 +133,7 @@ BANNER
     if [[ "$LOCAL_INSTALL" == true && -n "$SOURCE_DIR" ]]; then
         print_info "Instalando a partir de: $SOURCE_DIR"
         
-        # Copiar estrutura
+        # Copiar estrutura (incluindo subpastas de idiomas)
         cp -r "$SOURCE_DIR/lib" "$SPECSWIFT_HOME/"
         cp -r "$SOURCE_DIR/docs" "$SPECSWIFT_HOME/"
         mkdir -p "$SPECSWIFT_HOME/bin"
@@ -155,6 +155,7 @@ BANNER
                 do_install
                 return
             }
+            # Copiar estrutura completa (incluindo subpastas de idiomas)
             cp -r "$tmp_dir/specswift-cli/lib" "$SPECSWIFT_HOME/"
             cp -r "$tmp_dir/specswift-cli/docs" "$SPECSWIFT_HOME/"
             mkdir -p "$SPECSWIFT_HOME/bin"
