@@ -78,7 +78,7 @@ The main flow is ideal for features that require human review and conscious deci
 **Purpose**: Identify and resolve ambiguities in PRD through targeted questions.
 
 **When to use**:
-- PRD has `[NEEDS CLARIFICATION]` markers
+- PRD has `[PRECISA ESCLARECIMENTO]` markers
 - Requirements are vague or incomplete
 - Want more clarity before technical design
 
@@ -88,7 +88,7 @@ The main flow is ideal for features that require human review and conscious deci
 ```
 
 **Updated Artifacts**:
-- `prd.md` - With `## Clarifications` section added
+- `prd.md` - With `## Esclarecimentos` section added
 
 **Next Step**: `/specswift.create-techspec`
 

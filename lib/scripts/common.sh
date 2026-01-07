@@ -15,6 +15,10 @@ get_repo_root() {
 # Get current branch, with fallback for non-git repositories
 get_current_branch() {
     # First check if SPECIFY_FEATURE environment variable is set
+    if [[ -n "${SPECSWIFT_FEATURE:-}" ]]; then
+        echo "$SPECSWIFT_FEATURE"
+        return
+    fi
     if [[ -n "${SPECIFY_FEATURE:-}" ]]; then
         echo "$SPECIFY_FEATURE"
         return
@@ -53,7 +57,7 @@ check_feature_branch() {
 
     # For non-git repos, we can't enforce branch naming but still provide output
     if [[ "$has_git_repo" != "true" ]]; then
-        echo "[specify] Warning: Git repository not detected; skipped branch validation" >&2
+        echo "[specswift] Warning: Git repository not detected; skipped branch validation" >&2
         return 0
     fi
 

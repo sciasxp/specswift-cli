@@ -71,7 +71,7 @@ fi
 find_repo_root() {
     local dir="$1"
     while [ "$dir" != "/" ]; do
-        if [ -d "$dir/.git" ] || [ -d "$dir/.specify" ]; then
+        if [ -d "$dir/.git" ] || [ -d "$dir/.windsurf" ]; then
             echo "$dir"
             return 0
         fi
@@ -231,7 +231,7 @@ BRANCH_NAME="${BRANCH_TYPE}/${SHORT_NAME}"
 if [ "$HAS_GIT" = true ]; then
     git checkout -b "$BRANCH_NAME"
 else
-    >&2 echo "[specify] Warning: Git repository not detected; skipped branch creation for $BRANCH_NAME"
+    >&2 echo "[specswift] Warning: Git repository not detected; skipped branch creation for $BRANCH_NAME"
 fi
 
 FEATURE_DIR="$SPECS_DIR/$SHORT_NAME"
@@ -241,7 +241,8 @@ TEMPLATE="$REPO_ROOT/_docs/templates/prd-template.md"
 PRD_FILE="$FEATURE_DIR/prd.md"
 if [ -f "$TEMPLATE" ]; then cp "$TEMPLATE" "$PRD_FILE"; else touch "$PRD_FILE"; fi
 
-# Set the SPECIFY_FEATURE environment variable for the current session
+# Set the SPECSWIFT_FEATURE environment variable for the current session
+export SPECSWIFT_FEATURE="$BRANCH_NAME"
 export SPECIFY_FEATURE="$BRANCH_NAME"
 
 if $JSON_MODE; then
@@ -252,5 +253,5 @@ else
     echo "FEATURE_DIR: $FEATURE_DIR"
     echo "SHORT_NAME: $SHORT_NAME"
     echo "TYPE: $BRANCH_TYPE"
-    echo "SPECIFY_FEATURE environment variable set to: $BRANCH_NAME"
+    echo "SPECSWIFT_FEATURE environment variable set to: $BRANCH_NAME"
 fi

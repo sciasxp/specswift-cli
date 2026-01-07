@@ -3,7 +3,7 @@
 # SpecSwift CLI Installer
 #
 # Uso:
-#   curl -fsSL https://raw.githubusercontent.com/user/specswift-cli/main/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/sciasxp/specswift-cli/main/install.sh | bash
 #   ou
 #   ./install.sh [--prefix /usr/local]
 #
@@ -16,7 +16,7 @@ set -e
 VERSION="1.0.0"
 INSTALL_PREFIX="${HOME}/.local"
 SPECSWIFT_HOME="${HOME}/.specswift"
-REPO_URL="https://github.com/user/specswift-cli"  # Ajustar conforme necessário
+REPO_URL="https://github.com/sciasxp/specswift-cli"
 
 # =============================================================================
 # Cores
@@ -114,12 +114,12 @@ do_uninstall() {
 do_install() {
     echo -e "${BOLD}${BLUE}"
     cat << 'BANNER'
-   ____                  _  _____ _   
-  / ___| _ __   ___  ___| |/ /_ _| |_ 
-  \___ \| '_ \ / _ \/ __| ' / | || __|
-   ___) | |_) |  __/ (__| . \ | || |_ 
-  |____/| .__/ \___|\___|_|\_\___|\__|
-        |_|                           
+   ____                  ____          _  __ _   
+  / ___| _ __   ___  ___/ ___|_      _(_)/ _| |_ 
+  \___ \| '_ \ / _ \/ __\___ \ \ /\ / / | |_| __|
+   ___) | |_) |  __/ (__ ___) \ V  V /| |  _| |_ 
+  |____/| .__/ \___|\___|____/ \_/\_/ |_|_|  \__|
+        |_|                                      
 BANNER
     echo -e "${NC}"
     echo -e "  Installing SpecSwift CLI v$VERSION"
@@ -136,7 +136,6 @@ BANNER
         # Copiar estrutura
         cp -r "$SOURCE_DIR/lib" "$SPECSWIFT_HOME/"
         cp -r "$SOURCE_DIR/docs" "$SPECSWIFT_HOME/"
-        cp "$SOURCE_DIR/bin/specswift" "$SPECSWIFT_HOME/bin/specswift"
         mkdir -p "$SPECSWIFT_HOME/bin"
         cp "$SOURCE_DIR/bin/specswift" "$SPECSWIFT_HOME/bin/"
     else

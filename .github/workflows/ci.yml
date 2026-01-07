@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  lint-and-smoke:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Bash syntax check
+        shell: bash
+        run: |
+          bash -n bin/specswift
+          bash -n install.sh
+          for f in lib/scripts/*.sh; do
+            bash -n "$f"
+          done
+
+      - name: ShellCheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+          shellcheck --severity=error bin/specswift install.sh lib/scripts/*.sh
+
+      - name: Smoke test (help)
+        run: |
+          chmod +x bin/specswift
+          ./bin/specswift help >/dev/null
+          ./bin/specswift --lang pt help >/dev/null
+
+      - name: Smoke test (doctor)
+        run: |
+          ./bin/specswift doctor

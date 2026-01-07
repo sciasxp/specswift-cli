@@ -24,18 +24,24 @@ Command line tool for feature specification and implementation using the SpecSwi
 
 ```bash
 # Clone the repository
-git clone https://github.com/user/specswift-cli.git
+git clone https://github.com/sciasxp/specswift-cli.git
 cd specswift-cli
 
 # Install
 ./install.sh
 ```
 
+### One-liner Install (recommended)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/sciasxp/specswift-cli/main/install.sh | bash
+```
+
 ### Manual Install
 
 ```bash
 # Clone the repository
-git clone https://github.com/user/specswift-cli.git
+git clone https://github.com/sciasxp/specswift-cli.git
 
 # Add to PATH (in ~/.zshrc or ~/.bashrc)
 export PATH="$HOME/path/to/specswift-cli/bin:$PATH"
@@ -205,7 +211,8 @@ rm ~/.local/bin/specswift
 ## 📚 Additional Documentation
 
 After installing in a project, see:
-- `_docs/SPECSWIFT-WORKFLOWS.md` - Complete workflows guide
+- `docs/SPECSWIFT-WORKFLOWS.md` - Complete workflows guide (in this repository)
+- `_docs/SPECSWIFT-WORKFLOWS.md` - Complete workflows guide (after installing into a project)
 - `.windsurf/workflows/` - Detailed workflow definitions
 
 ## 🤝 Contributing
@@ -231,18 +238,24 @@ Ferramenta de linha de comando para especificação e implementação de feature
 
 ```bash
 # Clone o repositório
-git clone https://github.com/user/specswift-cli.git
+git clone https://github.com/sciasxp/specswift-cli.git
 cd specswift-cli
 
 # Instale
 ./install.sh
 ```
 
+### Instalação em uma linha (recomendado)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/sciasxp/specswift-cli/main/install.sh | bash
+```
+
 ### Instalação Manual
 
 ```bash
 # Clone o repositório
-git clone https://github.com/user/specswift-cli.git
+git clone https://github.com/sciasxp/specswift-cli.git
 
 # Adicione ao PATH (no ~/.zshrc ou ~/.bashrc)
 export PATH="$HOME/path/to/specswift-cli/bin:$PATH"
@@ -412,7 +425,8 @@ rm ~/.local/bin/specswift
 ## 📚 Documentação Adicional
 
 Após instalar em um projeto, veja:
-- `_docs/SPECSWIFT-WORKFLOWS.md` - Guia completo dos workflows
+- `docs/SPECSWIFT-WORKFLOWS.md` - Guia completo dos workflows (neste repositório)
+- `_docs/SPECSWIFT-WORKFLOWS.md` - Guia completo dos workflows (após instalar no projeto)
 - `.windsurf/workflows/` - Definição detalhada de cada workflow
 
 ## 🤝 Contribuindo
