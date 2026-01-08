@@ -37,6 +37,11 @@ Execute `_docs/scripts/bash/check-prerequisites.sh --json` da raiz do repositór
 
 Para aspas simples em argumentos como "I'm Groot", use sintaxe de escape: ex. 'I'\''m Groot' (ou aspas duplas se possível: "I'm Groot").
 
+**Verificar projeto Xcode**:
+- Procure por arquivos `*.xcodeproj` na raiz do repositório
+- Se NENHUM `.xcodeproj` for encontrado E este é um projeto iOS/macOS, note isto para geração de tarefas da Fase 1
+- Verifique se `project.yml` (spec do XcodeGen) existe no diretório raiz
+
 ### 2. Carregar Documentos de Design
 
 Leia os seguintes em ordem de prioridade:
@@ -90,6 +95,14 @@ Crie ou atualize `FEATURE_DIR/tasks.md` seguindo a estrutura definida em `_docs/
 
 ## Fase 1: Setup
 [Tarefas de setup se necessário]
+
+**IMPORTANTE - Setup do XcodeGen**:
+- Se NENHUM `.xcodeproj` foi encontrado no Passo 1 e este é um projeto iOS/macOS:
+  - Se `project.yml` existe: Adicione tarefa para executar `xcodegen generate`
+  - Se `project.yml` NÃO existe: Adicione tarefas para:
+    1. Criar `project.yml` usando o template apropriado de `lib/xcode-templates/` (swiftui-ios ou swiftui-macos)
+    2. Executar `xcodegen generate` para criar o `.xcodeproj`
+  - Estas tarefas devem ser as PRIMEIRAS tarefas na Fase 1 (antes de T001)
 
 ## Fase 2: Foundational
 [Tarefas de infraestrutura core - BLOQUEIA histórias de usuário]

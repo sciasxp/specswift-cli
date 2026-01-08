@@ -37,6 +37,11 @@ Execute `_docs/scripts/bash/check-prerequisites.sh --json` from repository root.
 
 For single quotes in arguments like "I'm Groot", use escape syntax: e.g. 'I'\''m Groot' (or double quotes if possible: "I'm Groot").
 
+**Check for Xcode project**:
+- Search for `*.xcodeproj` files in the repository root
+- If NO `.xcodeproj` is found AND this is an iOS/macOS project, note this for Phase 1 task generation
+- Check if `project.yml` (XcodeGen spec) exists in the root directory
+
 ### 2. Load Design Documents
 
 Read the following in priority order:
@@ -90,6 +95,14 @@ Create or update `FEATURE_DIR/tasks.md` following the structure defined in `_doc
 
 ## Phase 1: Setup
 [Setup tasks if needed]
+
+**IMPORTANT - XcodeGen Setup**:
+- If NO `.xcodeproj` was found in Step 1 and this is an iOS/macOS project:
+  - If `project.yml` exists: Add task to run `xcodegen generate`
+  - If `project.yml` does NOT exist: Add tasks to:
+    1. Create `project.yml` using the appropriate template from `lib/xcode-templates/` (swiftui-ios or swiftui-macos)
+    2. Run `xcodegen generate` to create the `.xcodeproj`
+  - These tasks should be the FIRST tasks in Phase 1 (before T001)
 
 ## Phase 2: Foundational
 [Core infrastructure tasks - BLOCKS user stories]

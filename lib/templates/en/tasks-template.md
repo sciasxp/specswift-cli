@@ -73,6 +73,13 @@ Before creating tasks, consult the project documentation:
 
 **Purpose**: Project initialization and basic structure
 
+<!-- 
+  NOTE: If no .xcodeproj exists, XcodeGen tasks should be added FIRST:
+  - [ ] T001 Create project.yml from template (if needed)
+  - [ ] T002 Run `xcodegen generate` to create .xcodeproj
+  Then continue with T003, T004, etc.
+-->
+
 - [ ] T001 Create project structure as per implementation plan in techspec.md
 - [ ] T002 Ensure project compiles and dependencies resolve
 - [ ] T003 [P] Configure linting and formatting tools

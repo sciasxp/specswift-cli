@@ -73,6 +73,13 @@ Antes de criar tarefas, consulte a documentação do projeto:
 
 **Propósito**: Inicialização do projeto e estrutura básica
 
+<!-- 
+  NOTA: Se não existe .xcodeproj, tarefas de XcodeGen devem ser adicionadas PRIMEIRO:
+  - [ ] T001 Criar project.yml a partir do template (se necessário)
+  - [ ] T002 Executar `xcodegen generate` para criar .xcodeproj
+  Depois continue com T003, T004, etc.
+-->
+
 - [ ] T001 Criar estrutura do projeto conforme plano de implementação em techspec.md
 - [ ] T002 Garantir que o projeto compila e dependências resolvem
 - [ ] T003 [P] Configurar ferramentas de linting e formatação
