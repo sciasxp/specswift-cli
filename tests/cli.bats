@@ -48,8 +48,8 @@ teardown() {
   # Verify .cursor directory exists
   [ -d "$TEST_DIR/test-project-cursor/.cursor" ]
   
-  # Verify workflows were copied
-  [ -d "$TEST_DIR/test-project-cursor/.cursor/workflows" ]
+  # Verify workflows were copied (Cursor uses "commands" directory)
+  [ -d "$TEST_DIR/test-project-cursor/.cursor/commands" ]
   [ -d "$TEST_DIR/test-project-cursor/.cursor/rules" ]
   
   # Verify _docs directory exists
@@ -158,8 +158,8 @@ teardown() {
   run "$SPECswift_BIN" install --editor cursor
   assert_success
   
-  # Verify .cursor directory was created
-  [ -d ".cursor/workflows" ]
+  # Verify .cursor directory was created (Cursor uses "commands" directory)
+  [ -d ".cursor/commands" ]
   [ -d ".cursor/rules" ]
   
   # Verify _docs directory was created
@@ -261,8 +261,8 @@ teardown() {
   # Verify .cursor directory exists (editor 1 = cursor)
   [ -d "$TEST_DIR/test-interactive/.cursor" ]
   
-  # Verify workflows were copied
-  [ -d "$TEST_DIR/test-interactive/.cursor/workflows" ]
+  # Verify workflows were copied (Cursor uses "commands" directory)
+  [ -d "$TEST_DIR/test-interactive/.cursor/commands" ]
   [ -d "$TEST_DIR/test-interactive/.cursor/rules" ]
   
   # Verify _docs directory exists

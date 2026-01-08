@@ -657,8 +657,8 @@ cmd_doctor() {
         echo ""
         echo -e "${BOLD}$(L "current_project"):${NC}"
         
-        if [[ -d ".cursor/workflows" ]]; then
-            local proj_wf=$(ls -1 .cursor/workflows/specswift.*.md 2>/dev/null | wc -l | tr -d ' ')
+        if [[ -d ".cursor/commands" ]]; then
+            local proj_wf=$(ls -1 .cursor/commands/specswift.*.md 2>/dev/null | wc -l | tr -d ' ')
             print_success "SpecSwift workflows (Cursor): $proj_wf"
         fi
         
@@ -667,7 +667,7 @@ cmd_doctor() {
             print_success "SpecSwift workflows (Windsurf): $proj_wf"
         fi
         
-        if [[ ! -d ".cursor/workflows" ]] && [[ ! -d ".windsurf/workflows" ]]; then
+        if [[ ! -d ".cursor/commands" ]] && [[ ! -d ".windsurf/workflows" ]]; then
             print_warning "$(L "workflows_not_installed")"
         fi
 
@@ -941,9 +941,20 @@ cmd_install_internal() {
             ;;
     esac
 
+    # Determine workflows directory name based on editor
+    local workflows_dir=""
+    case "$editor" in
+        cursor)
+            workflows_dir="commands"  # Cursor uses "commands"
+            ;;
+        windsurf)
+            workflows_dir="workflows"  # Windsurf uses "workflows"
+            ;;
+    esac
+    
     # Check if already exists
-    if [[ -d "$target_dir/$editor_dir/workflows" && "$force" != true ]]; then
-        local existing=$(ls -1 "$target_dir/$editor_dir/workflows"/specswift.*.md 2>/dev/null | wc -l | tr -d ' ')
+    if [[ -d "$target_dir/$editor_dir/$workflows_dir" && "$force" != true ]]; then
+        local existing=$(ls -1 "$target_dir/$editor_dir/$workflows_dir"/specswift.*.md 2>/dev/null | wc -l | tr -d ' ')
         if [[ "$existing" -gt 0 ]]; then
             print_warning "$(L "already_installed") ($existing workflows)"
             echo ""
@@ -1468,12 +1479,15 @@ _copy_workflows() {
     
     # Determine directory based on editor
     local editor_dir=""
+    local workflows_dir=""
     case "$editor" in
         cursor)
             editor_dir=".cursor"
+            workflows_dir="commands"  # Cursor uses "commands" instead of "workflows"
             ;;
         windsurf)
             editor_dir=".windsurf"
+            workflows_dir="workflows"  # Windsurf uses "workflows"
             ;;
         *)
             print_error "$(L "invalid_editor")"
@@ -1481,7 +1495,7 @@ _copy_workflows() {
             ;;
     esac
     
-    mkdir -p "$target/$editor_dir/workflows"
+    mkdir -p "$target/$editor_dir/$workflows_dir"
 
     # Use workflows from the selected language folder
     local wf_src="$LIB_DIR/workflows/$LANG_CODE"
@@ -1495,8 +1509,8 @@ _copy_workflows() {
         for file in "$wf_src"/*.md; do
             if [[ -f "$file" ]]; then
                 local basename=$(basename "$file")
-                if [[ "$overwrite" == true || ! -f "$target/$editor_dir/workflows/$basename" ]]; then
-                    cp "$file" "$target/$editor_dir/workflows/"
+                if [[ "$overwrite" == true || ! -f "$target/$editor_dir/$workflows_dir/$basename" ]]; then
+                    cp "$file" "$target/$editor_dir/$workflows_dir/"
                     [[ "$verbose" == true ]] && print_success "$basename"
                     ((count++))
                 fi
@@ -1874,8 +1888,19 @@ _print_init_summary() {
             ;;
     esac
     
+    # Determine workflows directory name based on editor
+    local workflows_dir=""
+    case "$editor" in
+        cursor)
+            workflows_dir="commands"  # Cursor uses "commands"
+            ;;
+        windsurf)
+            workflows_dir="workflows"  # Windsurf uses "workflows"
+            ;;
+    esac
+    
     echo "  ├── $editor_dir/"
-    echo "  │   ├── workflows/    $(ls -1 "$target/$editor_dir/workflows" 2>/dev/null | wc -l | tr -d ' ') $(L "files")"
+    echo "  │   ├── $workflows_dir/    $(ls -1 "$target/$editor_dir/$workflows_dir" 2>/dev/null | wc -l | tr -d ' ') $(L "files")"
     echo "  │   └── rules/        $(ls -1 "$target/$editor_dir/rules" 2>/dev/null | wc -l | tr -d ' ') $(L "files")"
     echo "  ├── _docs/"
     echo "  │   ├── templates/"

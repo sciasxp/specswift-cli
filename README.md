@@ -78,7 +78,7 @@ specswift init
 ```
 my-app/
 ├── .cursor/ or .windsurf/  # IDE-specific directory (selected during init)
-│   ├── workflows/     # Localized SpecSwift workflows
+│   ├── commands/ or workflows/  # Localized SpecSwift workflows (commands for Cursor, workflows for Windsurf)
 │   └── rules/         # Localized code rules
 ├── _docs/
 │   ├── templates/     # Localized document templates
@@ -285,7 +285,7 @@ rm ~/.local/bin/specswift
 After installing in a project, see:
 - `docs/SPECSWIFT-WORKFLOWS.md` - Complete workflows guide (in this repository)
 - `_docs/SPECSWIFT-WORKFLOWS.md` - Complete workflows guide (after installing into a project)
-- `.cursor/workflows/` or `.windsurf/workflows/` - Detailed workflow definitions (depending on selected editor)
+- `.cursor/commands/` or `.windsurf/workflows/` - Detailed workflow definitions (commands for Cursor, workflows for Windsurf)
 
 ## 🤝 Contributing
 
@@ -364,7 +364,7 @@ specswift init
 ```
 meu-app/
 ├── .cursor/ ou .windsurf/  # Diretório específico do IDE (selecionado durante init)
-│   ├── workflows/     # Workflows SpecSwift localizados
+│   ├── commands/ ou workflows/  # Workflows SpecSwift localizados (commands para Cursor, workflows para Windsurf)
 │   └── rules/         # Rules de código localizadas
 ├── _docs/
 │   ├── templates/     # Templates de documentos localizados
@@ -571,7 +571,7 @@ rm ~/.local/bin/specswift
 Após instalar em um projeto, veja:
 - `docs/SPECSWIFT-WORKFLOWS.md` - Guia completo dos workflows (neste repositório)
 - `_docs/SPECSWIFT-WORKFLOWS.md` - Guia completo dos workflows (após instalar no projeto)
-- `.cursor/workflows/` ou `.windsurf/workflows/` - Definição detalhada de cada workflow (dependendo do editor selecionado)
+- `.cursor/commands/` ou `.windsurf/workflows/` - Definição detalhada de cada workflow (commands para Cursor, workflows para Windsurf)
 
 ## 🤝 Contribuindo
 
