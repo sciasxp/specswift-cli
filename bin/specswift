@@ -128,7 +128,13 @@ L() {
             "run_to_create_feature") echo "Execute para criar uma feature" ;;
             "specswift_installed") echo "SpecSwift Instalado!" ;;
             "run_in_windsurf") echo "Execute no Windsurf para configurar documentação base" ;;
+            "run_in_cursor") echo "Execute no Cursor para configurar documentação base" ;;
+            "run_in_ide") echo "Execute no editor para configurar documentação base" ;;
             "to_create_new_feature") echo "para criar uma nova feature" ;;
+            "select_editor") echo "Selecione o editor" ;;
+            "editor_cursor") echo "Cursor" ;;
+            "editor_windsurf") echo "Windsurf" ;;
+            "invalid_editor") echo "Editor inválido. Use 'cursor' ou 'windsurf'" ;;
             # Makefile
             "makefile_created") echo "Makefile criado" ;;
             "xcode_project_created") echo "Projeto Xcode criado" ;;
@@ -235,7 +241,13 @@ L() {
             "run_to_create_feature") echo "Run to create a feature" ;;
             "specswift_installed") echo "SpecSwift Installed!" ;;
             "run_in_windsurf") echo "Run in Windsurf to configure base documentation" ;;
+            "run_in_cursor") echo "Run in Cursor to configure base documentation" ;;
+            "run_in_ide") echo "Run in editor to configure base documentation" ;;
             "to_create_new_feature") echo "to create a new feature" ;;
+            "select_editor") echo "Select editor" ;;
+            "editor_cursor") echo "Cursor" ;;
+            "editor_windsurf") echo "Windsurf" ;;
+            "invalid_editor") echo "Invalid editor. Use 'cursor' or 'windsurf'" ;;
             # Makefile
             "makefile_created") echo "Makefile created" ;;
             "xcode_project_created") echo "Xcode project created" ;;
@@ -459,6 +471,7 @@ $(L "global_options"):
     --ios                $(L "opt_ios")
     --template <name>    $(L "opt_template")
     --bundle-id <prefix> Bundle ID prefix (default: example)
+    --editor <cursor|windsurf> Select IDE editor (default: prompt)
     --no-git             $(L "opt_no_git")
     --no-deps            Skip dependency check/installation
     --force              $(L "opt_force")
@@ -488,9 +501,9 @@ $(L "examples"):
 
 $(L "recommended_flow"):
     1. specswift init ~/new-project --ios
-    2. cd ~/new-project && windsurf .
-    3. $(L "in_windsurf"): /specswift.constitution
-    4. $(L "in_windsurf"): /specswift.create-prd "feature description"
+    2. cd ~/new-project && (cursor . or windsurf .)
+    3. In editor: /specswift.constitution
+    4. In editor: /specswift.create-prd "feature description"
 
 $(L "documentation"):
     $(L "after_install_see"): _docs/SPECSWIFT-WORKFLOWS.md
@@ -571,14 +584,21 @@ cmd_doctor() {
     fi
 
     # Check current project (if in one)
-    if [[ -d ".windsurf" ]]; then
+    if [[ -d ".cursor" ]] || [[ -d ".windsurf" ]]; then
         echo ""
         echo -e "${BOLD}$(L "current_project"):${NC}"
         
+        if [[ -d ".cursor/workflows" ]]; then
+            local proj_wf=$(ls -1 .cursor/workflows/specswift.*.md 2>/dev/null | wc -l | tr -d ' ')
+            print_success "SpecSwift workflows (Cursor): $proj_wf"
+        fi
+        
         if [[ -d ".windsurf/workflows" ]]; then
             local proj_wf=$(ls -1 .windsurf/workflows/specswift.*.md 2>/dev/null | wc -l | tr -d ' ')
-            print_success "SpecSwift workflows: $proj_wf"
-        else
+            print_success "SpecSwift workflows (Windsurf): $proj_wf"
+        fi
+        
+        if [[ ! -d ".cursor/workflows" ]] && [[ ! -d ".windsurf/workflows" ]]; then
             print_warning "$(L "workflows_not_installed")"
         fi
 
@@ -610,6 +630,7 @@ cmd_init() {
     local xcode_template=""
     local bundle_prefix=""
     local check_deps=true
+    local editor=""
 
     # Parse arguments
     while [[ $# -gt 0 ]]; do
@@ -619,6 +640,20 @@ cmd_init() {
             --no-deps) check_deps=false; shift ;;
             --force) force=true; shift ;;
             -v|--verbose) verbose=true; shift ;;
+            --editor)
+                if [[ -n "$2" && ! "$2" =~ ^- ]]; then
+                    if [[ "$2" =~ ^(cursor|windsurf)$ ]]; then
+                        editor="$2"
+                        shift 2
+                    else
+                        print_error "$(L "invalid_editor")"
+                        exit 1
+                    fi
+                else
+                    print_error "Editor required. Use 'cursor' or 'windsurf'"
+                    exit 1
+                fi
+                ;;
             --template)
                 if [[ -n "$2" && ! "$2" =~ ^- ]]; then
                     xcode_template="$2"
@@ -685,9 +720,14 @@ cmd_init() {
         _create_xcode_project "$target_dir" "$xcode_template" "$project_name" "$bundle_prefix" "$verbose"
     fi
 
+    # Prompt for editor if not specified
+    if [[ -z "$editor" ]]; then
+        editor=$(_prompt_editor)
+    fi
+
     # Copiar estrutura
-    _copy_workflows "$target_dir" "$verbose"
-    _copy_rules "$target_dir" "$ios_mode" "$verbose"
+    _copy_workflows "$target_dir" "$editor" "$verbose"
+    _copy_rules "$target_dir" "$editor" "$ios_mode" "$verbose"
     _copy_templates "$target_dir" "$verbose"
     _copy_scripts "$target_dir" "$verbose"
     _copy_documentation "$target_dir" "$ios_mode" "$verbose"
@@ -699,7 +739,7 @@ cmd_init() {
     fi
 
     # Summary
-    _print_init_summary "$target_dir" "$ios_mode" "$xcode_template" "$project_name"
+    _print_init_summary "$target_dir" "$ios_mode" "$xcode_template" "$project_name" "$editor"
 }
 
 # =============================================================================
@@ -711,6 +751,7 @@ cmd_install() {
     local force=false
     local verbose=false
     local check_deps=true
+    local editor=""
 
     # Parse arguments
     while [[ $# -gt 0 ]]; do
@@ -719,6 +760,20 @@ cmd_install() {
             --force) force=true; shift ;;
             --no-deps) check_deps=false; shift ;;
             -v|--verbose) verbose=true; shift ;;
+            --editor)
+                if [[ -n "$2" && ! "$2" =~ ^- ]]; then
+                    if [[ "$2" =~ ^(cursor|windsurf)$ ]]; then
+                        editor="$2"
+                        shift 2
+                    else
+                        print_error "$(L "invalid_editor")"
+                        exit 1
+                    fi
+                else
+                    print_error "Editor required. Use 'cursor' or 'windsurf'"
+                    exit 1
+                fi
+                ;;
             -*)
                 print_error "$(L "unknown_option"): $1"
                 exit 1
@@ -737,9 +792,25 @@ cmd_install() {
     print_header "📥 $(L "installing_specswift")"
     print_info "$(L "directory"): $target_dir"
 
+    # Prompt for editor if not specified
+    if [[ -z "$editor" ]]; then
+        editor=$(_prompt_editor)
+    fi
+
+    # Determine editor directory
+    local editor_dir=""
+    case "$editor" in
+        cursor)
+            editor_dir=".cursor"
+            ;;
+        windsurf)
+            editor_dir=".windsurf"
+            ;;
+    esac
+
     # Check if already exists
-    if [[ -d "$target_dir/.windsurf/workflows" && "$force" != true ]]; then
-        local existing=$(ls -1 "$target_dir/.windsurf/workflows"/specswift.*.md 2>/dev/null | wc -l | tr -d ' ')
+    if [[ -d "$target_dir/$editor_dir/workflows" && "$force" != true ]]; then
+        local existing=$(ls -1 "$target_dir/$editor_dir/workflows"/specswift.*.md 2>/dev/null | wc -l | tr -d ' ')
         if [[ "$existing" -gt 0 ]]; then
             print_warning "$(L "already_installed") ($existing workflows)"
             echo ""
@@ -749,8 +820,8 @@ cmd_install() {
     fi
 
     # Copy structure (without overwriting project files)
-    _copy_workflows "$target_dir" "$verbose"
-    _copy_rules "$target_dir" "$ios_mode" "$verbose"
+    _copy_workflows "$target_dir" "$editor" "$verbose"
+    _copy_rules "$target_dir" "$editor" "$ios_mode" "$verbose"
     _copy_templates "$target_dir" "$verbose"
     _copy_scripts "$target_dir" "$verbose"
     _copy_documentation "$target_dir" "$ios_mode" "$verbose"
@@ -763,7 +834,7 @@ cmd_install() {
     fi
 
     # Summary
-    _print_install_summary "$target_dir"
+    _print_install_summary "$target_dir" "$editor"
 }
 
 # =============================================================================
@@ -772,10 +843,25 @@ cmd_install() {
 cmd_update() {
     local target_dir="$(pwd)"
     local verbose=false
+    local editor=""
 
     while [[ $# -gt 0 ]]; do
         case "$1" in
             -v|--verbose) verbose=true; shift ;;
+            --editor)
+                if [[ -n "$2" && ! "$2" =~ ^- ]]; then
+                    if [[ "$2" =~ ^(cursor|windsurf)$ ]]; then
+                        editor="$2"
+                        shift 2
+                    else
+                        print_error "$(L "invalid_editor")"
+                        exit 1
+                    fi
+                else
+                    print_error "Editor required. Use 'cursor' or 'windsurf'"
+                    exit 1
+                fi
+                ;;
             *) shift ;;
         esac
     done
@@ -783,14 +869,38 @@ cmd_update() {
     show_banner
     print_header "🔄 $(L "updating_specswift")"
 
-    if [[ ! -d "$target_dir/.windsurf" ]]; then
+    # Detect which editor is installed
+    if [[ -z "$editor" ]]; then
+        if [[ -d "$target_dir/.cursor" ]]; then
+            editor="cursor"
+        elif [[ -d "$target_dir/.windsurf" ]]; then
+            editor="windsurf"
+        else
+            print_error "$(L "not_installed_in_project")"
+            echo "$(L "run_install_first")"
+            exit 1
+        fi
+    fi
+
+    # Determine editor directory
+    local editor_dir=""
+    case "$editor" in
+        cursor)
+            editor_dir=".cursor"
+            ;;
+        windsurf)
+            editor_dir=".windsurf"
+            ;;
+    esac
+
+    if [[ ! -d "$target_dir/$editor_dir" ]]; then
         print_error "$(L "not_installed_in_project")"
         echo "$(L "run_install_first")"
         exit 1
     fi
 
     # Update workflows (always overwrite)
-    _copy_workflows "$target_dir" "$verbose" true
+    _copy_workflows "$target_dir" "$editor" "$verbose" true
 
     # Update templates
     _copy_templates "$target_dir" "$verbose" true
@@ -805,15 +915,66 @@ cmd_update() {
 }
 
 # =============================================================================
+# Helper functions
+# =============================================================================
+_prompt_editor() {
+    local editor=""
+    
+    echo ""
+    echo -e "${YELLOW}$(L "select_editor"):${NC}"
+    echo "  1) $(L "editor_cursor")"
+    echo "  2) $(L "editor_windsurf")"
+    echo ""
+    if [[ "$LANG_CODE" == "pt" ]]; then
+        echo -n "Escolha [1-2]: "
+    else
+        echo -n "Choose [1-2]: "
+    fi
+    read -r choice
+    
+    case "$choice" in
+        1|cursor|Cursor|CURSOR)
+            editor="cursor"
+            ;;
+        2|windsurf|Windsurf|WINDSURF)
+            editor="windsurf"
+            ;;
+        *)
+            print_error "$(L "invalid_editor")"
+            exit 1
+            ;;
+    esac
+    
+    echo "$editor"
+}
+
+# =============================================================================
 # Helper copy functions
 # =============================================================================
 _copy_workflows() {
     local target="$1"
-    local verbose="${2:-false}"
-    local overwrite="${3:-false}"
+    local editor="$2"
+    local verbose="${3:-false}"
+    local overwrite="${4:-false}"
 
     print_header "📋 $(L "workflows")"
-    mkdir -p "$target/.windsurf/workflows"
+    
+    # Determine directory based on editor
+    local editor_dir=""
+    case "$editor" in
+        cursor)
+            editor_dir=".cursor"
+            ;;
+        windsurf)
+            editor_dir=".windsurf"
+            ;;
+        *)
+            print_error "$(L "invalid_editor")"
+            return 1
+            ;;
+    esac
+    
+    mkdir -p "$target/$editor_dir/workflows"
 
     # Use workflows from the selected language folder
     local wf_src="$LIB_DIR/workflows/$LANG_CODE"
@@ -827,8 +988,8 @@ _copy_workflows() {
         for file in "$wf_src"/*.md; do
             if [[ -f "$file" ]]; then
                 local basename=$(basename "$file")
-                if [[ "$overwrite" == true || ! -f "$target/.windsurf/workflows/$basename" ]]; then
-                    cp "$file" "$target/.windsurf/workflows/"
+                if [[ "$overwrite" == true || ! -f "$target/$editor_dir/workflows/$basename" ]]; then
+                    cp "$file" "$target/$editor_dir/workflows/"
                     [[ "$verbose" == true ]] && print_success "$basename"
                     ((count++))
                 fi
@@ -840,11 +1001,28 @@ _copy_workflows() {
 
 _copy_rules() {
     local target="$1"
-    local ios_mode="$2"
-    local verbose="${3:-false}"
+    local editor="$2"
+    local ios_mode="$3"
+    local verbose="${4:-false}"
 
     print_header "📏 $(L "rules")"
-    mkdir -p "$target/.windsurf/rules"
+    
+    # Determine directory based on editor
+    local editor_dir=""
+    case "$editor" in
+        cursor)
+            editor_dir=".cursor"
+            ;;
+        windsurf)
+            editor_dir=".windsurf"
+            ;;
+        *)
+            print_error "$(L "invalid_editor")"
+            return 1
+            ;;
+    esac
+    
+    mkdir -p "$target/$editor_dir/rules"
 
     # Use rules from the selected language folder
     local rules_src="$LIB_DIR/rules/$LANG_CODE"
@@ -859,7 +1037,7 @@ _copy_rules() {
 
     for rule in "${generic_rules[@]}"; do
         if [[ -f "$rules_src/$rule" ]]; then
-            cp "$rules_src/$rule" "$target/.windsurf/rules/"
+            cp "$rules_src/$rule" "$target/$editor_dir/rules/"
             [[ "$verbose" == true ]] && print_success "$rule"
             ((count++))
         fi
@@ -870,7 +1048,7 @@ _copy_rules() {
         local ios_rules=("swift-coding-style.md" "swift-concurrency.md" "makefile-usage.md")
         for rule in "${ios_rules[@]}"; do
             if [[ -f "$rules_src/$rule" ]]; then
-                cp "$rules_src/$rule" "$target/.windsurf/rules/"
+                cp "$rules_src/$rule" "$target/$editor_dir/rules/"
                 [[ "$verbose" == true ]] && print_success "$rule (iOS)"
                 ((count++))
             fi
@@ -1158,6 +1336,7 @@ _print_init_summary() {
     local ios_mode="$2"
     local xcode_template="${3:-}"
     local project_name="${4:-}"
+    local editor="${5:-windsurf}"
 
     echo ""
     print_header "✅ $(L "project_created")"
@@ -1172,9 +1351,20 @@ _print_init_summary() {
         echo "  ├── Tests/"
     fi
     
-    echo "  ├── .windsurf/"
-    echo "  │   ├── workflows/    $(ls -1 "$target/.windsurf/workflows" 2>/dev/null | wc -l | tr -d ' ') $(L "files")"
-    echo "  │   └── rules/        $(ls -1 "$target/.windsurf/rules" 2>/dev/null | wc -l | tr -d ' ') $(L "files")"
+    # Show editor directory
+    local editor_dir=""
+    case "$editor" in
+        cursor)
+            editor_dir=".cursor"
+            ;;
+        windsurf)
+            editor_dir=".windsurf"
+            ;;
+    esac
+    
+    echo "  ├── $editor_dir/"
+    echo "  │   ├── workflows/    $(ls -1 "$target/$editor_dir/workflows" 2>/dev/null | wc -l | tr -d ' ') $(L "files")"
+    echo "  │   └── rules/        $(ls -1 "$target/$editor_dir/rules" 2>/dev/null | wc -l | tr -d ' ') $(L "files")"
     echo "  ├── _docs/"
     echo "  │   ├── templates/"
     echo "  │   ├── scripts/"
@@ -1184,27 +1374,50 @@ _print_init_summary() {
     echo ""
     echo -e "${BOLD}$(L "next_steps"):${NC}"
     
+    local editor_cmd=""
+    case "$editor" in
+        cursor)
+            editor_cmd="cursor ."
+            ;;
+        windsurf)
+            editor_cmd="windsurf ."
+            ;;
+    esac
+    
     if [[ -n "$xcode_template" ]]; then
         echo "  1. cd $target"
-        echo "  2. open $project_name.xcodeproj  # or: windsurf ."
-        echo -e "  3. ${CYAN}/specswift.constitution${NC} - $(L "run_to_configure")"
+        echo "  2. open $project_name.xcodeproj  # or: $editor_cmd"
+        echo -e "  3. ${CYAN}/specswift.constitution${NC} - $(L "run_in_ide")"
         echo -e "  4. ${CYAN}/specswift.create-prd${NC} - $(L "run_to_create_feature")"
     else
         echo "  1. cd $target"
-        echo "  2. windsurf ."
-        echo -e "  3. ${CYAN}/specswift.constitution${NC} - $(L "run_to_configure")"
+        echo "  2. $editor_cmd"
+        echo -e "  3. ${CYAN}/specswift.constitution${NC} - $(L "run_in_ide")"
         echo -e "  4. ${CYAN}/specswift.create-prd${NC} - $(L "run_to_create_feature")"
     fi
 }
 
 _print_install_summary() {
     local target="$1"
+    local editor="${2:-windsurf}"
 
     echo ""
     print_header "✅ $(L "specswift_installed")"
     echo ""
     echo -e "${BOLD}$(L "next_steps"):${NC}"
-    echo -e "  1. ${CYAN}/specswift.constitution${NC} - $(L "run_in_windsurf")"
+    
+    local editor_cmd=""
+    case "$editor" in
+        cursor)
+            editor_cmd="cursor ."
+            echo -e "  1. ${CYAN}/specswift.constitution${NC} - $(L "run_in_cursor")"
+            ;;
+        windsurf)
+            editor_cmd="windsurf ."
+            echo -e "  1. ${CYAN}/specswift.constitution${NC} - $(L "run_in_windsurf")"
+            ;;
+    esac
+    
     echo -e "  2. ${CYAN}/specswift.create-prd${NC} - $(L "to_create_new_feature")"
     echo ""
     echo -e "$(L "documentation"): ${CYAN}_docs/SPECSWIFT-WORKFLOWS.md${NC}"
