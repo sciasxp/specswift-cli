@@ -128,7 +128,7 @@ Mantenha um log interno de decisões tomadas para incluir no relatório final:
    - `_docs/PRODUCT.md`
    - `_docs/STRUCTURE.md`
    - `_docs/TECH.md`
-   - `.windsurf/rules/` (todos os arquivos)
+   - `.cursor/rules/` ou `.windsurf/rules/` (todos os arquivos, dependendo do seu IDE)
 
 5. **Fetch branches remotas**:
    ```bash

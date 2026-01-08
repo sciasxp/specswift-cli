@@ -76,7 +76,7 @@ Before creating any PRD, you **MUST** complete the clarification phase:
    - `_docs/PRODUCT.md` - Product context and business rules (mandatory)
    - `_docs/STRUCTURE.md` - Architecture and folder structure (mandatory)
    - `_docs/TECH.md` - Technology stack and patterns (mandatory)
-   - `.windsurf/rules/` - Project coding rules and standards
+   - `.cursor/rules/` or `.windsurf/rules/` - Project coding rules and standards (depending on your IDE)
 
 3. **Sequential questions loop** (interactive):
     - Present EXACTLY ONE question at a time.

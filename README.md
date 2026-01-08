@@ -73,7 +73,7 @@ specswift init ~/Projects/my-app --no-git
 **What gets created:**
 ```
 my-app/
-├── .windsurf/
+├── .cursor/ or .windsurf/  # IDE-specific directory (selected during init)
 │   ├── workflows/     # Localized SpecSwift workflows
 │   └── rules/         # Localized code rules
 ├── _docs/
@@ -123,14 +123,21 @@ specswift doctor
 ### New Project
 
 ```bash
-# 1. Create project
+# 1. Create project (you'll be prompted to select Cursor or Windsurf)
 specswift init ~/Projects/new-app --ios
 
-# 2. Open in Windsurf
-cd ~/Projects/new-app
-windsurf .
+# Or specify the editor directly:
+specswift init ~/Projects/new-app --ios --editor cursor
+# or
+specswift init ~/Projects/new-app --ios --editor windsurf
 
-# 3. In Windsurf, run workflows:
+# 2. Open in your selected editor
+cd ~/Projects/new-app
+cursor .    # if you selected Cursor
+# or
+windsurf .  # if you selected Windsurf
+
+# 3. In your editor, run workflows:
 #    /specswift.constitution     → Configure base documentation
 #    /specswift.create-prd       → Create feature PRD
 #    /specswift.create-techspec  → Create technical specification
@@ -144,11 +151,18 @@ windsurf .
 # 1. Navigate to project
 cd ~/Projects/my-existing-project
 
-# 2. Install SpecSwift
+# 2. Install SpecSwift (you'll be prompted to select Cursor or Windsurf)
 specswift install --ios
 
-# 3. Open in Windsurf and follow the flow
-windsurf .
+# Or specify the editor directly:
+specswift install --ios --editor cursor
+# or
+specswift install --ios --editor windsurf
+
+# 3. Open in your selected editor and follow the flow
+cursor .    # if you selected Cursor
+# or
+windsurf .  # if you selected Windsurf
 ```
 
 ## 📋 Available Workflows
@@ -190,6 +204,7 @@ specswift-cli/
 | Option | Description |
 |--------|-------------|
 | `--ios` | Apply iOS/Swift configurations |
+| `--editor <cursor\|windsurf>` | Select IDE editor (default: prompt) |
 | `--no-git` | Don't initialize Git repository |
 | `--force` | Overwrite existing files |
 | `--lang <en\|pt>` | Set language (en/pt) |
@@ -214,7 +229,7 @@ rm ~/.local/bin/specswift
 After installing in a project, see:
 - `docs/SPECSWIFT-WORKFLOWS.md` - Complete workflows guide (in this repository)
 - `_docs/SPECSWIFT-WORKFLOWS.md` - Complete workflows guide (after installing into a project)
-- `.windsurf/workflows/` - Detailed workflow definitions
+- `.cursor/workflows/` or `.windsurf/workflows/` - Detailed workflow definitions (depending on selected editor)
 
 ## 🤝 Contributing
 
@@ -288,7 +303,7 @@ specswift init ~/Projetos/meu-app --no-git
 **O que é criado:**
 ```
 meu-app/
-├── .windsurf/
+├── .cursor/ ou .windsurf/  # Diretório específico do IDE (selecionado durante init)
 │   ├── workflows/     # Workflows SpecSwift localizados
 │   └── rules/         # Rules de código localizadas
 ├── _docs/
@@ -338,14 +353,21 @@ specswift doctor
 ### Novo Projeto
 
 ```bash
-# 1. Criar projeto (ex: em Português)
+# 1. Criar projeto (será solicitado para selecionar Cursor ou Windsurf)
 specswift init ~/Projetos/novo-app --ios --lang pt
 
-# 2. Abrir no Windsurf
-cd ~/Projetos/novo-app
-windsurf .
+# Ou especificar o editor diretamente:
+specswift init ~/Projetos/novo-app --ios --lang pt --editor cursor
+# ou
+specswift init ~/Projetos/novo-app --ios --lang pt --editor windsurf
 
-# 3. No Windsurf, executar workflows:
+# 2. Abrir no editor selecionado
+cd ~/Projetos/novo-app
+cursor .    # se selecionou Cursor
+# ou
+windsurf .  # se selecionou Windsurf
+
+# 3. No editor, executar workflows:
 #    /specswift.constitution     → Configurar documentação base
 #    /specswift.create-prd       → Criar PRD da feature
 #    /specswift.create-techspec  → Criar especificação técnica
@@ -359,11 +381,18 @@ windsurf .
 # 1. Navegar até o projeto
 cd ~/Projetos/meu-projeto-existente
 
-# 2. Instalar SpecSwift (ex: em Português)
+# 2. Instalar SpecSwift (será solicitado para selecionar Cursor ou Windsurf)
 specswift install --ios --lang pt
 
-# 3. Abrir no Windsurf e seguir o fluxo
-windsurf .
+# Ou especificar o editor diretamente:
+specswift install --ios --lang pt --editor cursor
+# ou
+specswift install --ios --lang pt --editor windsurf
+
+# 3. Abrir no editor selecionado e seguir o fluxo
+cursor .    # se selecionou Cursor
+# ou
+windsurf .  # se selecionou Windsurf
 ```
 
 ## 📋 Workflows Disponíveis
@@ -405,6 +434,7 @@ specswift-cli/
 | Opção | Descrição |
 |-------|-----------|
 | `--ios` | Aplicar configurações para iOS/Swift |
+| `--editor <cursor\|windsurf>` | Selecionar editor IDE (padrão: solicitar) |
 | `--no-git` | Não inicializar repositório Git |
 | `--force` | Sobrescrever arquivos existentes |
 | `--lang <en\|pt>` | Definir idioma (en/pt) |
@@ -429,7 +459,7 @@ rm ~/.local/bin/specswift
 Após instalar em um projeto, veja:
 - `docs/SPECSWIFT-WORKFLOWS.md` - Guia completo dos workflows (neste repositório)
 - `_docs/SPECSWIFT-WORKFLOWS.md` - Guia completo dos workflows (após instalar no projeto)
-- `.windsurf/workflows/` - Definição detalhada de cada workflow
+- `.cursor/workflows/` ou `.windsurf/workflows/` - Definição detalhada de cada workflow (dependendo do editor selecionado)
 
 ## 🤝 Contribuindo
 

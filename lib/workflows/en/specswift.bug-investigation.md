@@ -43,7 +43,7 @@ Consult `_docs/STRUCTURE.md` for:
 - Navigation patterns
 
 ### Concurrency and Threading
-Consult `_docs/TECH.md` and `.windsurf/rules/` for:
+Consult `_docs/TECH.md` and `.cursor/rules/` or `.windsurf/rules/` (depending on your IDE) for:
 - Actor isolation rules
 - async/await patterns
 - Background work handling
@@ -55,7 +55,7 @@ Consult `_docs/TECH.md` for:
 - Migrations and schema
 
 ### Accessibility
-Consult `.windsurf/rules/accessibility-guidelines.md` for:
+Consult `.cursor/rules/accessibility-guidelines.md` or `.windsurf/rules/accessibility-guidelines.md` (depending on your IDE) for:
 - VoiceOver requirements
 - Dynamic Type
 - Mandatory labels and hints

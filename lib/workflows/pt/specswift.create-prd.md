@@ -76,7 +76,7 @@ Antes de criar qualquer PRD, você **DEVE** completar a fase de esclarecimento:
    - `_docs/PRODUCT.md` - Contexto de produto e regras de negócio (obrigatório)
    - `_docs/STRUCTURE.md` - Arquitetura e estrutura de pastas (obrigatório)
    - `_docs/TECH.md` - Stack tecnológica e padrões (obrigatório)
-   - `.windsurf/rules/` - Regras e padrões de codificação do projeto
+   - `.cursor/rules/` ou `.windsurf/rules/` - Regras e padrões de codificação do projeto (dependendo do seu IDE)
 
 3. **Loop de perguntas sequenciais** (interativo):
     - Apresente EXATAMENTE UMA pergunta por vez.

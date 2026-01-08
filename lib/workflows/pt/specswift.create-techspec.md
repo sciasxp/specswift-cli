@@ -37,7 +37,7 @@ Você **DEVE** considerar a entrada do usuário antes de prosseguir (se não est
 
 2. **Carregar contexto do Projeto**: 
    - Leia PRD e `README.md`
-   - Revise padrões do projeto em `_docs/TECH.md` e `.windsurf/rules`
+   - Revise padrões do projeto em `_docs/TECH.md` e `.cursor/rules/` ou `.windsurf/rules/` (dependendo do seu IDE)
    - Carregue template TECHSPEC (já copiado)
    - Identifique conteúdo técnico deslocado no PRD para notas de limpeza
    
@@ -46,7 +46,7 @@ Você **DEVE** considerar a entrada do usuário antes de prosseguir (se não est
    - `_docs/PRODUCT.md` - Contexto de produto e regras de negócio
    - `_docs/STRUCTURE.md` - Arquitetura e estrutura de pastas
    - `_docs/TECH.md` - Stack tecnológica e padrões do projeto
-   - `.windsurf/rules/` - Regras e padrões de codificação do projeto
+   - `.cursor/rules/` ou `.windsurf/rules/` - Regras e padrões de codificação do projeto (dependendo do seu IDE)
    
    **Arquitetura do Projeto**:
    - Consulte `_docs/STRUCTURE.md` para padrões de arquitetura e organização de módulos.
@@ -123,7 +123,7 @@ Você **DEVE** considerar a entrada do usuário antes de prosseguir (se não est
    - <critical>Quando obtiver todas as respostas, continue para a próxima etapa</critical>
 
 5. **Mapeamento de Conformidade com Constituição & HIG** (OBRIGATÓRIO):
-   - Mapeie decisões para padrões de `.windsurf/rules`
+   - Mapeie decisões para padrões de `.cursor/rules/` ou `.windsurf/rules/` (dependendo do seu IDE)
    - Verifique conformidade com Apple Human Interface Guidelines
    - Verifique aderência às App Store Review Guidelines
    - Destaque desvios com justificativa e alternativas conformes
@@ -306,7 +306,7 @@ Antes de completar, verifique:
 - [ ] PRD revisado e notas de limpeza preparadas se necessário
 - [ ] Análise profunda do projeto iOS completada
 - [ ] Todos os esclarecimentos técnicos e de design respondidos
-- [ ] Conformidade com constituição mapeada (`.windsurf/rules` revisado)
+- [ ] Conformidade com constituição mapeada (`.cursor/rules/` ou `.windsurf/rules/` revisado, dependendo do seu IDE)
 - [ ] Conformidade com Apple HIG verificada
 - [ ] Conformidade com guidelines da App Store verificada
 - [ ] Pacotes SPM existentes avaliados vs desenvolvimento customizado

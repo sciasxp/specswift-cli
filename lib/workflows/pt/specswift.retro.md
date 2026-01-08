@@ -60,7 +60,7 @@ Crie `_docs/retro/[SHORT_NAME].md` contendo:
    - O que deveríamos fazer diferente na próxima vez?
 5. **Atualizações de Constituição/Tech Stack**:
    - Mudanças propostas para `_docs/TECH.md`
-   - Mudanças propostas para `.windsurf/rules/`
+   - Mudanças propostas para `.cursor/rules/` ou `.windsurf/rules/` (dependendo do seu IDE)
 
 ### 4. Saída
 

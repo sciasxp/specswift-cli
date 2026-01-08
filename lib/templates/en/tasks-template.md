@@ -48,7 +48,7 @@ Before creating tasks, consult the project documentation:
 | `_docs/PRODUCT.md` | Business rules | Validate functional requirements |
 | `_docs/STRUCTURE.md` | Architecture and folders | File paths |
 | `_docs/TECH.md` | Stack and patterns | Technologies and pitfalls |
-| `.windsurf/rules/` | Code style | Implementation conventions |
+| `.cursor/rules/` or `.windsurf/rules/` | Code style | Implementation conventions |
 
 <!-- 
   ============================================================================

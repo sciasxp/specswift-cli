@@ -48,7 +48,7 @@ Antes de criar tarefas, consulte a documentação do projeto:
 | `_docs/PRODUCT.md` | Regras de negócio | Validar requisitos funcionais |
 | `_docs/STRUCTURE.md` | Arquitetura e pastas | Caminhos de arquivos |
 | `_docs/TECH.md` | Stack e padrões | Tecnologias e pitfalls |
-| `.windsurf/rules/` | Estilo de código | Convenções de implementação |
+| `.cursor/rules/` ou `.windsurf/rules/` | Estilo de código | Convenções de implementação |
 
 <!-- 
   ============================================================================

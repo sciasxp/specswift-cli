@@ -22,7 +22,7 @@
 | `_docs/PRODUCT.md` | Business rules | Requirements validation |
 | `_docs/STRUCTURE.md` | Architecture and folders | Where to create files |
 | `_docs/TECH.md` | Stack and patterns | Technologies and pitfalls |
-| `.windsurf/rules/` | Code style | Implementation conventions |
+| `.cursor/rules/` or `.windsurf/rules/` | Code style | Implementation conventions |
 
 ## Feature Context
 

@@ -95,7 +95,7 @@ For each task, follow these steps:
 5. **Quality Check**:
    - Run `make build` to ensure no compilation errors
    - Run `make test` for the affected module/target
-   - Ensure compliance with `.windsurf/rules/` (Swift style, concurrency, etc.)
+   - Ensure compliance with `.cursor/rules/` or `.windsurf/rules/` (Swift style, concurrency, etc., depending on your IDE)
 
 ### 6. Progress Tracking
 

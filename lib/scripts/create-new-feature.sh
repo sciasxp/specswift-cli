@@ -71,7 +71,7 @@ fi
 find_repo_root() {
     local dir="$1"
     while [ "$dir" != "/" ]; do
-        if [ -d "$dir/.git" ] || [ -d "$dir/.windsurf" ]; then
+        if [ -d "$dir/.git" ] || [ -d "$dir/.windsurf" ] || [ -d "$dir/.cursor" ]; then
             echo "$dir"
             return 0
         fi

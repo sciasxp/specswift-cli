@@ -37,7 +37,7 @@ You **MUST** consider user input before proceeding (if not empty).
 
 2. **Load Project Context**: 
    - Read PRD and `README.md`
-   - Review project patterns in `_docs/TECH.md` and `.windsurf/rules`
+   - Review project patterns in `_docs/TECH.md` and `.cursor/rules/` or `.windsurf/rules/` (depending on your IDE)
    - Load TECHSPEC template (already copied)
    - Identify technical content displaced in the PRD for cleanup notes
    
@@ -46,7 +46,7 @@ You **MUST** consider user input before proceeding (if not empty).
    - `_docs/PRODUCT.md` - Product context and business rules
    - `_docs/STRUCTURE.md` - Architecture and folder structure
    - `_docs/TECH.md` - Technology stack and project patterns
-   - `.windsurf/rules/` - Project coding rules and standards
+   - `.cursor/rules/` or `.windsurf/rules/` - Project coding rules and standards (depending on your IDE)
    
    **Project Architecture**:
    - Consult `_docs/STRUCTURE.md` for architecture patterns and module organization.
@@ -123,7 +123,7 @@ You **MUST** consider user input before proceeding (if not empty).
    - <critical>When you have all answers, continue to the next step</critical>
 
 5. **Constitution & HIG Compliance Mapping** (MANDATORY):
-   - Map decisions to `.windsurf/rules` patterns
+   - Map decisions to `.cursor/rules/` or `.windsurf/rules/` patterns (depending on your IDE)
    - Verify compliance with Apple Human Interface Guidelines
    - Verify adherence to App Store Review Guidelines
    - Highlight deviations with justification and compliant alternatives
@@ -306,7 +306,7 @@ Before completing, verify:
 - [ ] PRD reviewed and cleanup notes prepared if necessary
 - [ ] Deep iOS project analysis completed
 - [ ] All technical and design clarifications answered
-- [ ] Constitution compliance mapped (`.windsurf/rules` reviewed)
+- [ ] Constitution compliance mapped (`.cursor/rules/` or `.windsurf/rules/` reviewed, depending on your IDE)
 - [ ] Apple HIG compliance verified
 - [ ] App Store guidelines compliance verified
 - [ ] Existing SPM packages evaluated vs custom development

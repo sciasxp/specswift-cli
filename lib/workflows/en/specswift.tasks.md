@@ -59,7 +59,7 @@ Read the following in priority order:
 | `_docs/PRODUCT.md` | Business rules | Validate functional requirements |
 | `_docs/STRUCTURE.md` | Architecture and folders | File paths |
 | `_docs/TECH.md` | Stack and patterns | Technologies and pitfalls |
-| `.windsurf/rules/` | Code style | Implementation conventions |
+| `.cursor/rules/` or `.windsurf/rules/` | Code style | Implementation conventions |
 
 If only PRD exists, generate tasks based on user stories and requirements. If techspec exists, use it to inform the technical task breakdown.
 
