@@ -920,15 +920,15 @@ cmd_update() {
 _prompt_editor() {
     local editor=""
     
-    echo ""
-    echo -e "${YELLOW}$(L "select_editor"):${NC}"
-    echo "  1) $(L "editor_cursor")"
-    echo "  2) $(L "editor_windsurf")"
-    echo ""
+    echo "" >&2
+    echo -e "${YELLOW}$(L "select_editor"):${NC}" >&2
+    echo "  1) $(L "editor_cursor")" >&2
+    echo "  2) $(L "editor_windsurf")" >&2
+    echo "" >&2
     if [[ "$LANG_CODE" == "pt" ]]; then
-        echo -n "Escolha [1-2]: "
+        echo -n "Escolha [1-2]: " >&2
     else
-        echo -n "Choose [1-2]: "
+        echo -n "Choose [1-2]: " >&2
     fi
     read -r choice
     
@@ -940,7 +940,7 @@ _prompt_editor() {
             editor="windsurf"
             ;;
         *)
-            print_error "$(L "invalid_editor")"
+            print_error "$(L "invalid_editor")" >&2
             exit 1
             ;;
     esac
