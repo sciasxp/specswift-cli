@@ -68,6 +68,10 @@ specswift init ~/Projects/my-ios-app --ios --lang pt
 
 # Without Git initialization
 specswift init ~/Projects/my-app --no-git
+
+# Interactive mode (no arguments)
+specswift init
+# You'll be prompted to select all configuration options
 ```
 
 **What gets created:**
@@ -99,6 +103,10 @@ specswift install --ios --lang pt
 
 # Force overwrite
 specswift install --force
+
+# Interactive mode (no arguments)
+specswift install
+# Interactive menu will guide you through installation options
 ```
 
 ### `specswift update` - Update Workflows
@@ -117,6 +125,51 @@ Verifies installation and available dependencies.
 ```bash
 specswift doctor
 ```
+
+## 🎯 Interactive Mode
+
+Both `init` and `install` commands support an interactive mode that guides you through all configuration options via menus. Interactive mode is automatically activated when no command-line options are provided.
+
+**When Interactive Mode is Activated:**
+- `specswift init` - When run without any arguments
+- `specswift install` - When run without any options (except `--lang` which is global)
+
+**When CLI Mode is Used:**
+- If you provide any CLI options (like `--ios`, `--editor`, `--no-git`, etc.), the command will use CLI mode instead of interactive mode
+- For `init`, if you provide a directory path, it will use CLI mode
+
+**Example - Interactive Init:**
+```bash
+specswift init
+# You'll be prompted to select:
+# - Project directory
+# - Editor (Cursor/Windsurf)
+# - Language (en/pt)
+# - iOS mode
+# - Xcode template (if iOS)
+# - Bundle ID prefix (if template selected)
+# - Git initialization
+# - Dependency checking
+# - Verbose mode
+# - Force overwrite
+# - Confirmation before creating
+```
+
+**Example - Interactive Install:**
+```bash
+cd ~/Projects/my-project
+specswift install
+# Interactive menu will guide you through:
+# - Editor selection (Cursor/Windsurf)
+# - Language (en/pt)
+# - iOS mode
+# - Dependency checking
+# - Verbose mode
+# - Force overwrite
+# - Confirmation before installing
+```
+
+**Note**: If you provide any CLI options, the command will use CLI mode instead of interactive mode. This allows you to use interactive mode for guided setup or CLI mode for automation and scripts.
 
 ## 🔄 Usage Flow
 
@@ -298,6 +351,10 @@ specswift init ~/Projetos/meu-app-ios --ios --lang pt
 
 # Sem inicialização Git
 specswift init ~/Projetos/meu-app --no-git
+
+# Modo interativo (sem argumentos)
+specswift init
+# Você será solicitado a selecionar todas as opções de configuração
 ```
 
 **O que é criado:**
@@ -329,6 +386,10 @@ specswift install --ios --lang pt
 
 # Forçar sobrescrita
 specswift install --force
+
+# Modo interativo (sem argumentos)
+specswift install
+# Menu interativo guiará você pelas opções de instalação
 ```
 
 ### `specswift update` - Atualizar Workflows
@@ -347,6 +408,51 @@ Verifica se a instalação está correta e todas as dependências estão dispon�
 ```bash
 specswift doctor
 ```
+
+## 🎯 Modo Interativo
+
+Os comandos `init` e `install` suportam um modo interativo que guia você através de todas as opções de configuração via menus. O modo interativo é ativado automaticamente quando nenhuma opção de linha de comando é fornecida.
+
+**Quando o Modo Interativo é Ativado:**
+- `specswift init` - Quando executado sem argumentos
+- `specswift install` - Quando executado sem opções (exceto `--lang` que é global)
+
+**Quando o Modo CLI é Usado:**
+- Se você fornecer qualquer opção CLI (como `--ios`, `--editor`, `--no-git`, etc.), o comando usará o modo CLI em vez do modo interativo
+- Para `init`, se você fornecer um caminho de diretório, usará o modo CLI
+
+**Exemplo - Init Interativo:**
+```bash
+specswift init
+# Você será solicitado a selecionar:
+# - Diretório do projeto
+# - Editor (Cursor/Windsurf)
+# - Idioma (en/pt)
+# - Modo iOS
+# - Template Xcode (se iOS)
+# - Prefixo do Bundle ID (se template selecionado)
+# - Inicialização Git
+# - Verificação de dependências
+# - Modo verbose
+# - Forçar sobrescrita
+# - Confirmação antes de criar
+```
+
+**Exemplo - Install Interativo:**
+```bash
+cd ~/Projetos/meu-projeto
+specswift install
+# Menu interativo guiará você através de:
+# - Seleção de editor (Cursor/Windsurf)
+# - Idioma (en/pt)
+# - Modo iOS
+# - Verificação de dependências
+# - Modo verbose
+# - Forçar sobrescrita
+# - Confirmação antes de instalar
+```
+
+**Nota**: Se você fornecer qualquer opção CLI, o comando usará o modo CLI em vez do modo interativo. Isso permite usar o modo interativo para configuração guiada ou o modo CLI para automação e scripts.
 
 ## 🔄 Fluxo de Uso
 

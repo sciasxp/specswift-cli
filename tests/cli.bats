@@ -188,10 +188,12 @@ teardown() {
   [ ! -d ".cursor" ]
 }
 
-@test "specswift init requires directory argument" {
-  run "$SPECswift_BIN" init
-  assert_failure
-  assert_output --partial "Target directory not specified"
+@test "specswift init enters interactive mode when no directory argument provided" {
+  # When no directory is provided and no CLI options, it should enter interactive mode
+  # Provide minimal input to trigger interactive mode and then cancel
+  run bash -c "printf '%s\n' \"\" \"\" \"\" \"\" \"\" \"\" \"\" \"\" \"\" \"no\" | \"$SPECswift_BIN\" init 2>&1 || true"
+  # The command should start interactive mode (not fail with "Target directory not specified")
+  assert_output --partial "Interactive Mode"
 }
 
 @test "specswift unknown command shows error" {
@@ -233,4 +235,115 @@ teardown() {
   run "$SPECswift_BIN" init "$TEST_DIR/test-invalid-editor" --editor invalid
   assert_failure
   assert_output --partial "Invalid editor"
+}
+
+# =============================================================================
+# Interactive Mode Tests
+# =============================================================================
+
+@test "specswift init enters interactive mode when no arguments provided" {
+  # Simulate interactive input:
+  # - Directory: TEST_DIR/test-interactive
+  # - Editor: 1 (cursor)
+  # - Language: 1 (English)
+  # - iOS mode: no (simpler, no template prompts)
+  # - Git init: yes
+  # - Check deps: no (to speed up test and avoid prompts)
+  # - Verbose: no
+  # - Force: no
+  # - Confirm: yes
+  run bash -c "printf '%s\n' \"$TEST_DIR/test-interactive\" \"1\" \"1\" \"no\" \"yes\" \"no\" \"no\" \"no\" \"yes\" | \"$SPECswift_BIN\" init"
+  assert_success
+  
+  # Verify directory was created
+  [ -d "$TEST_DIR/test-interactive" ]
+  
+  # Verify .cursor directory exists (editor 1 = cursor)
+  [ -d "$TEST_DIR/test-interactive/.cursor" ]
+  
+  # Verify workflows were copied
+  [ -d "$TEST_DIR/test-interactive/.cursor/workflows" ]
+  [ -d "$TEST_DIR/test-interactive/.cursor/rules" ]
+  
+  # Verify _docs directory exists
+  [ -d "$TEST_DIR/test-interactive/_docs" ]
+  
+  # Verify Makefile was created
+  [ -f "$TEST_DIR/test-interactive/Makefile" ]
+}
+
+@test "specswift install enters interactive mode when no arguments provided" {
+  # Create a dummy project directory
+  mkdir -p "$TEST_DIR/existing-project-interactive"
+  cd "$TEST_DIR/existing-project-interactive"
+  
+  # Simulate interactive input:
+  # - Editor: 2 (windsurf)
+  # - Language: 1 (English)
+  # - iOS mode: no
+  # - Check deps: no (to speed up test)
+  # - Verbose: no
+  # - Force: no
+  # - Confirm: yes
+  run bash -c "printf '%s\n' \"2\" \"1\" \"no\" \"no\" \"no\" \"no\" \"yes\" | \"$SPECswift_BIN\" install"
+  assert_success
+  
+  # Verify .windsurf directory was created (editor 2 = windsurf)
+  [ -d ".windsurf/workflows" ]
+  [ -d ".windsurf/rules" ]
+  
+  # Verify _docs directory was created
+  [ -d "_docs/templates" ]
+  
+  # Verify .cursor directory was NOT created
+  [ ! -d ".cursor" ]
+}
+
+@test "specswift init interactive mode can be cancelled" {
+  # Simulate cancellation by answering "no" to confirmation
+  # - Directory: TEST_DIR/test-cancel
+  # - Editor: 1 (cursor)
+  # - Language: 1 (English)
+  # - iOS mode: no
+  # - Git init: yes
+  # - Check deps: no
+  # - Verbose: no
+  # - Force: no
+  # - Confirm: no (cancel)
+  run bash -c "printf '%s\n' \"$TEST_DIR/test-cancel\" \"1\" \"1\" \"no\" \"yes\" \"no\" \"no\" \"no\" \"no\" | \"$SPECswift_BIN\" init"
+  assert_success
+  
+  # Verify directory was NOT created (operation cancelled)
+  [ ! -d "$TEST_DIR/test-cancel" ]
+}
+
+@test "specswift init with CLI options does not enter interactive mode" {
+  # When directory and options are provided, should use CLI mode
+  run "$SPECswift_BIN" init "$TEST_DIR/test-cli-mode" --editor cursor --no-git
+  assert_success
+  
+  # Verify directory was created
+  [ -d "$TEST_DIR/test-cli-mode" ]
+  
+  # Verify .cursor directory exists
+  [ -d "$TEST_DIR/test-cli-mode/.cursor" ]
+  
+  # Verify .git directory was NOT created (--no-git flag)
+  [ ! -d "$TEST_DIR/test-cli-mode/.git" ]
+}
+
+@test "specswift install with CLI options does not enter interactive mode" {
+  # Create a dummy project directory
+  mkdir -p "$TEST_DIR/existing-project-cli"
+  cd "$TEST_DIR/existing-project-cli"
+  
+  # When options are provided, should use CLI mode
+  run "$SPECswift_BIN" install --editor windsurf --no-deps
+  assert_success
+  
+  # Verify .windsurf directory was created
+  [ -d ".windsurf/workflows" ]
+  
+  # Verify .cursor directory was NOT created
+  [ ! -d ".cursor" ]
 }

@@ -156,6 +156,31 @@ L() {
             "all_dependencies_ok") echo "Todas as dependências estão instaladas" ;;
             "install_dependencies_prompt") echo "Deseja instalar as dependências faltantes?" ;;
             "yes_no") echo "[S/n]" ;;
+            # Interactive menu
+            "interactive_mode") echo "Modo Interativo" ;;
+            "enter_project_directory") echo "Digite o diretório do projeto" ;;
+            "select_language") echo "Selecione o idioma" ;;
+            "language_english") echo "Inglês (English)" ;;
+            "language_portuguese") echo "Português" ;;
+            "enable_ios_mode") echo "Habilitar modo iOS/Swift?" ;;
+            "select_xcode_template") echo "Selecione o template Xcode" ;;
+            "template_none") echo "Nenhum (apenas estrutura SpecSwift)" ;;
+            "template_swiftui_ios") echo "SwiftUI iOS" ;;
+            "template_swiftui_macos") echo "SwiftUI macOS" ;;
+            "enter_bundle_id_prefix") echo "Digite o prefixo do Bundle ID" ;;
+            "bundle_id_default") echo "Padrão (example)" ;;
+            "initialize_git") echo "Inicializar repositório Git?" ;;
+            "check_dependencies") echo "Verificar e instalar dependências?" ;;
+            "verbose_mode") echo "Modo verbose (output detalhado)?" ;;
+            "force_overwrite") echo "Forçar sobrescrita de arquivos existentes?" ;;
+            "preview_configuration") echo "Preview da Configuração" ;;
+            "confirm_create") echo "Confirmar criação?" ;;
+            "confirm_install") echo "Confirmar instalação?" ;;
+            "cancelled") echo "Operação cancelada" ;;
+            "invalid_choice") echo "Escolha inválida" ;;
+            "invalid_directory") echo "Diretório inválido" ;;
+            "yes") echo "Sim" ;;
+            "no") echo "Não" ;;
             *) echo "$key" ;;
         esac
     else
@@ -269,6 +294,31 @@ L() {
             "all_dependencies_ok") echo "All dependencies are installed" ;;
             "install_dependencies_prompt") echo "Do you want to install missing dependencies?" ;;
             "yes_no") echo "[Y/n]" ;;
+            # Interactive menu
+            "interactive_mode") echo "Interactive Mode" ;;
+            "enter_project_directory") echo "Enter project directory" ;;
+            "select_language") echo "Select language" ;;
+            "language_english") echo "English" ;;
+            "language_portuguese") echo "Portuguese" ;;
+            "enable_ios_mode") echo "Enable iOS/Swift mode?" ;;
+            "select_xcode_template") echo "Select Xcode template" ;;
+            "template_none") echo "None (SpecSwift structure only)" ;;
+            "template_swiftui_ios") echo "SwiftUI iOS" ;;
+            "template_swiftui_macos") echo "SwiftUI macOS" ;;
+            "enter_bundle_id_prefix") echo "Enter Bundle ID prefix" ;;
+            "bundle_id_default") echo "Default (example)" ;;
+            "initialize_git") echo "Initialize Git repository?" ;;
+            "check_dependencies") echo "Check and install dependencies?" ;;
+            "verbose_mode") echo "Verbose mode (detailed output)?" ;;
+            "force_overwrite") echo "Force overwrite existing files?" ;;
+            "preview_configuration") echo "Configuration Preview" ;;
+            "confirm_create") echo "Confirm creation?" ;;
+            "confirm_install") echo "Confirm installation?" ;;
+            "cancelled") echo "Operation cancelled" ;;
+            "invalid_choice") echo "Invalid choice" ;;
+            "invalid_directory") echo "Invalid directory" ;;
+            "yes") echo "Yes" ;;
+            "no") echo "No" ;;
             *) echo "$key" ;;
         esac
     fi
@@ -687,11 +737,43 @@ cmd_init() {
         esac
     done
 
+    # Check if interactive mode should be activated
+    # Interactive mode if: no target_dir AND no CLI options provided (except --lang which is global)
+    # If target_dir is provided, use CLI mode even without other options
     if [[ -z "$target_dir" ]]; then
-        print_error "$(L "target_dir_not_specified")"
-        echo "$(L "usage_init")"
-        exit 1
+        local has_cli_options=false
+        if [[ "$ios_mode" == true ]] || [[ "$init_git" == false ]] || [[ "$force" == true ]] || \
+           [[ "$verbose" == true ]] || [[ "$check_deps" == false ]] || [[ -n "$editor" ]] || \
+           [[ -n "$xcode_template" ]] || [[ -n "$bundle_prefix" ]]; then
+            has_cli_options=true
+        fi
+        
+        if [[ "$has_cli_options" == false ]]; then
+            # Interactive mode - no arguments provided
+            _interactive_menu_init
+            return 0
+        else
+            # CLI options provided but no directory - error
+            print_error "$(L "target_dir_not_specified")"
+            echo "$(L "usage_init")"
+            exit 1
+        fi
     fi
+
+    # Call internal function with parsed arguments
+    cmd_init_internal "$target_dir" "$editor" "$ios_mode" "$init_git" "$check_deps" "$verbose" "$force" "$xcode_template" "$bundle_prefix"
+}
+
+cmd_init_internal() {
+    local target_dir="$1"
+    local editor="${2:-}"
+    local ios_mode="${3:-false}"
+    local init_git="${4:-true}"
+    local check_deps="${5:-true}"
+    local verbose="${6:-false}"
+    local force="${7:-false}"
+    local xcode_template="${8:-}"
+    local bundle_prefix="${9:-}"
 
     show_banner
     
@@ -781,6 +863,32 @@ cmd_install() {
             *) shift ;;
         esac
     done
+
+    # Check if interactive mode should be activated
+    # Interactive mode if: no CLI options provided (except --lang which is global)
+    local has_cli_options=false
+    if [[ "$ios_mode" == true ]] || [[ "$force" == true ]] || \
+       [[ "$verbose" == true ]] || [[ "$check_deps" == false ]] || [[ -n "$editor" ]]; then
+        has_cli_options=true
+    fi
+    
+    if [[ "$has_cli_options" == false ]]; then
+        # Interactive mode - no arguments provided
+        _interactive_menu_install
+        return 0
+    fi
+
+    # Call internal function with parsed arguments
+    cmd_install_internal "$editor" "$ios_mode" "$check_deps" "$verbose" "$force"
+}
+
+cmd_install_internal() {
+    local editor="${1:-}"
+    local ios_mode="${2:-false}"
+    local check_deps="${3:-true}"
+    local verbose="${4:-false}"
+    local force="${5:-false}"
+    local target_dir="$(pwd)"
 
     show_banner
     
@@ -946,6 +1054,309 @@ _prompt_editor() {
     esac
     
     echo "$editor"
+}
+
+# =============================================================================
+# Interactive Menu Helper Functions
+# =============================================================================
+_prompt_yes_no() {
+    local prompt="$1"
+    local default="${2:-yes}"
+    local response=""
+    
+    while true; do
+        if [[ "$LANG_CODE" == "pt" ]]; then
+            if [[ "$default" == "yes" ]]; then
+                echo -e "${YELLOW}$prompt${NC} $(L "yes_no")" >&2
+            else
+                echo -e "${YELLOW}$prompt${NC} [s/N]" >&2
+            fi
+        else
+            if [[ "$default" == "yes" ]]; then
+                echo -e "${YELLOW}$prompt${NC} $(L "yes_no")" >&2
+            else
+                echo -e "${YELLOW}$prompt${NC} [y/N]" >&2
+            fi
+        fi
+        read -r response
+        
+        # Use default if empty
+        if [[ -z "$response" ]]; then
+            response="$default"
+        fi
+        
+        case "$response" in
+            [YySs]*|[Yy][Ee][Ss]|[Ss][Ii][Mm])
+                echo "yes"
+                return 0
+                ;;
+            [Nn]*|[Nn][Oo])
+                echo "no"
+                return 0
+                ;;
+            *)
+                print_error "$(L "invalid_choice")" >&2
+                ;;
+        esac
+    done
+}
+
+_prompt_select() {
+    local prompt="$1"
+    shift
+    local options=("$@")
+    local choice=""
+    local max="${#options[@]}"
+    
+    echo "" >&2
+    echo -e "${YELLOW}$prompt${NC}" >&2
+    for i in "${!options[@]}"; do
+        echo "  $((i+1))) ${options[$i]}" >&2
+    done
+    echo "" >&2
+    
+    while true; do
+        if [[ "$LANG_CODE" == "pt" ]]; then
+            echo -n "Escolha [1-$max]: " >&2
+        else
+            echo -n "Choose [1-$max]: " >&2
+        fi
+        read -r choice
+        
+        if [[ "$choice" =~ ^[0-9]+$ ]] && [[ "$choice" -ge 1 ]] && [[ "$choice" -le "$max" ]]; then
+            echo "$((choice-1))"
+            return 0
+        else
+            print_error "$(L "invalid_choice")" >&2
+        fi
+    done
+}
+
+_prompt_text() {
+    local prompt="$1"
+    local default="${2:-}"
+    local validate="${3:-}"
+    local response=""
+    
+    while true; do
+        if [[ -n "$default" ]]; then
+            if [[ "$LANG_CODE" == "pt" ]]; then
+                echo -e "${YELLOW}$prompt${NC} [padrão: $default]: " >&2
+            else
+                echo -e "${YELLOW}$prompt${NC} [default: $default]: " >&2
+            fi
+        else
+            echo -e "${YELLOW}$prompt${NC}: " >&2
+        fi
+        read -r response
+        
+        # Use default if empty
+        if [[ -z "$response" && -n "$default" ]]; then
+            response="$default"
+        fi
+        
+        # Validate if validator function provided
+        if [[ -n "$validate" ]]; then
+            if $validate "$response"; then
+                echo "$response"
+                return 0
+            else
+                print_error "$(L "invalid_directory")" >&2
+                continue
+            fi
+        elif [[ -n "$response" ]]; then
+            echo "$response"
+            return 0
+        elif [[ -z "$response" && -z "$default" ]]; then
+            print_error "$(L "invalid_choice")" >&2
+        else
+            echo "$response"
+            return 0
+        fi
+    done
+}
+
+_validate_directory() {
+    local dir="$1"
+    # Basic validation - check if parent directory exists
+    local parent=$(dirname "$dir")
+    if [[ -d "$parent" ]] || [[ "$parent" == "." ]] || [[ "$parent" == "/" ]]; then
+        return 0
+    fi
+    return 1
+}
+
+# =============================================================================
+# Interactive Menu Functions
+# =============================================================================
+_interactive_menu_init() {
+    show_banner
+    print_header "🎯 $(L "interactive_mode") - $(L "creating_new_project")"
+    echo ""
+    
+    # 1. Project directory
+    local target_dir=""
+    target_dir=$(_prompt_text "$(L "enter_project_directory")" "$(pwd)/my-app" "_validate_directory")
+    target_dir=$(eval echo "$target_dir")  # Expand ~ and variables
+    
+    # 2. Editor
+    local editor=""
+    editor=$(_prompt_editor)
+    
+    # 3. Language
+    local lang_choice=""
+    lang_choice=$(_prompt_select "$(L "select_language")" "$(L "language_english")" "$(L "language_portuguese")")
+    if [[ "$lang_choice" == "0" ]]; then
+        LANG_CODE="en"
+    else
+        LANG_CODE="pt"
+    fi
+    
+    # 4. iOS mode
+    local ios_mode=""
+    ios_mode=$(_prompt_yes_no "$(L "enable_ios_mode")" "yes")
+    
+    # 5. Xcode template (if iOS)
+    local xcode_template=""
+    local bundle_prefix=""
+    if [[ "$ios_mode" == "yes" ]]; then
+        local template_choice=""
+        template_choice=$(_prompt_select "$(L "select_xcode_template")" \
+            "$(L "template_none")" \
+            "$(L "template_swiftui_ios")" \
+            "$(L "template_swiftui_macos")")
+        
+        case "$template_choice" in
+            0) xcode_template="" ;;
+            1) xcode_template="swiftui-ios" ;;
+            2) xcode_template="swiftui-macos" ;;
+        esac
+        
+        # 6. Bundle ID prefix (if template selected)
+        if [[ -n "$xcode_template" ]]; then
+            bundle_prefix=$(_prompt_text "$(L "enter_bundle_id_prefix")" "example")
+        fi
+    fi
+    
+    # 7. Initialize Git
+    local init_git=""
+    init_git=$(_prompt_yes_no "$(L "initialize_git")" "yes")
+    
+    # 8. Check dependencies
+    local check_deps=""
+    check_deps=$(_prompt_yes_no "$(L "check_dependencies")" "yes")
+    
+    # 9. Verbose mode
+    local verbose=""
+    verbose=$(_prompt_yes_no "$(L "verbose_mode")" "no")
+    
+    # 10. Force overwrite
+    local force=""
+    force=$(_prompt_yes_no "$(L "force_overwrite")" "no")
+    
+    # Preview configuration
+    echo ""
+    print_header "📋 $(L "preview_configuration")"
+    echo -e "  $(L "directory"): ${CYAN}$target_dir${NC}"
+    echo -e "  $(L "select_editor"): ${CYAN}$editor${NC}"
+    echo -e "  $(L "select_language"): ${CYAN}$LANG_CODE${NC}"
+    echo -e "  $(L "enable_ios_mode"): ${CYAN}$ios_mode${NC}"
+    if [[ "$ios_mode" == "yes" ]]; then
+        if [[ -n "$xcode_template" ]]; then
+            echo -e "  $(L "select_xcode_template"): ${CYAN}$xcode_template${NC}"
+            if [[ -n "$bundle_prefix" ]]; then
+                echo -e "  $(L "enter_bundle_id_prefix"): ${CYAN}$bundle_prefix${NC}"
+            fi
+        else
+            echo -e "  $(L "select_xcode_template"): ${CYAN}$(L "template_none")${NC}"
+        fi
+    fi
+    echo -e "  $(L "initialize_git"): ${CYAN}$init_git${NC}"
+    echo -e "  $(L "check_dependencies"): ${CYAN}$check_deps${NC}"
+    echo -e "  $(L "verbose_mode"): ${CYAN}$verbose${NC}"
+    echo -e "  $(L "force_overwrite"): ${CYAN}$force${NC}"
+    echo ""
+    
+    # Confirm
+    local confirm=""
+    confirm=$(_prompt_yes_no "$(L "confirm_create")" "yes")
+    if [[ "$confirm" != "yes" ]]; then
+        print_info "$(L "cancelled")"
+        exit 0
+    fi
+    
+    # Convert yes/no to boolean
+    [[ "$ios_mode" == "yes" ]] && ios_mode=true || ios_mode=false
+    [[ "$init_git" == "yes" ]] && init_git=true || init_git=false
+    [[ "$check_deps" == "yes" ]] && check_deps=true || check_deps=false
+    [[ "$verbose" == "yes" ]] && verbose=true || verbose=false
+    [[ "$force" == "yes" ]] && force=true || force=false
+    
+    # Call cmd_init with collected options
+    cmd_init_internal "$target_dir" "$editor" "$ios_mode" "$init_git" "$check_deps" "$verbose" "$force" "$xcode_template" "$bundle_prefix"
+}
+
+_interactive_menu_install() {
+    show_banner
+    print_header "🎯 $(L "interactive_mode") - $(L "installing_specswift")"
+    echo ""
+    
+    # 1. Editor
+    local editor=""
+    editor=$(_prompt_editor)
+    
+    # 2. Language
+    local lang_choice=""
+    lang_choice=$(_prompt_select "$(L "select_language")" "$(L "language_english")" "$(L "language_portuguese")")
+    if [[ "$lang_choice" == "0" ]]; then
+        LANG_CODE="en"
+    else
+        LANG_CODE="pt"
+    fi
+    
+    # 3. iOS mode
+    local ios_mode=""
+    ios_mode=$(_prompt_yes_no "$(L "enable_ios_mode")" "no")
+    
+    # 4. Check dependencies
+    local check_deps=""
+    check_deps=$(_prompt_yes_no "$(L "check_dependencies")" "yes")
+    
+    # 5. Verbose mode
+    local verbose=""
+    verbose=$(_prompt_yes_no "$(L "verbose_mode")" "no")
+    
+    # 6. Force overwrite
+    local force=""
+    force=$(_prompt_yes_no "$(L "force_overwrite")" "no")
+    
+    # Preview configuration
+    echo ""
+    print_header "📋 $(L "preview_configuration")"
+    echo -e "  $(L "select_editor"): ${CYAN}$editor${NC}"
+    echo -e "  $(L "select_language"): ${CYAN}$LANG_CODE${NC}"
+    echo -e "  $(L "enable_ios_mode"): ${CYAN}$ios_mode${NC}"
+    echo -e "  $(L "check_dependencies"): ${CYAN}$check_deps${NC}"
+    echo -e "  $(L "verbose_mode"): ${CYAN}$verbose${NC}"
+    echo -e "  $(L "force_overwrite"): ${CYAN}$force${NC}"
+    echo ""
+    
+    # Confirm
+    local confirm=""
+    confirm=$(_prompt_yes_no "$(L "confirm_install")" "yes")
+    if [[ "$confirm" != "yes" ]]; then
+        print_info "$(L "cancelled")"
+        exit 0
+    fi
+    
+    # Convert yes/no to boolean
+    [[ "$ios_mode" == "yes" ]] && ios_mode=true || ios_mode=false
+    [[ "$check_deps" == "yes" ]] && check_deps=true || check_deps=false
+    [[ "$verbose" == "yes" ]] && verbose=true || verbose=false
+    [[ "$force" == "yes" ]] && force=true || force=false
+    
+    # Call cmd_install with collected options
+    cmd_install_internal "$editor" "$ios_mode" "$check_deps" "$verbose" "$force"
 }
 
 # =============================================================================
