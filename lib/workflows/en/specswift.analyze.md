@@ -64,303 +64,38 @@ Run `_docs/scripts/bash/check-prerequisites.sh --json --require-tasks --include-
 Abort with an error message if any mandatory file is missing (instruct user to run the missing prerequisite command).
 For single quotes in arguments like "I'm Groot", use escape syntax: e.g. 'I'\''m Groot' (or double quotes if possible: "I'm Groot").
 
-### 2. Load Artifacts (Progressive Disclosure)
+### 2. Run Automated Validation (Low Token)
 
-Load only the minimum necessary context from each artifact:
+Run the deterministic validator once from the repository root:
 
-**From prd.md:**
-
-- Overview/Context
-- Functional Requirements (extract IDs: FR-001, FR-002, ...)
-- Non-Functional Requirements (extract IDs: NFR-001, NFR-002, ...)
-- User Stories
-- Edge Cases (if present)
-
-**From techspec.md:**
-
-- Architecture/stack choices
-- Data Model references
-- Components/Classes to be created
-- Implementation phases
-- Technical constraints
-- Design decisions
-
-**From tasks.md:**
-
-- Task IDs (TASK-001, TASK-002, ...)
-- Descriptions
-- Explicit dependencies (`depends_on: [TASK-XXX]`)
-- Phase grouping
-- Parallelization markers [P]
-- **Unit Tests Section** (MANDATORY in every task)
-- Referenced file paths
-
-**From project documentation:**
-
-- Load `README.md`, `_docs/PRODUCT.md`, `_docs/STRUCTURE.md`, `_docs/TECH.md` for principles and patterns validation.
-
-### 3. Build Semantic Models
-
-Create internal representations (do not include raw artifacts in output):
-
-- **PRD Requirements Inventory**: Each functional (FR-XXX) and non-functional (NFR-XXX) requirement with stable ID
-- **Tech Spec Inventory**: Components, classes, design decisions from techspec
-- **Dependency Graph**: Map task dependencies (TASK-001 → TASK-002)
-- **Coverage Mapping**: Task → PRD Requirements + Tech Specs covered
-- **Tests Inventory**: Unit tests defined in each task
-- **Constitution Ruleset**: MUST/SHOULD principles
-
-### 4. Validation Passes (Implementation Gate)
-
-Focus on critical implementation readiness validations. Limit to 50 findings total.
-
-#### A. PRD Requirement Coverage → Tasks
-
-For each PRD requirement (FR-XXX, NFR-XXX):
-- **Verify**: Does at least one task implement this requirement?
-- **CRITICAL**: Requirement without associated task = BLOCKING
-- **Map**: Create traceability matrix Requirement → Task(s)
-
-#### B. Tech Spec Coverage → Tasks
-
-For each techspec component/class/decision:
-- **Verify**: Is there a task creating/modifying this component?
-- **CRITICAL**: Techspec component without task = BLOCKING
-- **Map**: Create traceability matrix Spec → Task(s)
-
-#### C. Dependency Validation
-
-For each task with `depends_on`:
-- **Verify**: Does the dependent task exist?
-- **Verify**: No circular dependencies (A→B→C→A)
-- **Verify**: Are implicit dependencies made explicit?
-- **CRITICAL**: Circular or non-existent dependency = BLOCKING
-
-#### D. Development Order Validation
-
-Analyze task execution sequence:
-- **Verify**: Infrastructure/setup tasks come before feature tasks?
-- **Verify**: Data model tasks come before UI tasks?
-- **Verify**: Integration tasks come after individual component tasks?
-- **HIGH**: Illogical order that will cause rework = BLOCKING
-
-#### E. Parallelism Validation
-
-Identify parallelization opportunities:
-- **Verify**: Are independent tasks marked with [P]?
-- **Verify**: Do tasks with [P] really have no dependencies between them?
-- **Suggest**: Tasks that could be parallelized but are not marked
-- **MEDIUM**: Misconfigured parallelism = WARNING
-
-#### F. Unit Test Validation
-
-For each task:
-- **CRITICAL**: Task without unit tests section = BLOCKING
-- **Verify**: Do tests cover task acceptance criteria?
-- **Verify**: Do tests follow project standards (XCTest)?
-- **Verify**: Are edge cases covered in tests?
-
-**Expected test structure in each task:**
-```markdown
-- [ ] T001 ...
-  - **Unit Tests**:
-    - [ ] `test_<functionality>_<scenario>_<expected_result>()`
-    - [ ] `test_<functionality>_<edge_case>()`
+```bash
+_docs/scripts/bash/validate-tasks.sh --json --include-report
 ```
 
-#### G. Constitution Alignment
+Parse the JSON output:
+- If `ok: false` OR any `findings` with `severity: CRITICAL` → **BLOCK** implementation.
+- Use `report_md` as the base Gate Report (it is already compact).
 
-- Any requirement or techspec element conflicting with MUST principle
-- Mandatory sections or quality gates missing from constitution
-- **CRITICAL**: Constitution violation = BLOCKING
+> **Important**: For deterministic PRD coverage checks, tasks should reference PRD requirement IDs like `FR-001` / `NFR-001` inside the task description or acceptance criteria.
 
-### 5. Severity Assignment
+### 3. Produce Gate Report (Human Review Layer)
 
-Use this heuristic to prioritize findings:
+1. Paste the `report_md` section as your Gate Report.\n2. Add a short “Corrective Actions” section:\n   - For each CRITICAL finding: provide a copy-paste-ready change to `tasks.md` (where to insert and what to write).\n3. Declare the gate decision:\n   - `🔴 BLOCKED` if any CRITICAL finding exists\n   - `🟢 APPROVED` if no CRITICAL findings\n 
+## Operational Principles
 
-- **CRITICAL (BLOCKING)**: 
-  - PRD requirement without corresponding task
-  - Techspec component without corresponding task
-  - Circular or non-existent dependency
-  - Task without defined unit tests
-  - MUST principle violation from constitution
-  
-- **HIGH**: 
-  - Illogical development order
-  - Implicit dependency not explicit
-  - Incomplete unit tests (do not cover acceptance criteria)
-  
-- **MEDIUM**: 
-  - Misconfigured parallelism
-  - Independent tasks not marked with [P]
-  - Tests do not cover edge cases
-  
-- **LOW**: 
-  - Test naming improvements
-  - Order optimization suggestions
+### Rigorous Gate
 
-### 6. Produce Analysis Report (Gate Report)
+- **Block without hesitation**: If there is a CRITICAL issue, implementation MUST NOT proceed
+- **Concrete actions**: Every corrective action should be copy-paste ready
+- **Test verification**: Tasks without tests are automatically CRITICAL
 
-Produce a Markdown report (no file writing) with the following structure:
+### Context Efficiency
 
----
+- **Minimum high-signal tokens**: Prefer script outputs (JSON/compact report) over reading full artifacts
 
-## 🚦 Implementation Gate Report
+## Context
 
-### Gate Status
-
-| Criterion | Status | Details |
-|----------|--------|----------|
-| PRD Coverage → Tasks | ✅/❌ | X/Y requirements covered |
-| Techspec Coverage → Tasks | ✅/❌ | X/Y specs covered |
-| Valid Dependencies | ✅/❌ | No cycles/invalid refs |
-| Development Order | ✅/❌ | Logical sequence |
-| Parallelism Configured | ✅/❌ | [P] tasks identified |
-| Unit Tests | ✅/❌ | X/Y tasks with tests |
-
-**RESULT: 🟢 APPROVED / 🔴 BLOCKED**
-
----
-
-### Traceability Matrix: PRD → Tasks
-
-| Requirement ID | Description | Task(s) | Status |
-|--------------|-----------|---------|--------|
-| FR-001 | ... | TASK-001, TASK-003 | ✅ |
-| FR-002 | ... | — | ❌ NO COVERAGE |
-
-### Traceability Matrix: Techspec → Tasks
-
-| Component/Spec | Task(s) | Status |
-|-----------------|---------|--------|
-| UserRepository | TASK-002 | ✅ |
-| SyncManager | — | ❌ NO COVERAGE |
-
-### Dependency Graph
-
-```
-TASK-001 (setup)
-├── TASK-002 (model) [P]
-├── TASK-003 (model) [P]
-└── TASK-004 (integration)
-    └── TASK-005 (UI)
-```
-
-### Unit Test Validation
-
-| Task ID | Has Tests? | Test Count | Criteria Coverage |
-|---------|-------------|------------|---------------------|
-| TASK-001 | ✅ | 3 | 100% |
-| TASK-002 | ❌ | 0 | 0% |
-
-### Issues Found
-
-| ID | Category | Severity | Location | Summary | Corrective Action |
-|----|-----------|------------|-------------|--------|----------------|
-| C1 | Coverage | CRITICAL | FR-002 | No task | Create task for FR-002 |
-| D1 | Dependency | CRITICAL | TASK-005 | Depends on missing TASK-999 | Fix reference |
-| T1 | Tests | CRITICAL | TASK-002 | No tests defined | Add tests section |
-
-### Metrics
-
-- **PRD Requirements**: X total
-- **Tech Specs**: Y total  
-- **Tasks**: Z total
-- **PRD Coverage**: X% (requirements with >=1 task)
-- **Techspec Coverage**: Y%
-- **Tasks with Tests**: Z%
-- **CRITICAL Issues**: N
-- **HIGH Issues**: N
-- **MEDIUM Issues**: N
-
-### 7. Propose Corrective Actions
-
-**MANDATORY**: At the end of analysis, produce a corrective actions section for each issue found:
-
----
-
-## 🔧 Proposed Corrective Actions
-
-### CRITICAL Issues (Resolve BEFORE implementing)
-
-**C1 - Requirement FR-002 without task**
-```markdown
-## Action: Add task for FR-002
-File: tasks.md
-Position: After TASK-003
-
-### TASK-004: Implement [FR-002 description]
-**Phase**: [appropriate phase]
-**Dependencies**: [TASK-XXX]
-**Files**:
-- `Path/To/File.swift`
-
-#### Acceptance Criteria
-- [ ] [criterion 1]
-- [ ] [criterion 2]
-
-#### Unit Tests
-- [ ] `test_functionality_scenario_result()`
-```
-
-**T1 - TASK-002 without unit tests**
-```markdown
-## Action: Add tests for TASK-002
-File: tasks.md
-Position: End of TASK-002
-
-#### Unit Tests
-- [ ] `test_component_operation_success()`
-- [ ] `test_component_operation_failure()`
-- [ ] `test_component_edge_case()`
-```
-
-### HIGH Issues (Recommended to resolve)
-
-**D1 - Suboptimal development order**
-```markdown
-## Action: Reorder tasks
-Move TASK-005 after TASK-004
-Reason: TASK-005 depends on components created in TASK-004
-```
-
-### MEDIUM Issues (Optional)
-
-**P1 - Parallelizable tasks not marked**
-```markdown
-## Action: Mark parallelism
-TASK-002 and TASK-003 can run in parallel
-Add [P] marker to both
-```
-
----
-
-### 8. Gate Decision
-
-Based on the analysis, clearly declare:
-
-**If 🔴 BLOCKED:**
-```
-⛔ IMPLEMENTATION BLOCKED
-
-There are N CRITICAL issues that MUST be resolved before proceeding.
-Run the corrective actions above and re-run /specswift.analyze.
-
-Next steps:
-1. Fix issue C1: [action]
-2. Fix issue C2: [action]
-3. Re-run: /specswift.analyze
-```
-
-**If 🟢 APPROVED:**
-```
-✅ GATE APPROVED - Ready for implementation
-
-All critical criteria have been met.
-Improvement suggestions (optional): [list]
-
-Next step: /specswift.implement
-```
+$ARGUMENTS
 
 ## Operational Principles
 

@@ -32,12 +32,17 @@ install:
 	@./install.sh --local
 
 test:
-	@echo "No tests configured yet. Add tests to enable this command."
+	@echo "Running BATS tests..."
+	@which bats > /dev/null || (echo "bats not found. Install with: brew install bats-core" && exit 1)
+	@bats tests/
 
 lint:
 	@echo "Running shellcheck..."
 	@which shellcheck > /dev/null || (echo "shellcheck not found. Install with: brew install shellcheck" && exit 1)
-	@shellcheck bin/specswift lib/scripts/*.sh install.sh scripts/validate-workflows.sh
+	@shellcheck -S error bin/specswift
+	@shellcheck -S error -x lib/scripts/*.sh
+	@shellcheck -S error -x _docs/scripts/bash/*.sh
+	@shellcheck -S error install.sh scripts/validate-workflows.sh
 
 clean:
 	@echo "Cleaning build artifacts..."

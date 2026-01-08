@@ -65,24 +65,24 @@ while [[ $# -gt 0 ]]; do
             cat << 'EOF'
 SpecSwift CLI Installer
 
-USO:
-    ./install.sh [opções]
+Usage / USO:
+    ./install.sh [options/opções]
 
-OPÇÕES:
-    --prefix <dir>   Diretório de instalação (default: ~/.local)
-    --local          Instalar a partir do diretório local (não baixar)
-    --force          Sobrescrever instalação existente
-    --uninstall      Remover instalação do SpecSwift
-    --help, -h       Mostrar ajuda
+Options / OPÇÕES:
+    --prefix <dir>   Install directory (default: ~/.local) / Diretório de instalação
+    --local          Install from local directory (no download) / Instalar a partir do diretório local
+    --force          Overwrite existing installation / Sobrescrever instalação existente
+    --uninstall      Remove SpecSwift installation / Remover instalação do SpecSwift
+    --help, -h       Show help / Mostrar ajuda
 
-EXEMPLOS:
-    # Instalação padrão
+Examples / EXEMPLOS:
+    # Default install / Instalação padrão
     ./install.sh
 
-    # Instalação em diretório customizado
+    # Custom install dir / Instalação em diretório customizado
     ./install.sh --prefix /usr/local
 
-    # Remover instalação
+    # Uninstall / Remover instalação
     ./install.sh --uninstall
 
 EOF

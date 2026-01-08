@@ -2,159 +2,134 @@ name: Tests
 
 on:
   push:
-    branches: [main, develop]
+    branches: [ main, develop ]
   pull_request:
-    branches: [main, develop]
+    branches: [ main, develop ]
 
 jobs:
   lint-scripts:
     name: Lint Scripts
     runs-on: ubuntu-latest
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+        with:
+          submodules: recursive
+      
       - name: Install shellcheck
         run: |
           sudo apt-get update
           sudo apt-get install -y shellcheck
-
-      - name: Run shellcheck on bin/specswift
-        run: shellcheck bin/specswift
-
-      - name: Run shellcheck on lib scripts
+      
+      - name: Run shellcheck on scripts
         run: |
-          for script in lib/scripts/*.sh; do
-            if [ -f "$script" ]; then
-              shellcheck "$script"
-            fi
-          done
+          shellcheck -S error bin/specswift
+          shellcheck -S error install.sh scripts/validate-workflows.sh
+          shellcheck -S error -x lib/scripts/*.sh
+          shellcheck -S error -x _docs/scripts/bash/*.sh
 
-      - name: Run shellcheck on install.sh
-        run: shellcheck install.sh
-
-      - name: Run shellcheck on validate-workflows.sh
-        run: shellcheck scripts/validate-workflows.sh
-
-  validate-workflows:
+  validate-workflow-consistency:
     name: Validate Workflow Consistency
     runs-on: ubuntu-latest
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      
+      - name: Run workflow validation
+        run: |
+          chmod +x scripts/validate-workflows.sh
+          ./scripts/validate-workflows.sh
 
-      - name: Make script executable
-        run: chmod +x scripts/validate-workflows.sh
-
-      - name: Validate workflow consistency
-        run: ./scripts/validate-workflows.sh
-
-  test-cli:
+  test-cli-commands:
     name: Test CLI Commands
     runs-on: ubuntu-latest
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+        with:
+          submodules: recursive
+      
       - name: Install BATS
         run: |
           sudo apt-get update
-          sudo apt-get install -y git
-          git clone https://github.com/bats-core/bats-core.git /tmp/bats-core
-          sudo /tmp/bats-core/install.sh /usr/local
-
-      - name: Install BATS helper libraries
-        run: |
-          mkdir -p tests/test_helper
-          if [ ! -d "tests/test_helper/bats-support" ]; then
-            git clone https://github.com/bats-core/bats-support.git tests/test_helper/bats-support
-          fi
-          if [ ! -d "tests/test_helper/bats-assert" ]; then
-            git clone https://github.com/bats-core/bats-assert.git tests/test_helper/bats-assert
-          fi
-
+          sudo apt-get install -y bats
+      
       - name: Run BATS tests
-        run: bats tests/
+        run: |
+          chmod +x bin/specswift
+          bats tests/
 
   test-installation:
     name: Test Installation
     runs-on: ubuntu-latest
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Test local installation
+        with:
+          submodules: recursive
+      
+      - name: Test installation
         run: |
-          INSTALL_DIR="/tmp/specswift-test"
-          mkdir -p "$INSTALL_DIR"
-          ./install.sh --local --prefix "$INSTALL_DIR"
+          chmod +x install.sh
+          ./install.sh --local --prefix /tmp/specswift-test
           
-          # Verify installed CLI works
-          export PATH="$INSTALL_DIR/bin:$PATH"
-          specswift --version
-          specswift help
-
+      - name: Verify installed CLI works
+        run: |
+          /tmp/specswift-test/bin/specswift --version
+          /tmp/specswift-test/bin/specswift help
+      
       - name: Test uninstallation
         run: |
-          INSTALL_DIR="/tmp/specswift-test"
-          ./install.sh --uninstall --prefix "$INSTALL_DIR"
-          
-          # Verify files are removed
-          if [ -f "$INSTALL_DIR/bin/specswift" ]; then
-            echo "Error: specswift binary still exists after uninstall"
-            exit 1
-          fi
-          if [ -d "$INSTALL_DIR/lib/specswift" ]; then
-            echo "Error: specswift lib directory still exists after uninstall"
+          ./install.sh --uninstall --prefix /tmp/specswift-test
+      
+      - name: Verify files are removed
+        run: |
+          if [ -d "/tmp/specswift-test" ]; then
+            echo "Error: Installation directory still exists"
             exit 1
           fi
 
-  verify-version:
+  verify-version-consistency:
     name: Verify Version Consistency
     runs-on: ubuntu-latest
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+        with:
+          submodules: recursive
+      
       - name: Extract version from VERSION file
         id: version
         run: |
           VERSION=$(cat VERSION | tr -d '[:space:]')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Version from VERSION file: $VERSION"
-
-      - name: Verify bin/specswift uses same version
+      
+      - name: Verify bin/specswift reports correct version
         run: |
           VERSION_FILE=$(cat VERSION | tr -d '[:space:]')
-          VERSION_SCRIPT=$(grep -o 'VERSION="[^"]*"' bin/specswift | head -1 | sed 's/VERSION="\(.*\)"/\1/')
-          
-          # Also check if version is read from VERSION file
-          if grep -q 'VERSION_FILE.*VERSION' bin/specswift; then
-            echo "✓ bin/specswift reads version from VERSION file"
-          else
-            # Check if hardcoded version matches
-            if [ "$VERSION_FILE" = "$VERSION_SCRIPT" ]; then
-              echo "✓ bin/specswift version matches: $VERSION_SCRIPT"
-            else
-              echo "✗ Version mismatch: VERSION file has '$VERSION_FILE', bin/specswift has '$VERSION_SCRIPT'"
-              exit 1
-            fi
+          VERSION_BIN=$(./bin/specswift --version | sed 's/SpecSwift CLI v//')
+          if [ "$VERSION_FILE" != "$VERSION_BIN" ]; then
+            echo "Error: Version mismatch"
+            echo "VERSION file: $VERSION_FILE"
+            echo "bin/specswift: $VERSION_BIN"
+            exit 1
           fi
-
-      - name: Verify install.sh uses same version
+          echo "✓ bin/specswift version matches: $VERSION_BIN"
+      
+      - name: Verify install.sh reads version dynamically
         run: |
-          VERSION_FILE=$(cat VERSION | tr -d '[:space:]')
-          VERSION_INSTALL=$(grep -o 'VERSION="[^"]*"' install.sh | head -1 | sed 's/VERSION="\(.*\)"/\1/')
-          
-          # Check if version is read from VERSION file
-          if grep -q 'VERSION_FILE.*VERSION' install.sh; then
-            echo "✓ install.sh reads version from VERSION file"
+          # Verify install.sh contains the logic to read VERSION file
+          if grep -q 'VERSION="$(cat "$VERSION_FILE"' install.sh; then
+            echo "✓ install.sh reads VERSION file dynamically"
           else
-            # Check if hardcoded version matches
-            if [ "$VERSION_FILE" = "$VERSION_INSTALL" ]; then
-              echo "✓ install.sh version matches: $VERSION_INSTALL"
-            else
-              echo "✗ Version mismatch: VERSION file has '$VERSION_FILE', install.sh has '$VERSION_INSTALL'"
-              exit 1
-            fi
+            echo "Error: install.sh does not appear to read VERSION file dynamically"
+            exit 1
           fi

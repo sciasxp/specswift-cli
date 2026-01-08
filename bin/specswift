@@ -61,6 +61,11 @@ L() {
             "cmd_doctor") echo "Verificar instalação e dependências" ;;
             "cmd_version") echo "Mostrar versão" ;;
             "cmd_help") echo "Mostrar esta ajuda" ;;
+            "cmd_context") echo "Gerar um pacote de contexto (JSON) para reduzir tokens" ;;
+            "cmd_validate") echo "Validar artefatos (ex.: tasks.md) e gerar relatório" ;;
+            "cmd_tasks_skeleton") echo "Gerar esqueleto de tasks.md a partir do PRD" ;;
+            "cmd_issues") echo "Converter tasks.md em issues GitHub (via gh)" ;;
+            "cmd_agent") echo "Gerar/atualizar _docs/specs/[SHORT_NAME]/.agent.md" ;;
             "global_options") echo "OPÇÕES GLOBAIS" ;;
             "opt_ios") echo "Aplicar configurações específicas para iOS/Swift" ;;
             "opt_no_git") echo "Não inicializar/modificar repositório Git" ;;
@@ -199,6 +204,11 @@ L() {
             "cmd_doctor") echo "Check installation and dependencies" ;;
             "cmd_version") echo "Show version" ;;
             "cmd_help") echo "Show this help" ;;
+            "cmd_context") echo "Generate a context pack (JSON) to reduce tokens" ;;
+            "cmd_validate") echo "Validate artifacts (e.g., tasks.md) and emit a report" ;;
+            "cmd_tasks_skeleton") echo "Generate tasks.md skeleton from PRD" ;;
+            "cmd_issues") echo "Convert tasks.md into GitHub issues (via gh)" ;;
+            "cmd_agent") echo "Generate/update _docs/specs/[SHORT_NAME]/.agent.md" ;;
             "global_options") echo "GLOBAL OPTIONS" ;;
             "opt_ios") echo "Apply iOS/Swift specific configurations" ;;
             "opt_no_git") echo "Don't initialize/modify Git repository" ;;
@@ -518,6 +528,11 @@ $(L "commands"):
     install              $(L "cmd_install")
     update               $(L "cmd_update")
     doctor               $(L "cmd_doctor")
+    context              $(L "cmd_context")
+    validate tasks       $(L "cmd_validate")
+    tasks-skeleton       $(L "cmd_tasks_skeleton")
+    issues               $(L "cmd_issues")
+    agent                $(L "cmd_agent")
     version              $(L "cmd_version")
     help                 $(L "cmd_help")
 
@@ -1852,6 +1867,11 @@ _print_init_summary() {
         windsurf)
             editor_dir=".windsurf"
             ;;
+        *)
+            print_warning "Unknown editor '$editor' in init summary; defaulting to Cursor"
+            editor_dir=".cursor"
+            editor="cursor"
+            ;;
     esac
     
     echo "  ├── $editor_dir/"
@@ -1873,6 +1893,10 @@ _print_init_summary() {
             ;;
         windsurf)
             editor_cmd="windsurf ."
+            ;;
+        *)
+            print_warning "Unknown editor '$editor' in init summary; defaulting to 'cursor .'"
+            editor_cmd="cursor ."
             ;;
     esac
     
@@ -1906,6 +1930,10 @@ _print_install_summary() {
         windsurf)
             editor_cmd="windsurf ."
             ;;
+        *)
+            print_warning "Unknown editor '$editor' in install summary; defaulting to 'cursor .'"
+            editor_cmd="cursor ."
+            ;;
     esac
     
     echo "  1. $editor_cmd"
@@ -1913,6 +1941,94 @@ _print_install_summary() {
     echo -e "  3. ${CYAN}/specswift.create-prd${NC} - $(L "to_create_new_feature")"
     echo ""
     echo -e "$(L "documentation"): ${CYAN}_docs/SPECSWIFT-WORKFLOWS.md${NC}"
+}
+
+# =============================================================================
+# Local Script Runner (project _docs/scripts/bash or built-in lib/scripts)
+# =============================================================================
+_ensure_json_flag() {
+    for arg in "$@"; do
+        if [[ "$arg" == "--json" ]]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
+_run_project_or_lib_script() {
+    local script_name="$1"
+    shift
+
+    local project_script="$(pwd)/_docs/scripts/bash/$script_name"
+    local lib_script="$LIB_DIR/scripts/$script_name"
+
+    if [[ -f "$project_script" ]]; then
+        bash "$project_script" "$@"
+        return $?
+    fi
+
+    if [[ -f "$lib_script" ]]; then
+        bash "$lib_script" "$@"
+        return $?
+    fi
+
+    print_error "Script not found: $script_name"
+    print_info "Expected: _docs/scripts/bash/$script_name (in project) or $lib_script (in CLI)"
+    return 1
+}
+
+# =============================================================================
+# Utility commands (token reduction helpers)
+# =============================================================================
+cmd_context() {
+    if _ensure_json_flag "$@"; then
+        _run_project_or_lib_script "context-pack.sh" "$@"
+    else
+        _run_project_or_lib_script "context-pack.sh" --json "$@"
+    fi
+}
+
+cmd_validate() {
+    local sub="${1:-}"
+    shift 2>/dev/null || true
+
+    case "$sub" in
+        tasks)
+            if _ensure_json_flag "$@"; then
+                _run_project_or_lib_script "validate-tasks.sh" "$@"
+            else
+                _run_project_or_lib_script "validate-tasks.sh" --json "$@"
+            fi
+            ;;
+        *)
+            print_error "Usage: specswift validate tasks [--json] [--include-report]"
+            return 1
+            ;;
+    esac
+}
+
+cmd_tasks_skeleton() {
+    if _ensure_json_flag "$@"; then
+        _run_project_or_lib_script "generate-tasks-skeleton.sh" "$@"
+    else
+        _run_project_or_lib_script "generate-tasks-skeleton.sh" --json "$@"
+    fi
+}
+
+cmd_issues() {
+    if _ensure_json_flag "$@"; then
+        _run_project_or_lib_script "tasks-to-issues.sh" "$@"
+    else
+        _run_project_or_lib_script "tasks-to-issues.sh" --json "$@"
+    fi
+}
+
+cmd_agent() {
+    if _ensure_json_flag "$@"; then
+        _run_project_or_lib_script "generate-agent-md.sh" "$@"
+    else
+        _run_project_or_lib_script "generate-agent-md.sh" --json "$@"
+    fi
 }
 
 # =============================================================================
@@ -1960,6 +2076,21 @@ main() {
             ;;
         doctor)
             cmd_doctor "$@"
+            ;;
+        context)
+            cmd_context "$@"
+            ;;
+        validate)
+            cmd_validate "$@"
+            ;;
+        tasks-skeleton)
+            cmd_tasks_skeleton "$@"
+            ;;
+        issues)
+            cmd_issues "$@"
+            ;;
+        agent)
+            cmd_agent "$@"
             ;;
         version|--version|-V)
             show_version

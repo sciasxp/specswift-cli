@@ -33,7 +33,14 @@ Passos de execução:
    - Se o parse do JSON falhar, aborte e instrua o usuário a reexecutar `/specswift.create-prd` ou verificar o ambiente da branch de feature.
    - Para aspas simples em argumentos como "I'm Groot", use sintaxe de escape: ex. 'I'\''m Groot' (ou aspas duplas se possível: "I'm Groot").
 
-2. Carregue o arquivo PRD atual. Execute uma varredura estruturada de ambiguidade & cobertura usando esta taxonomia. Para cada categoria, marque status: Claro / Parcial / Faltando. Produza um mapa de cobertura interno usado para priorização (não produza o mapa bruto a menos que nenhuma pergunta seja feita).
+2. Gere helpers de contexto (baixo token):
+   ```bash
+   _docs/scripts/bash/context-pack.sh --json --include-artifacts
+   _docs/scripts/bash/extract-artifacts.sh --json
+   ```
+   Use essas saídas para localizar rapidamente seções do PRD, IDs FR/NFR e lista de US.\n
+
+3. Carregue o arquivo PRD atual (divulgação progressiva). Execute uma varredura estruturada de ambiguidade & cobertura usando esta taxonomia. Para cada categoria, marque status: Claro / Parcial / Faltando. Produza um mapa de cobertura interno usado para priorização (não produza o mapa bruto a menos que nenhuma pergunta seja feita).
 
    Escopo Funcional & Comportamento:
    - Objetivos principais do usuário & critérios de sucesso

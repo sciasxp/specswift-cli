@@ -17,18 +17,15 @@ $ARGUMENTS
 
 ## Summary
 
-1. Execute `_docs/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks` from the repository root and parse FEATURE_DIR and AVAILABLE_DOCS. All paths must be absolute. For single quotes in args like "I'm Groot", use escape syntax: e.g. 'I'\''m Groot' (or double quotes if possible: "I'm Groot").
-2. From the executed script, extract the path to **tasks**.
-3. Get the Git remote by running:
-   ```bash
-   git remote get-url origin
-   ```
-4. Read `tasks.md` and extract all uncompleted tasks (`- [ ]`).
-5. For each task, create a GitHub issue using `gh issue create`.
-   - Title: `[SHORT_NAME] TASK-XXX: Description`
-   - Body: Include acceptance criteria and unit tests defined in the task.
-   - Label: Add a `specswift` label and a feature-specific label.
-6. Record the created issue numbers/URLs in a report.
+Run the exporter script from repository root:
+
+```bash
+_docs/scripts/bash/tasks-to-issues.sh --json --dry-run --label specswift
+```
+
+- Review the JSON plan (titles/bodies) and ensure the target `repo` is correct.\n- If everything looks correct, run again without `--dry-run`.\n 
+Recommended additional labels:\n- `--label feature/[SHORT_NAME]`\n 
+If you prefer, you can also run:\n- `specswift issues --dry-run --label specswift` (same behavior)
 
 ## Guidelines
 
@@ -39,4 +36,4 @@ $ARGUMENTS
 
 ## Artifacts
 
-- **GitHub Issues**: Created directly via `gh` CLI.
+- **GitHub Issues**: Created directly via `gh` CLI (through the script).

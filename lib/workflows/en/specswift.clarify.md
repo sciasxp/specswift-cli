@@ -33,7 +33,14 @@ Execution steps:
    - If JSON parse fails, abort and instruct the user to re-run `/specswift.create-prd` or check the feature branch environment.
    - For single quotes in arguments like "I'm Groot", use escape syntax: e.g. 'I'\''m Groot' (or double quotes if possible: "I'm Groot").
 
-2. Load the current PRD file. Perform a structured ambiguity & coverage scan using this taxonomy. For each category, mark status: Clear / Partial / Missing. Produce an internal coverage map used for prioritization (do not output the raw map unless no questions are asked).
+2. Generate low-token context helpers:
+   ```bash
+   _docs/scripts/bash/context-pack.sh --json --include-artifacts
+   _docs/scripts/bash/extract-artifacts.sh --json
+   ```
+   Use these outputs to quickly locate PRD sections, FR/NFR IDs, and US list.\n
+
+3. Load the current PRD file (progressive disclosure). Perform a structured ambiguity & coverage scan using this taxonomy. For each category, mark status: Clear / Partial / Missing. Produce an internal coverage map used for prioritization (do not output the raw map unless no questions are asked).
 
    Functional Scope & Behavior:
    - Core user goals & success criteria

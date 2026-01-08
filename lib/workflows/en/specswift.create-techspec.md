@@ -36,8 +36,12 @@ You **MUST** consider user input before proceeding (if not empty).
    - For single quotes in arguments like "I'm Groot", use escape syntax: e.g. 'I'\''m Groot' (or double quotes if possible: "I'm Groot").
 
 2. **Load Project Context**: 
-   - Read PRD and `README.md`
-   - Review project patterns in `_docs/TECH.md` and `.cursor/rules/` or `.windsurf/rules/` (depending on your IDE)
+   - Run a low-token context pack first:
+     ```bash
+     _docs/scripts/bash/context-pack.sh --json --include-artifacts
+     ```
+     Use this JSON as your primary context source (high-signal headings/bullets).\n
+   - Only read full PRD / `README.md` / `_docs/TECH.md` / rules files if the context pack indicates missing nuance.
    - Load TECHSPEC template (already copied)
    - Identify technical content displaced in the PRD for cleanup notes
    

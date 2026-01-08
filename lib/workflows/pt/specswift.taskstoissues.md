@@ -17,18 +17,12 @@ Você **DEVE** considerar a entrada do usuário antes de prosseguir (se não est
 
 ## Resumo
 
-1. Execute `_docs/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks` a partir da raiz do repositório e parse FEATURE_DIR e a lista AVAILABLE_DOCS. Todos os caminhos devem ser absolutos. Para aspas simples em args como "I'm Groot", use a sintaxe de escape: e.g 'I'\''m Groot' (ou aspas duplas se possível: "I'm Groot").
-1. Do script executado, extraia o caminho para **tasks**.
-1. Obtenha o Git remote executando:
+Execute o script exportador a partir da raiz do repositório:
 
 ```bash
-git config --get remote.origin.url
+_docs/scripts/bash/tasks-to-issues.sh --json --dry-run --label specswift
 ```
 
-> [!CAUTION]
-> APENAS PROSSIGA PARA OS PRÓXIMOS PASSOS SE O REMOTE FOR UMA URL DO GITHUB
-
-1. Para cada tarefa na lista, use o servidor MCP do GitHub para criar uma nova issue no repositório que é representativo do Git remote.
-
-> [!CAUTION]
-> SOB NENHUMA CIRCUNSTÂNCIA CRIE ISSUES EM REPOSITÓRIOS QUE NÃO CORRESPONDAM À URL REMOTA
+- Revise o plano (títulos/corpos) e valide se o `repo` alvo está correto.\n- Se estiver ok, execute novamente sem `--dry-run`.\n
+Labels recomendadas adicionais:\n- `--label feature/[SHORT_NAME]`\n
+Opcionalmente:\n- `specswift issues --dry-run --label specswift` (mesmo comportamento)

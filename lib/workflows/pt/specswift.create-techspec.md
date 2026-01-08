@@ -36,8 +36,12 @@ Você **DEVE** considerar a entrada do usuário antes de prosseguir (se não est
    - Para aspas simples em argumentos como "I'm Groot", use sintaxe de escape: ex. 'I'\''m Groot' (ou aspas duplas se possível: "I'm Groot").
 
 2. **Carregar contexto do Projeto**: 
-   - Leia PRD e `README.md`
-   - Revise padrões do projeto em `_docs/TECH.md` e `.cursor/rules/` ou `.windsurf/rules/` (dependendo do seu IDE)
+   - Primeiro, gere um pacote de contexto (baixo token):
+     ```bash
+     _docs/scripts/bash/context-pack.sh --json --include-artifacts
+     ```
+     Use esse JSON como fonte primária de contexto (títulos/bullets de alto-sinal).\n
+   - Só leia PRD / `README.md` / `_docs/TECH.md` / rules completos se o context pack indicar necessidade.
    - Carregue template TECHSPEC (já copiado)
    - Identifique conteúdo técnico deslocado no PRD para notas de limpeza
    

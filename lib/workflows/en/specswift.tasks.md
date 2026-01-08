@@ -37,6 +37,24 @@ Execute `_docs/scripts/bash/check-prerequisites.sh --json` from repository root.
 
 For single quotes in arguments like "I'm Groot", use escape syntax: e.g. 'I'\''m Groot' (or double quotes if possible: "I'm Groot").
 
+**Generate inventories (low token)**:
+
+```bash
+_docs/scripts/bash/extract-artifacts.sh --json
+```
+
+Use this JSON to get:
+- PRD inventories: `FR-*`, `NFR-*`, and `US*` without re-reading the whole PRD.
+- TechSpec component candidates without re-reading the whole techspec.
+
+**Optional: create a scaffold tasks.md (recommended)**:
+
+If `tasks.md` does not exist yet (or you want a clean skeleton), run:
+
+```bash
+_docs/scripts/bash/generate-tasks-skeleton.sh --json --force
+```
+
 **Check for Xcode project**:
 - Search for `*.xcodeproj` files in the repository root
 - If NO `.xcodeproj` is found AND this is an iOS/macOS project, note this for Phase 1 task generation
@@ -44,7 +62,11 @@ For single quotes in arguments like "I'm Groot", use escape syntax: e.g. 'I'\''m
 
 ### 2. Load Design Documents
 
-Read the following in priority order:
+Prefer **progressive disclosure**:
+
+1. Use the inventory JSON from `extract-artifacts.sh` for IDs and structure.\n2. Only read full documents when you need nuance or missing details.
+
+If you need to read, use this priority order:
 1. **PRD** (prd.md) - Mandatory. Contains user stories and acceptance criteria
 2. **TechSpec** (techspec.md) - If available. Contains technical implementation details
 3. **UI Design** (ui-design.md) - If available. Contains component specifications
