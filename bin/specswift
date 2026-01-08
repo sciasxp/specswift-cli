@@ -1410,15 +1410,15 @@ _print_install_summary() {
     case "$editor" in
         cursor)
             editor_cmd="cursor ."
-            echo -e "  1. ${CYAN}/specswift.constitution${NC} - $(L "run_in_cursor")"
             ;;
         windsurf)
             editor_cmd="windsurf ."
-            echo -e "  1. ${CYAN}/specswift.constitution${NC} - $(L "run_in_windsurf")"
             ;;
     esac
     
-    echo -e "  2. ${CYAN}/specswift.create-prd${NC} - $(L "to_create_new_feature")"
+    echo "  1. $editor_cmd"
+    echo -e "  2. ${CYAN}/specswift.constitution${NC} - $(L "run_in_ide")"
+    echo -e "  3. ${CYAN}/specswift.create-prd${NC} - $(L "to_create_new_feature")"
     echo ""
     echo -e "$(L "documentation"): ${CYAN}_docs/SPECSWIFT-WORKFLOWS.md${NC}"
 }
