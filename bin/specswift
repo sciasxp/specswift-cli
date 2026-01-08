@@ -445,7 +445,11 @@ _check_and_install_dependencies() {
     # Ask user for permission to install
     echo ""
     echo -e "${YELLOW}$(L "install_dependencies_prompt")${NC} $(L "yes_no")"
-    read -r response
+    if ! read -r response; then
+        # EOF detected - skip installation
+        print_info "$(L "skip_dependency_install")"
+        return 0
+    fi
     
     # Default to yes for English, sim for Portuguese
     if [[ "$LANG_CODE" == "pt" ]]; then
@@ -804,7 +808,10 @@ cmd_init_internal() {
 
     # Prompt for editor if not specified
     if [[ -z "$editor" ]]; then
-        editor=$(_prompt_editor)
+        if ! editor=$(_prompt_editor); then
+            print_info "$(L "cancelled")"
+            exit 0
+        fi
     fi
 
     # Copiar estrutura
@@ -902,7 +909,10 @@ cmd_install_internal() {
 
     # Prompt for editor if not specified
     if [[ -z "$editor" ]]; then
-        editor=$(_prompt_editor)
+        if ! editor=$(_prompt_editor); then
+            print_info "$(L "cancelled")"
+            exit 0
+        fi
     fi
 
     # Determine editor directory
@@ -1027,6 +1037,7 @@ cmd_update() {
 # =============================================================================
 _prompt_editor() {
     local editor=""
+    local choice=""
     
     echo "" >&2
     echo -e "${YELLOW}$(L "select_editor"):${NC}" >&2
@@ -1038,7 +1049,11 @@ _prompt_editor() {
     else
         echo -n "Choose [1-2]: " >&2
     fi
-    read -r choice
+    if ! read -r choice; then
+        # EOF detected
+        print_error "$(L "cancelled")" >&2
+        return 1
+    fi
     
     case "$choice" in
         1|cursor|Cursor|CURSOR)
@@ -1049,7 +1064,7 @@ _prompt_editor() {
             ;;
         *)
             print_error "$(L "invalid_editor")" >&2
-            exit 1
+            return 1
             ;;
     esac
     
@@ -1078,7 +1093,11 @@ _prompt_yes_no() {
                 echo -e "${YELLOW}$prompt${NC} [y/N]" >&2
             fi
         fi
-        read -r response
+        if ! read -r response; then
+            # EOF detected - exit loop
+            print_error "$(L "cancelled")" >&2
+            return 1
+        fi
         
         # Use default if empty
         if [[ -z "$response" ]]; then
@@ -1121,7 +1140,11 @@ _prompt_select() {
         else
             echo -n "Choose [1-$max]: " >&2
         fi
-        read -r choice
+        if ! read -r choice; then
+            # EOF detected - exit loop
+            print_error "$(L "cancelled")" >&2
+            return 1
+        fi
         
         if [[ "$choice" =~ ^[0-9]+$ ]] && [[ "$choice" -ge 1 ]] && [[ "$choice" -le "$max" ]]; then
             echo "$((choice-1))"
@@ -1148,7 +1171,11 @@ _prompt_text() {
         else
             echo -e "${YELLOW}$prompt${NC}: " >&2
         fi
-        read -r response
+        if ! read -r response; then
+            # EOF detected - exit loop
+            print_error "$(L "cancelled")" >&2
+            return 1
+        fi
         
         # Use default if empty
         if [[ -z "$response" && -n "$default" ]]; then
@@ -1196,16 +1223,25 @@ _interactive_menu_init() {
     
     # 1. Project directory
     local target_dir=""
-    target_dir=$(_prompt_text "$(L "enter_project_directory")" "$(pwd)/my-app" "_validate_directory")
+    if ! target_dir=$(_prompt_text "$(L "enter_project_directory")" "$(pwd)/my-app" "_validate_directory"); then
+        print_info "$(L "cancelled")"
+        exit 0
+    fi
     target_dir=$(eval echo "$target_dir")  # Expand ~ and variables
     
     # 2. Editor
     local editor=""
-    editor=$(_prompt_editor)
+    if ! editor=$(_prompt_editor); then
+        print_info "$(L "cancelled")"
+        exit 0
+    fi
     
     # 3. Language
     local lang_choice=""
-    lang_choice=$(_prompt_select "$(L "select_language")" "$(L "language_english")" "$(L "language_portuguese")")
+    if ! lang_choice=$(_prompt_select "$(L "select_language")" "$(L "language_english")" "$(L "language_portuguese")"); then
+        print_info "$(L "cancelled")"
+        exit 0
+    fi
     if [[ "$lang_choice" == "0" ]]; then
         LANG_CODE="en"
     else
@@ -1214,17 +1250,23 @@ _interactive_menu_init() {
     
     # 4. iOS mode
     local ios_mode=""
-    ios_mode=$(_prompt_yes_no "$(L "enable_ios_mode")" "yes")
+    if ! ios_mode=$(_prompt_yes_no "$(L "enable_ios_mode")" "yes"); then
+        print_info "$(L "cancelled")"
+        exit 0
+    fi
     
     # 5. Xcode template (if iOS)
     local xcode_template=""
     local bundle_prefix=""
     if [[ "$ios_mode" == "yes" ]]; then
         local template_choice=""
-        template_choice=$(_prompt_select "$(L "select_xcode_template")" \
+        if ! template_choice=$(_prompt_select "$(L "select_xcode_template")" \
             "$(L "template_none")" \
             "$(L "template_swiftui_ios")" \
-            "$(L "template_swiftui_macos")")
+            "$(L "template_swiftui_macos")"); then
+            print_info "$(L "cancelled")"
+            exit 0
+        fi
         
         case "$template_choice" in
             0) xcode_template="" ;;
@@ -1234,25 +1276,40 @@ _interactive_menu_init() {
         
         # 6. Bundle ID prefix (if template selected)
         if [[ -n "$xcode_template" ]]; then
-            bundle_prefix=$(_prompt_text "$(L "enter_bundle_id_prefix")" "example")
+            if ! bundle_prefix=$(_prompt_text "$(L "enter_bundle_id_prefix")" "example"); then
+                print_info "$(L "cancelled")"
+                exit 0
+            fi
         fi
     fi
     
     # 7. Initialize Git
     local init_git=""
-    init_git=$(_prompt_yes_no "$(L "initialize_git")" "yes")
+    if ! init_git=$(_prompt_yes_no "$(L "initialize_git")" "yes"); then
+        print_info "$(L "cancelled")"
+        exit 0
+    fi
     
     # 8. Check dependencies
     local check_deps=""
-    check_deps=$(_prompt_yes_no "$(L "check_dependencies")" "yes")
+    if ! check_deps=$(_prompt_yes_no "$(L "check_dependencies")" "yes"); then
+        print_info "$(L "cancelled")"
+        exit 0
+    fi
     
     # 9. Verbose mode
     local verbose=""
-    verbose=$(_prompt_yes_no "$(L "verbose_mode")" "no")
+    if ! verbose=$(_prompt_yes_no "$(L "verbose_mode")" "no"); then
+        print_info "$(L "cancelled")"
+        exit 0
+    fi
     
     # 10. Force overwrite
     local force=""
-    force=$(_prompt_yes_no "$(L "force_overwrite")" "no")
+    if ! force=$(_prompt_yes_no "$(L "force_overwrite")" "no"); then
+        print_info "$(L "cancelled")"
+        exit 0
+    fi
     
     # Preview configuration
     echo ""
@@ -1279,7 +1336,10 @@ _interactive_menu_init() {
     
     # Confirm
     local confirm=""
-    confirm=$(_prompt_yes_no "$(L "confirm_create")" "yes")
+    if ! confirm=$(_prompt_yes_no "$(L "confirm_create")" "yes"); then
+        print_info "$(L "cancelled")"
+        exit 0
+    fi
     if [[ "$confirm" != "yes" ]]; then
         print_info "$(L "cancelled")"
         exit 0
@@ -1303,11 +1363,17 @@ _interactive_menu_install() {
     
     # 1. Editor
     local editor=""
-    editor=$(_prompt_editor)
+    if ! editor=$(_prompt_editor); then
+        print_info "$(L "cancelled")"
+        exit 0
+    fi
     
     # 2. Language
     local lang_choice=""
-    lang_choice=$(_prompt_select "$(L "select_language")" "$(L "language_english")" "$(L "language_portuguese")")
+    if ! lang_choice=$(_prompt_select "$(L "select_language")" "$(L "language_english")" "$(L "language_portuguese")"); then
+        print_info "$(L "cancelled")"
+        exit 0
+    fi
     if [[ "$lang_choice" == "0" ]]; then
         LANG_CODE="en"
     else
@@ -1316,19 +1382,31 @@ _interactive_menu_install() {
     
     # 3. iOS mode
     local ios_mode=""
-    ios_mode=$(_prompt_yes_no "$(L "enable_ios_mode")" "no")
+    if ! ios_mode=$(_prompt_yes_no "$(L "enable_ios_mode")" "no"); then
+        print_info "$(L "cancelled")"
+        exit 0
+    fi
     
     # 4. Check dependencies
     local check_deps=""
-    check_deps=$(_prompt_yes_no "$(L "check_dependencies")" "yes")
+    if ! check_deps=$(_prompt_yes_no "$(L "check_dependencies")" "yes"); then
+        print_info "$(L "cancelled")"
+        exit 0
+    fi
     
     # 5. Verbose mode
     local verbose=""
-    verbose=$(_prompt_yes_no "$(L "verbose_mode")" "no")
+    if ! verbose=$(_prompt_yes_no "$(L "verbose_mode")" "no"); then
+        print_info "$(L "cancelled")"
+        exit 0
+    fi
     
     # 6. Force overwrite
     local force=""
-    force=$(_prompt_yes_no "$(L "force_overwrite")" "no")
+    if ! force=$(_prompt_yes_no "$(L "force_overwrite")" "no"); then
+        print_info "$(L "cancelled")"
+        exit 0
+    fi
     
     # Preview configuration
     echo ""
@@ -1343,7 +1421,10 @@ _interactive_menu_install() {
     
     # Confirm
     local confirm=""
-    confirm=$(_prompt_yes_no "$(L "confirm_install")" "yes")
+    if ! confirm=$(_prompt_yes_no "$(L "confirm_install")" "yes"); then
+        print_info "$(L "cancelled")"
+        exit 0
+    fi
     if [[ "$confirm" != "yes" ]]; then
         print_info "$(L "cancelled")"
         exit 0

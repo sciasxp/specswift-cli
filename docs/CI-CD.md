@@ -8,7 +8,11 @@ The CI/CD pipeline automatically runs on every push and pull request to the `mai
 
 ## Workflow File
 
+**Status:** ✅ Implemented
+
 Location: `.github/workflows/test.yml`
+
+The CI/CD pipeline is fully implemented and runs automatically on every push and pull request to `main` and `develop` branches.
 
 ## Jobs
 

@@ -83,6 +83,7 @@ my-app/
 ├── _docs/
 │   ├── templates/     # Localized document templates
 │   ├── scripts/       # Automation scripts
+│   │   └── bash/      # Bash scripts
 │   └── specs/         # Feature specs directory
 ├── Makefile           # Build/test commands
 └── .gitignore
@@ -259,9 +260,11 @@ specswift-cli/
 | `--ios` | Apply iOS/Swift configurations |
 | `--editor <cursor\|windsurf>` | Select IDE editor (default: prompt) |
 | `--no-git` | Don't initialize Git repository |
+| `--no-deps` | Skip dependency check/installation |
 | `--force` | Overwrite existing files |
 | `--lang <en\|pt>` | Set language (en/pt) |
 | `-v, --verbose` | Detailed output |
+| `-q, --quiet` | Errors only |
 | `-h, --help` | Show help |
 
 ## 🛠️ Uninstall
@@ -366,6 +369,7 @@ meu-app/
 ├── _docs/
 │   ├── templates/     # Templates de documentos localizados
 │   ├── scripts/       # Scripts de automação
+│   │   └── bash/      # Scripts bash
 │   └── specs/         # Diretório para features
 ├── Makefile           # Comandos de build/test
 └── .gitignore
@@ -542,9 +546,11 @@ specswift-cli/
 | `--ios` | Aplicar configurações para iOS/Swift |
 | `--editor <cursor\|windsurf>` | Selecionar editor IDE (padrão: solicitar) |
 | `--no-git` | Não inicializar repositório Git |
+| `--no-deps` | Pular verificação/instalação de dependências |
 | `--force` | Sobrescrever arquivos existentes |
 | `--lang <en\|pt>` | Definir idioma (en/pt) |
 | `-v, --verbose` | Output detalhado |
+| `-q, --quiet` | Apenas erros |
 | `-h, --help` | Mostrar ajuda |
 
 ## 🛠️ Desinstalação

@@ -37,7 +37,7 @@ test:
 lint:
 	@echo "Running shellcheck..."
 	@which shellcheck > /dev/null || (echo "shellcheck not found. Install with: brew install shellcheck" && exit 1)
-	@shellcheck bin/specswift lib/scripts/*.sh install.sh
+	@shellcheck bin/specswift lib/scripts/*.sh install.sh scripts/validate-workflows.sh
 
 clean:
 	@echo "Cleaning build artifacts..."
