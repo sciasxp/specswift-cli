@@ -239,6 +239,7 @@ windsurf .  # if you selected Windsurf
 | `/specswift.tasks` | Generate task list |
 | `/specswift.analyze` | Validate coverage before implementing |
 | `/specswift.implement` | Execute implementation |
+| `/specswift.retro` | Post-implementation retrospective analysis |
 | `/specswift.yolo` | Automatic mode (PRD → TechSpec → Tasks) |
 | `/specswift.taskstoissues` | Convert tasks to GitHub Issues |
 | `/specswift.bug-investigation` | Structured workflow for investigating and fixing bugs |
@@ -534,6 +535,7 @@ windsurf .  # se selecionou Windsurf
 | `/specswift.tasks` | Gerar lista de tarefas |
 | `/specswift.analyze` | Validar cobertura antes de implementar |
 | `/specswift.implement` | Executar implementação |
+| `/specswift.retro` | Análise retrospectiva pós-implementação |
 | `/specswift.yolo` | Modo automático (PRD → TechSpec → Tasks) |
 | `/specswift.taskstoissues` | Converter tasks em GitHub Issues |
 | `/specswift.bug-investigation` | Fluxo estruturado para investigar e corrigir bugs |
