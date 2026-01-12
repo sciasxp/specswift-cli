@@ -1512,7 +1512,7 @@ _copy_workflows() {
                 if [[ "$overwrite" == true || ! -f "$target/$editor_dir/$workflows_dir/$basename" ]]; then
                     cp "$file" "$target/$editor_dir/$workflows_dir/"
                     [[ "$verbose" == true ]] && print_success "$basename"
-                    ((count++))
+                    ((count+=1))
                 fi
             fi
         done
@@ -1625,7 +1625,7 @@ _copy_templates() {
                 if [[ "$overwrite" == true || ! -f "$target/_docs/templates/$basename" ]]; then
                     cp "$file" "$target/_docs/templates/"
                     [[ "$verbose" == true ]] && print_success "$basename"
-                    ((count++))
+                    ((count+=1))
                 fi
             fi
         done
