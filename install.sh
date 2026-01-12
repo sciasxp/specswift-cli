@@ -110,8 +110,17 @@ do_uninstall() {
     fi
     
     if [[ -d "$SPECSWIFT_HOME" ]]; then
+        # Check if the directory is empty before removing it to be safe, 
+        # or just remove it if we are sure it is the installation directory.
+        # Since SPECSWIFT_HOME is defined as $INSTALL_PREFIX/lib/specswift, it should be safe to remove.
         rm -rf "$SPECSWIFT_HOME"
         print_success "Removido: $SPECSWIFT_HOME"
+    else
+        # In testing environments, SPECSWIFT_HOME might not exist if it was mocked or partially cleaned up.
+        # We print a warning but don't fail, to make tests more robust.
+        print_warning "Diretório de instalação não encontrado: $SPECSWIFT_HOME"
+        # Force success for tests if uninstalling non-existent dir
+        true
     fi
     
     echo ""
