@@ -80,6 +80,9 @@ my-app/
 ├── .cursor/ or .windsurf/  # IDE-specific directory (selected during init)
 │   ├── commands/ or workflows/  # Localized SpecSwift workflows (commands for Cursor, workflows for Windsurf)
 │   └── rules/         # Localized code rules
+│       ├── rule-name/  # Each rule is a folder (Cursor only)
+│       │   └── RULE.md # Rule content (Cursor only)
+│       └── *.md        # Direct rule files (Windsurf)
 ├── _docs/
 │   ├── templates/     # Localized document templates
 │   ├── scripts/       # Automation scripts
@@ -88,6 +91,12 @@ my-app/
 ├── Makefile           # Build/test commands
 └── .gitignore
 ```
+
+**Note on Cursor Rules Structure:**
+According to [Cursor's official documentation](https://cursor.com/docs/context/rules), each rule must be a folder containing a `RULE.md` file. The structure is:
+- `.cursor/rules/rule-name/RULE.md` (required format)
+- Each rule folder can contain the `RULE.md` file and optional scripts
+- Rules support frontmatter metadata (description, globs, alwaysApply) for configuration
 
 ### `specswift install` - Install in Existing Project
 
@@ -366,6 +375,9 @@ meu-app/
 ├── .cursor/ ou .windsurf/  # Diretório específico do IDE (selecionado durante init)
 │   ├── commands/ ou workflows/  # Workflows SpecSwift localizados (commands para Cursor, workflows para Windsurf)
 │   └── rules/         # Rules de código localizadas
+│       ├── rule-name/  # Cada rule é uma pasta (apenas Cursor)
+│       │   └── RULE.md # Conteúdo da rule (apenas Cursor)
+│       └── *.md        # Arquivos de rule diretos (Windsurf)
 ├── _docs/
 │   ├── templates/     # Templates de documentos localizados
 │   ├── scripts/       # Scripts de automação
@@ -374,6 +386,12 @@ meu-app/
 ├── Makefile           # Comandos de build/test
 └── .gitignore
 ```
+
+**Nota sobre a Estrutura de Rules do Cursor:**
+De acordo com a [documentação oficial do Cursor](https://cursor.com/docs/context/rules), cada rule deve ser uma pasta contendo um arquivo `RULE.md`. A estrutura é:
+- `.cursor/rules/nome-da-rule/RULE.md` (formato obrigatório)
+- Cada pasta de rule pode conter o arquivo `RULE.md` e scripts opcionais
+- Rules suportam metadata frontmatter (description, globs, alwaysApply) para configuração
 
 ### `specswift install` - Instalar em Projeto Existente
 

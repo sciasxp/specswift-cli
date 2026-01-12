@@ -52,6 +52,17 @@ teardown() {
   [ -d "$TEST_DIR/test-project-cursor/.cursor/commands" ]
   [ -d "$TEST_DIR/test-project-cursor/.cursor/rules" ]
   
+  # Verify Cursor rules structure (each rule should be a folder with RULE.md)
+  # Check if at least one rule folder exists with RULE.md inside
+  local rule_found=false
+  for rule_dir in "$TEST_DIR/test-project-cursor/.cursor/rules"/*/; do
+    if [[ -d "$rule_dir" && -f "$rule_dir/RULE.md" ]]; then
+      rule_found=true
+      break
+    fi
+  done
+  [ "$rule_found" = true ]
+  
   # Verify _docs directory exists
   [ -d "$TEST_DIR/test-project-cursor/_docs" ]
   
@@ -78,6 +89,17 @@ teardown() {
   # Verify workflows were copied
   [ -d "$TEST_DIR/test-project-windsurf/.windsurf/workflows" ]
   [ -d "$TEST_DIR/test-project-windsurf/.windsurf/rules" ]
+  
+  # Verify Windsurf rules structure (direct .md files, not folders)
+  # Check if at least one .md rule file exists
+  local rule_found=false
+  for rule_file in "$TEST_DIR/test-project-windsurf/.windsurf/rules"/*.md; do
+    if [[ -f "$rule_file" ]]; then
+      rule_found=true
+      break
+    fi
+  done
+  [ "$rule_found" = true ]
   
   # Verify _docs directory exists
   [ -d "$TEST_DIR/test-project-windsurf/_docs" ]
@@ -162,6 +184,17 @@ teardown() {
   [ -d ".cursor/commands" ]
   [ -d ".cursor/rules" ]
   
+  # Verify Cursor rules structure (each rule should be a folder with RULE.md)
+  # Check if at least one rule folder exists with RULE.md inside
+  local rule_found=false
+  for rule_dir in .cursor/rules/*/; do
+    if [[ -d "$rule_dir" && -f "$rule_dir/RULE.md" ]]; then
+      rule_found=true
+      break
+    fi
+  done
+  [ "$rule_found" = true ]
+  
   # Verify _docs directory was created
   [ -d "_docs/templates" ]
   
@@ -180,6 +213,17 @@ teardown() {
   # Verify .windsurf directory was created
   [ -d ".windsurf/workflows" ]
   [ -d ".windsurf/rules" ]
+  
+  # Verify Windsurf rules structure (direct .md files, not folders)
+  # Check if at least one .md rule file exists
+  local rule_found=false
+  for rule_file in .windsurf/rules/*.md; do
+    if [[ -f "$rule_file" ]]; then
+      rule_found=true
+      break
+    fi
+  done
+  [ "$rule_found" = true ]
   
   # Verify _docs directory was created
   [ -d "_docs/templates" ]
@@ -264,6 +308,17 @@ teardown() {
   # Verify workflows were copied (Cursor uses "commands" directory)
   [ -d "$TEST_DIR/test-interactive/.cursor/commands" ]
   [ -d "$TEST_DIR/test-interactive/.cursor/rules" ]
+  
+  # Verify Cursor rules structure (each rule should be a folder with RULE.md)
+  # Check if at least one rule folder exists with RULE.md inside
+  local rule_found=false
+  for rule_dir in "$TEST_DIR/test-interactive/.cursor/rules"/*/; do
+    if [[ -d "$rule_dir" && -f "$rule_dir/RULE.md" ]]; then
+      rule_found=true
+      break
+    fi
+  done
+  [ "$rule_found" = true ]
   
   # Verify _docs directory exists
   [ -d "$TEST_DIR/test-interactive/_docs" ]

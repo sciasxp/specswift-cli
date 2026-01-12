@@ -1556,10 +1556,21 @@ _copy_rules() {
     local generic_rules=("api-design-guidelines.md" "accessibility-guidelines.md")
     local count=0
 
-    for rule in "${generic_rules[@]}"; do
-        if [[ -f "$rules_src/$rule" ]]; then
-            cp "$rules_src/$rule" "$target/$editor_dir/rules/"
-            [[ "$verbose" == true ]] && print_success "$rule"
+    for rule_file in "${generic_rules[@]}"; do
+        if [[ -f "$rules_src/$rule_file" ]]; then
+            # Extract rule name without .md extension
+            local rule_name="${rule_file%.md}"
+            
+            if [[ "$editor" == "cursor" ]]; then
+                # Cursor requires folder structure: .cursor/rules/rule-name/RULE.md
+                mkdir -p "$target/$editor_dir/rules/$rule_name"
+                cp "$rules_src/$rule_file" "$target/$editor_dir/rules/$rule_name/RULE.md"
+                [[ "$verbose" == true ]] && print_success "$rule_name (Cursor rule)"
+            else
+                # Windsurf may use direct .md files (keeping compatibility)
+                cp "$rules_src/$rule_file" "$target/$editor_dir/rules/"
+                [[ "$verbose" == true ]] && print_success "$rule_file"
+            fi
             ((count++))
         fi
     done
@@ -1567,10 +1578,21 @@ _copy_rules() {
     # iOS rules
     if [[ "$ios_mode" == true ]]; then
         local ios_rules=("swift-coding-style.md" "swift-concurrency.md" "makefile-usage.md")
-        for rule in "${ios_rules[@]}"; do
-            if [[ -f "$rules_src/$rule" ]]; then
-                cp "$rules_src/$rule" "$target/$editor_dir/rules/"
-                [[ "$verbose" == true ]] && print_success "$rule (iOS)"
+        for rule_file in "${ios_rules[@]}"; do
+            if [[ -f "$rules_src/$rule_file" ]]; then
+                # Extract rule name without .md extension
+                local rule_name="${rule_file%.md}"
+                
+                if [[ "$editor" == "cursor" ]]; then
+                    # Cursor requires folder structure: .cursor/rules/rule-name/RULE.md
+                    mkdir -p "$target/$editor_dir/rules/$rule_name"
+                    cp "$rules_src/$rule_file" "$target/$editor_dir/rules/$rule_name/RULE.md"
+                    [[ "$verbose" == true ]] && print_success "$rule_name (iOS, Cursor rule)"
+                else
+                    # Windsurf may use direct .md files (keeping compatibility)
+                    cp "$rules_src/$rule_file" "$target/$editor_dir/rules/"
+                    [[ "$verbose" == true ]] && print_success "$rule_file (iOS)"
+                fi
                 ((count++))
             fi
         done
