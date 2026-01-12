@@ -98,8 +98,13 @@ For each user story in the PRD:
    - Include necessary data model changes
    - Include API integrations if applicable
    - Include tests for the functionality
+3. **Dependency and Blocking Analysis**:
+   - **External Dependencies**: Identify if the story depends on Foundational phase tasks or other stories.
+   - **Internal Blockers**: Within the story, order tasks logically (e.g., Model -> Service -> UI).
+   - **Explicit Marking**: If task T020 strictly depends on T010 (from another phase/story), add "Depends on T010" in the description.
+   - **Parallelism Validation**: Only mark with [P] if the task is NOT blocked by the immediately preceding task.
 
-3. **Add Support Tasks**: After all user story sections, add:
+4. **Add Support Tasks**: After all user story sections, add:
    - Setup tasks (if needed at the beginning)
    - Polish/cleanup tasks (at the end)
 
@@ -172,6 +177,8 @@ Before saving, verify:
 - [ ] All implementation tasks have filled `Acceptance Criteria` and `Unit Tests` sections
 - [ ] File paths follow project conventions
 - [ ] Dependencies are logical and don't create cycles
+- [ ] Tasks marked as [P] do not have immediate preceding blockers
+- [ ] Cross-User Story dependencies are explicit
 - [ ] Tasks have appropriate size (not too large, not trivial)
 
 ### 7. Output

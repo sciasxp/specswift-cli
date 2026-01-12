@@ -78,10 +78,23 @@ Para cada fase em ordem (Setup → Foundational → User Stories → Polish):
    - Para tarefas paralelas [P]: Pode executar concorrentemente dentro da mesma fase
 3. **Para Cada Tarefa**:
    - Anuncie ID da tarefa e descrição
-   - Implemente as mudanças necessárias
-   - Execute testes relevantes
-   - Marque tarefa como completa em tasks.md alterando `[ ]` para `[x]`
+   - Implemente as mudanças seguindo a Abordagem TDD (detalhada abaixo)
+   - Marque tarefa como completa em tasks.md alterando `[ ]` para `[x]` SOMENTE após sucesso em todos os testes
    - Commite mudanças com mensagem: `feat([SHORT_NAME]): [Task ID] - Breve descrição`
+
+#### Passos de Implementação da Tarefa (Abordagem TDD)
+
+Para cada tarefa, siga rigorosamente estes passos para garantir que todos os requisitos e testes estejam prontos:
+
+1. **Escrever Testes**: Implemente os testes unitários definidos na tarefa e verifique se eles FALHAM inicialmente (Red).
+2. **Implementar Código**: Escreva o código mínimo necessário para fazer os testes PASSAREM (Green).
+3. **Refatorar**: Melhore a qualidade do código mantendo os testes passando (Refactor).
+4. **Verificar**: Execute todos os testes relevantes usando `make test` para garantir que nada foi quebrado.
+5. **Checagem de Qualidade**:
+   - Execute `make build` para garantir que não há erros de compilação
+   - Execute `make test` para o módulo/target afetado
+   - Garanta conformidade com `.cursor/rules/` ou `.windsurf/rules/` (estilo Swift, concorrência, etc., dependendo do seu IDE)
+   - **CRÍTICO**: Uma tarefa só pode ser marcada como completa se o código compilar E todos os testes (novos e existentes) passarem.
 
 ### 6. Rastreamento de Progresso
 

@@ -24,6 +24,31 @@
 | `_docs/STRUCTURE.md` | Arquitetura e pastas | Entender estrutura |
 | `_docs/TECH.md` | Stack e padrões | Restrições técnicas |
 
+## Fluxo Crítico *(obrigatório)*
+
+<!--
+  AÇÃO REQUERIDA: Descreva o fluxo crítico da feature.
+  Você pode usar um fluxograma Mermaid ou descrição textual passo-a-passo.
+-->
+
+```mermaid
+graph TD
+    A[Start] --> B{Condition}
+    B -- Yes --> C[Action 1]
+    B -- No --> D[Action 2]
+    C --> E[End]
+    D --> E
+```
+
+## Mockups de UI *(se aplicável)*
+
+<!--
+  AÇÃO REQUERIDA: Se a feature possui elementos visuais, inclua aqui os mockups gerados.
+  Use a ferramenta generate_image para criar visualizações das telas principais.
+-->
+
+![Mockup Tela Principal](caminho/para/imagem_gerada.png)
+
 ## Cenários de Usuário & Testes *(obrigatório)*
 
 <!--

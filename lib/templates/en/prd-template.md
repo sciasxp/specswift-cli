@@ -24,6 +24,31 @@
 | `_docs/STRUCTURE.md` | Architecture and folders | Understand structure |
 | `_docs/TECH.md` | Stack and patterns | Technical constraints |
 
+## Critical Flow *(mandatory)*
+
+<!--
+  REQUIRED ACTION: Describe the critical flow of the feature.
+  You can use a Mermaid flowchart or step-by-step textual description.
+-->
+
+```mermaid
+graph TD
+    A[Start] --> B{Condition}
+    B -- Yes --> C[Action 1]
+    B -- No --> D[Action 2]
+    C --> E[End]
+    D --> E
+```
+
+## UI Mockups *(if applicable)*
+
+<!--
+  REQUIRED ACTION: If the feature has visual elements, include generated mockups here.
+  Use the generate_image tool to create visualizations of the main screens.
+-->
+
+![Main Screen Mockup](path/to/generated_image.png)
+
 ## User Scenarios & Tests *(mandatory)*
 
 <!--

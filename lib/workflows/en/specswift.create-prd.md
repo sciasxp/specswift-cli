@@ -170,6 +170,8 @@ Now that you have clarity and setup is complete:
    - Preserve section order and headers
    - Maximum 1,000 words for main content (excluding appendices/examples)
    - Include numbered functional requirements (testable and unambiguous)
+   - **CRITICAL: Critical Flow**: Must include a textual description and/or Mermaid diagram of the feature's critical flow.
+   - **UI Mockups**: If the feature has a visual interface, USE THE `generate_image` TOOL to create mockups of the critical flow screens. Save images to `_docs/specs/[SHORT_NAME]/assets/` (create if needed) and insert references to them in the PRD.
 
 2. **Apply [NEEDS CLARIFICATION] Markers** (Maximum 3):
    - Only for critical decisions that:

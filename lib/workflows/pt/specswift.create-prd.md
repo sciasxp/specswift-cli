@@ -170,6 +170,8 @@ Agora que você tem clareza e o setup está completo:
    - Preserve ordem das seções e cabeçalhos
    - Máximo 1.000 palavras para conteúdo principal (excluindo apêndices/exemplos)
    - Inclua requisitos funcionais numerados (testáveis e não-ambíguos)
+   - **CRÍTICO: Fluxo Crítico**: Deve haver uma descrição textual e/ou diagrama Mermaid do fluxo crítico da feature.
+   - **UI Mockups**: Se a feature tiver interface visual, USE A FERRAMENTA `generate_image` para criar mockups das telas do fluxo crítico. Salve as imagens na pasta `_docs/specs/[SHORT_NAME]/assets/` (crie se não existir) e insira referências a elas no PRD.
 
 2. **Aplicar Marcadores [PRECISA ESCLARECIMENTO]** (Máximo 3):
    - Apenas para decisões críticas que:

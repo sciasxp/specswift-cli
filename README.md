@@ -1,16 +1,12 @@
-<div align="center">
-
 # SpecSwift CLI
 
 **AI-powered feature specification and implementation toolkit for iOS/Swift projects**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/Platform-macOS-lightgrey.svg)]()
-[![Swift](https://img.shields.io/badge/Swift-6.2+-orange.svg)]()
+[License: MIT](LICENSE)
+[Platform]()
+[Swift]()
 
 [English](#english) | [Português](#português)
-
-</div>
 
 ---
 
@@ -75,6 +71,7 @@ specswift init
 ```
 
 **What gets created:**
+
 ```
 my-app/
 ├── .cursor/ or .windsurf/  # IDE-specific directory (selected during init)
@@ -94,6 +91,7 @@ my-app/
 
 **Note on Cursor Rules Structure:**
 According to [Cursor's official documentation](https://cursor.com/docs/context/rules), each rule must be a folder containing a `RULE.md` file. The structure is:
+
 - `.cursor/rules/rule-name/RULE.md` (required format)
 - Each rule folder can contain the `RULE.md` file and optional scripts
 - Rules support frontmatter metadata (description, globs, alwaysApply) for configuration
@@ -141,14 +139,17 @@ specswift doctor
 Both `init` and `install` commands support an interactive mode that guides you through all configuration options via menus. Interactive mode is automatically activated when no command-line options are provided.
 
 **When Interactive Mode is Activated:**
+
 - `specswift init` - When run without any arguments
 - `specswift install` - When run without any options (except `--lang` which is global)
 
 **When CLI Mode is Used:**
+
 - If you provide any CLI options (like `--ios`, `--editor`, `--no-git`, etc.), the command will use CLI mode instead of interactive mode
 - For `init`, if you provide a directory path, it will use CLI mode
 
 **Example - Interactive Init:**
+
 ```bash
 specswift init
 # You'll be prompted to select:
@@ -166,6 +167,7 @@ specswift init
 ```
 
 **Example - Interactive Install:**
+
 ```bash
 cd ~/Projects/my-project
 specswift install
@@ -230,19 +232,21 @@ windsurf .  # if you selected Windsurf
 
 ## 📋 Available Workflows
 
-| Workflow | Description |
-|----------|-------------|
-| `/specswift.constitution` | Create project base documentation |
-| `/specswift.create-prd` | Create PRD (Product Requirements Document) |
-| `/specswift.clarify` | Clarify PRD ambiguities |
-| `/specswift.create-techspec` | Create technical specification |
-| `/specswift.tasks` | Generate task list |
-| `/specswift.analyze` | Validate coverage before implementing |
-| `/specswift.implement` | Execute implementation |
-| `/specswift.retro` | Post-implementation retrospective analysis |
-| `/specswift.yolo` | Automatic mode (PRD → TechSpec → Tasks) |
-| `/specswift.taskstoissues` | Convert tasks to GitHub Issues |
+
+| Workflow                       | Description                                           |
+| ------------------------------ | ----------------------------------------------------- |
+| `/specswift.constitution`      | Create project base documentation                     |
+| `/specswift.create-prd`        | Create PRD (Product Requirements Document)            |
+| `/specswift.clarify`           | Clarify PRD ambiguities                               |
+| `/specswift.create-techspec`   | Create technical specification                        |
+| `/specswift.tasks`             | Generate task list                                    |
+| `/specswift.analyze`           | Validate coverage before implementing                 |
+| `/specswift.implement`         | Execute implementation                                |
+| `/specswift.retro`             | Post-implementation retrospective analysis            |
+| `/specswift.yolo`              | Automatic mode (PRD → TechSpec → Tasks)               |
+| `/specswift.taskstoissues`     | Convert tasks to GitHub Issues                        |
 | `/specswift.bug-investigation` | Structured workflow for investigating and fixing bugs |
+
 
 ## 📁 Project Structure
 
@@ -265,17 +269,19 @@ specswift-cli/
 
 ### Global Options
 
-| Option | Description |
-|--------|-------------|
-| `--ios` | Apply iOS/Swift configurations |
-| `--editor <cursor\|windsurf>` | Select IDE editor (default: prompt) |
-| `--no-git` | Don't initialize Git repository |
-| `--no-deps` | Skip dependency check/installation |
-| `--force` | Overwrite existing files |
-| `--lang <en\|pt>` | Set language (en/pt) |
-| `-v, --verbose` | Detailed output |
-| `-q, --quiet` | Errors only |
-| `-h, --help` | Show help |
+
+| Option            | Description                        |
+| ----------------- | ---------------------------------- |
+| `--ios`           | Apply iOS/Swift configurations     |
+| `--editor <cursor | windsurf>`                         |
+| `--no-git`        | Don't initialize Git repository    |
+| `--no-deps`       | Skip dependency check/installation |
+| `--force`         | Overwrite existing files           |
+| `--lang <en       | pt>`                               |
+| `-v, --verbose`   | Detailed output                    |
+| `-q, --quiet`     | Errors only                        |
+| `-h, --help`      | Show help                          |
+
 
 ## 🛠️ Uninstall
 
@@ -293,6 +299,7 @@ rm ~/.local/bin/specswift
 ## 📚 Additional Documentation
 
 After installing in a project, see:
+
 - `docs/SPECSWIFT-WORKFLOWS.md` - Complete workflows guide (in this repository)
 - `_docs/SPECSWIFT-WORKFLOWS.md` - Complete workflows guide (after installing into a project)
 - `.cursor/commands/` or `.windsurf/workflows/` - Detailed workflow definitions (commands for Cursor, workflows for Windsurf)
@@ -303,6 +310,10 @@ After installing in a project, see:
 2. Create a branch for your feature
 3. Make your changes
 4. Submit a Pull Request
+
+## 👏 Acknowledgements
+
+This project is based on [GitHub SpecKit](https://github.com/github/spec-kit).
 
 ## 📄 License
 
@@ -371,6 +382,7 @@ specswift init
 ```
 
 **O que é criado:**
+
 ```
 meu-app/
 ├── .cursor/ ou .windsurf/  # Diretório específico do IDE (selecionado durante init)
@@ -390,6 +402,7 @@ meu-app/
 
 **Nota sobre a Estrutura de Rules do Cursor:**
 De acordo com a [documentação oficial do Cursor](https://cursor.com/docs/context/rules), cada rule deve ser uma pasta contendo um arquivo `RULE.md`. A estrutura é:
+
 - `.cursor/rules/nome-da-rule/RULE.md` (formato obrigatório)
 - Cada pasta de rule pode conter o arquivo `RULE.md` e scripts opcionais
 - Rules suportam metadata frontmatter (description, globs, alwaysApply) para configuração
@@ -437,14 +450,17 @@ specswift doctor
 Os comandos `init` e `install` suportam um modo interativo que guia você através de todas as opções de configuração via menus. O modo interativo é ativado automaticamente quando nenhuma opção de linha de comando é fornecida.
 
 **Quando o Modo Interativo é Ativado:**
+
 - `specswift init` - Quando executado sem argumentos
 - `specswift install` - Quando executado sem opções (exceto `--lang` que é global)
 
 **Quando o Modo CLI é Usado:**
+
 - Se você fornecer qualquer opção CLI (como `--ios`, `--editor`, `--no-git`, etc.), o comando usará o modo CLI em vez do modo interativo
 - Para `init`, se você fornecer um caminho de diretório, usará o modo CLI
 
 **Exemplo - Init Interativo:**
+
 ```bash
 specswift init
 # Você será solicitado a selecionar:
@@ -462,6 +478,7 @@ specswift init
 ```
 
 **Exemplo - Install Interativo:**
+
 ```bash
 cd ~/Projetos/meu-projeto
 specswift install
@@ -526,19 +543,21 @@ windsurf .  # se selecionou Windsurf
 
 ## 📋 Workflows Disponíveis
 
-| Workflow | Descrição |
-|----------|-----------|
-| `/specswift.constitution` | Criar documentação base do projeto |
-| `/specswift.create-prd` | Criar PRD (Product Requirements Document) |
-| `/specswift.clarify` | Esclarecer ambiguidades no PRD |
-| `/specswift.create-techspec` | Criar especificação técnica |
-| `/specswift.tasks` | Gerar lista de tarefas |
-| `/specswift.analyze` | Validar cobertura antes de implementar |
-| `/specswift.implement` | Executar implementação |
-| `/specswift.retro` | Análise retrospectiva pós-implementação |
-| `/specswift.yolo` | Modo automático (PRD → TechSpec → Tasks) |
-| `/specswift.taskstoissues` | Converter tasks em GitHub Issues |
+
+| Workflow                       | Descrição                                         |
+| ------------------------------ | ------------------------------------------------- |
+| `/specswift.constitution`      | Criar documentação base do projeto                |
+| `/specswift.create-prd`        | Criar PRD (Product Requirements Document)         |
+| `/specswift.clarify`           | Esclarecer ambiguidades no PRD                    |
+| `/specswift.create-techspec`   | Criar especificação técnica                       |
+| `/specswift.tasks`             | Gerar lista de tarefas                            |
+| `/specswift.analyze`           | Validar cobertura antes de implementar            |
+| `/specswift.implement`         | Executar implementação                            |
+| `/specswift.retro`             | Análise retrospectiva pós-implementação           |
+| `/specswift.yolo`              | Modo automático (PRD → TechSpec → Tasks)          |
+| `/specswift.taskstoissues`     | Converter tasks em GitHub Issues                  |
 | `/specswift.bug-investigation` | Fluxo estruturado para investigar e corrigir bugs |
+
 
 ## 📁 Estrutura do Projeto
 
@@ -561,17 +580,19 @@ specswift-cli/
 
 ### Opções Globais
 
-| Opção | Descrição |
-|-------|-----------|
-| `--ios` | Aplicar configurações para iOS/Swift |
-| `--editor <cursor\|windsurf>` | Selecionar editor IDE (padrão: solicitar) |
-| `--no-git` | Não inicializar repositório Git |
-| `--no-deps` | Pular verificação/instalação de dependências |
-| `--force` | Sobrescrever arquivos existentes |
-| `--lang <en\|pt>` | Definir idioma (en/pt) |
-| `-v, --verbose` | Output detalhado |
-| `-q, --quiet` | Apenas erros |
-| `-h, --help` | Mostrar ajuda |
+
+| Opção             | Descrição                                    |
+| ----------------- | -------------------------------------------- |
+| `--ios`           | Aplicar configurações para iOS/Swift         |
+| `--editor <cursor | windsurf>`                                   |
+| `--no-git`        | Não inicializar repositório Git              |
+| `--no-deps`       | Pular verificação/instalação de dependências |
+| `--force`         | Sobrescrever arquivos existentes             |
+| `--lang <en       | pt>`                                         |
+| `-v, --verbose`   | Output detalhado                             |
+| `-q, --quiet`     | Apenas erros                                 |
+| `-h, --help`      | Mostrar ajuda                                |
+
 
 ## 🛠️ Desinstalação
 
@@ -589,6 +610,7 @@ rm ~/.local/bin/specswift
 ## 📚 Documentação Adicional
 
 Após instalar em um projeto, veja:
+
 - `docs/SPECSWIFT-WORKFLOWS.md` - Guia completo dos workflows (neste repositório)
 - `_docs/SPECSWIFT-WORKFLOWS.md` - Guia completo dos workflows (após instalar no projeto)
 - `.cursor/commands/` ou `.windsurf/workflows/` - Definição detalhada de cada workflow (commands para Cursor, workflows para Windsurf)
@@ -599,6 +621,10 @@ Após instalar em um projeto, veja:
 2. Crie uma branch para sua feature
 3. Faça suas alterações
 4. Envie um Pull Request
+
+## 👏 Agradecimentos
+
+Este projeto é baseado no [GitHub SpecKit](https://github.com/github/spec-kit).
 
 ## 📄 Licença
 

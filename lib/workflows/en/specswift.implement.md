@@ -96,6 +96,7 @@ For each task, follow these steps:
    - Run `make build` to ensure no compilation errors
    - Run `make test` for the affected module/target
    - Ensure compliance with `.cursor/rules/` or `.windsurf/rules/` (Swift style, concurrency, etc., depending on your IDE)
+   - **CRITICAL**: A task can only be marked as complete if the code compiles AND all tests (new and existing) pass.
 
 ### 6. Progress Tracking
 

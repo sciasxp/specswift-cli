@@ -98,8 +98,13 @@ Para cada história de usuário no PRD:
    - Incluam mudanças de modelo de dados necessárias
    - Incluam integrações de API se aplicável
    - Incluam testes para a funcionalidade
+3. **Análise de Dependências e Bloqueios**:
+   - **Dependências Externas**: Identifique se a história depende de tarefas da fase Foundational ou de outras histórias.
+   - **Bloqueios Internos**: Dentro da história, ordene tarefas de forma lógica (ex: Model -> Service -> UI).
+   - **Marcação Explícita**: Se uma tarefa T020 depende estritamente de T010 (de outra fase/história), adicione "Depende de T010" na descrição.
+   - **Validação de Paralelismo**: Apenas marque com [P] se a tarefa NÃO for bloqueada pela tarefa imediatamente anterior.
 
-3. **Adicionar Tarefas de Suporte**: Após todas as seções de história de usuário, adicione:
+4. **Adicionar Tarefas de Suporte**: Após todas as seções de história de usuário, adicione:
    - Tarefas de setup (se necessário no início)
    - Tarefas de polish/limpeza (no final)
 
@@ -172,6 +177,8 @@ Antes de salvar, verifique:
 - [ ] Todas as tarefas de implementação possuem seções de `Critérios de Aceitação` e `Testes Unitários` preenchidas
 - [ ] Caminhos de arquivo seguem convenções de projeto
 - [ ] Dependências são lógicas e não criam ciclos
+- [ ] Tarefas marcadas como [P] não possuem bloqueios anteriores imediatos
+- [ ] Dependências entre Histórias de Usuário estão explícitas
 - [ ] Tarefas têm tamanho apropriado (não muito grandes, não triviais)
 
 ### 7. Saída
