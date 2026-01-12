@@ -98,28 +98,3 @@ Parse the JSON output:
 ## Context
 
 $ARGUMENTS
-
-## Operational Principles
-
-### Rigorous Gate
-
-- **Block without hesitation**: If there is a CRITICAL issue, implementation MUST NOT proceed
-- **Concrete actions**: Every corrective action should be copy-paste ready
-- **Test verification**: Tasks without tests are automatically CRITICAL
-
-### Context Efficiency
-
-- **Minimum high-signal tokens**: Focus on actionable findings
-- **Progressive disclosure**: Load artifacts incrementally
-- **Efficient output**: Limit findings table to 50 lines
-
-### Analysis Guidelines
-
-- **NEVER modify PRD/techspec/tasks** (read-only)
-- **NEVER hallucinate missing sections** (report accurately)
-- **Prioritize**: Coverage → Dependencies → Tests → Order
-- **Report success gracefully** (emit approval report with metrics)
-
-## Context
-
-$ARGUMENTS
