@@ -121,6 +121,10 @@ L() {
             "rules_copied") echo "rules copiadas" ;;
             "templates_copied") echo "templates copiados" ;;
             "scripts_copied") echo "scripts copiados" ;;
+            "skills") echo "Skills" ;;
+            "skills_copied") echo "skills copiadas" ;;
+            "skills_not_found") echo "Nenhuma skill encontrada" ;;
+            "skills_already_installed") echo "Skills já instaladas" ;;
             # Git
             "git_repo_exists") echo "Repositório Git já existe" ;;
             "repo_initialized") echo "Repositório inicializado" ;;
@@ -264,6 +268,10 @@ L() {
             "rules_copied") echo "rules copied" ;;
             "templates_copied") echo "templates copied" ;;
             "scripts_copied") echo "scripts copied" ;;
+            "skills") echo "Skills" ;;
+            "skills_copied") echo "skills copied" ;;
+            "skills_not_found") echo "No skills found" ;;
+            "skills_already_installed") echo "Skills already installed" ;;
             # Git
             "git_repo_exists") echo "Git repository already exists" ;;
             "repo_initialized") echo "Repository initialized" ;;
@@ -835,6 +843,12 @@ cmd_init_internal() {
     _copy_templates "$target_dir" "$verbose"
     _copy_scripts "$target_dir" "$verbose"
     _copy_documentation "$target_dir" "$ios_mode" "$verbose"
+    
+    # Copy skills only for Windsurf
+    if [[ "$editor" == "windsurf" ]]; then
+        _copy_skills "$target_dir" "$verbose"
+    fi
+    
     _create_makefile "$target_dir" "$ios_mode" "$project_name" "$xcode_template"
 
     # Git
@@ -969,6 +983,11 @@ cmd_install_internal() {
     _copy_templates "$target_dir" "$verbose"
     _copy_scripts "$target_dir" "$verbose"
     _copy_documentation "$target_dir" "$ios_mode" "$verbose"
+    
+    # Copy skills only for Windsurf
+    if [[ "$editor" == "windsurf" ]]; then
+        _copy_skills "$target_dir" "$verbose"
+    fi
 
     # Don't create Makefile if it already exists
     if [[ ! -f "$target_dir/Makefile" ]]; then
@@ -1045,10 +1064,15 @@ cmd_update() {
 
     # Update workflows (always overwrite)
     _copy_workflows "$target_dir" "$editor" "$verbose" true
-
+    
     # Update templates
     _copy_templates "$target_dir" "$verbose" true
-
+    
+    # Update skills only for Windsurf
+    if [[ "$editor" == "windsurf" ]]; then
+        _copy_skills "$target_dir" "$verbose" true
+    fi
+    
     # Update documentation
     if [[ -f "$LIB_DIR/../docs/SPECSWIFT-WORKFLOWS.md" ]]; then
         cp "$LIB_DIR/../docs/SPECSWIFT-WORKFLOWS.md" "$target_dir/_docs/" 2>/dev/null || true
@@ -1650,6 +1674,54 @@ _copy_scripts() {
         fi
     done
     print_info "$count $(L "scripts_copied")"
+}
+
+_copy_skills() {
+    local target="$1"
+    local verbose="${2:-false}"
+    local overwrite="${3:-false}"
+
+    print_header "🎯 $(L "skills")"
+    
+    # Skills são apenas para Windsurf
+    local editor_dir=".windsurf"
+    mkdir -p "$target/$editor_dir/skills"
+
+    # Use skills from the selected language folder
+    local skills_src="$LIB_DIR/skills/$LANG_CODE"
+    # Fallback to English if the specific language folder doesn't exist
+    if [[ ! -d "$skills_src" ]]; then
+        skills_src="$LIB_DIR/skills/en"
+    fi
+
+    local count=0
+    if [[ -d "$skills_src" ]]; then
+        # Iterate through each skill directory
+        for skill_dir in "$skills_src"/*/; do
+            if [[ -d "$skill_dir" ]]; then
+                local skill_name=$(basename "$skill_dir")
+                local target_skill_dir="$target/$editor_dir/skills/$skill_name"
+                
+                # Check if skill already exists
+                if [[ "$overwrite" == true || ! -d "$target_skill_dir" ]]; then
+                    # Copy entire skill directory recursively
+                    cp -R "$skill_dir" "$target/$editor_dir/skills/"
+                    [[ "$verbose" == true ]] && print_success "$skill_name"
+                    ((count++))
+                else
+                    [[ "$verbose" == true ]] && print_dim "  $skill_name ($(L "already_installed"), use --force)"
+                fi
+            fi
+        done
+    fi
+    
+    if [[ $count -gt 0 ]]; then
+        print_info "$count $(L "skills_copied")"
+    else
+        if [[ "$verbose" == true ]]; then
+            print_dim "$(L "skills_not_found")"
+        fi
+    fi
 }
 
 _copy_documentation() {
