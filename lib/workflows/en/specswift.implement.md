@@ -16,7 +16,7 @@ You **MUST** consider user input before proceeding (if not empty).
 
 ## Objective
 
-Execute the implementation plan by processing and executing all tasks defined in `tasks.md`.
+Execute the implementation plan by processing and executing all tasks, unit tests, and acceptance criteria defined in `tasks.md`.
 
 ## Execution Steps
 
@@ -51,8 +51,27 @@ Execute `_docs/scripts/bash/check-prerequisites.sh --json --require-tasks --incl
 - PRD path
 - TECHSPEC path
 - TASKS path
+- REFERENCE_DOCS (object with paths to reference documents)
+- REFERENCE_DOCS_PRESENT (object with presence flags for reference documents)
 
 For single quotes in arguments like "I'm Groot", use escape syntax: e.g. 'I'\''m Groot' (or double quotes if possible: "I'm Groot").
+
+**Load Reference Documents** (when available):
+- **research.md** (REFERENCE_DOCS.RESEARCH): Use to consult technology decisions, library comparisons, and benchmarks
+- **ui-design.md** (REFERENCE_DOCS.UI_DESIGN): Use for UI/UX specifications, components, design tokens, and accessibility
+- **data-model.md** (REFERENCE_DOCS.DATA_MODEL): Use for model definitions, schemas, validations, and migration strategies
+- **quickstart.md** (REFERENCE_DOCS.QUICKSTART): Use for environment setup, dependencies, and development commands
+- **.agent.md** (REFERENCE_DOCS.AGENT_MD): Use for implementation context, active technologies, and project patterns
+- **contracts/** (REFERENCE_DOCS.CONTRACTS_DIR): Use for API specifications, Request/Response models, and error strategies
+
+**Loading Strategy**:
+1. Load all available reference documents (check REFERENCE_DOCS_PRESENT)
+2. Use **progressive disclosure**: load only when needed for a specific task
+3. Prioritize relevant documents for the task type:
+   - UI tasks → ui-design.md, .agent.md
+   - Model tasks → data-model.md, research.md
+   - API tasks → contracts/, data-model.md
+   - Setup tasks → quickstart.md, .agent.md
 
 ### 3. Verify Project Setup
 
@@ -79,24 +98,41 @@ For each phase in order (Setup → Foundational → User Stories → Polish):
    - For parallel tasks [P]: Can execute concurrently within the same phase
 3. **For Each Task**:
    - Announce task ID and description
-   - Implement necessary changes
-   - Run relevant tests
-   - Mark task as complete in tasks.md by changing `[ ]` to `[x]`
+   - Implement the changes following the TDD Approach (detailed below)
+   - Mark unit tests as complete in tasks.md by changing `[ ]` to `[x]` ONLY after successful test execution
+   - Mark task as complete in tasks.md by changing `[ ]` to `[x]` ONLY after acceptance criteria is confirmed
+   - Mark task as complete in tasks.md by changing `[ ]` to `[x]` ONLY after success in all tests and acceptance criteria
    - Commit changes with message: `feat([SHORT_NAME]): [Task ID] - Brief description`
 
 #### Task Implementation Steps (TDD Approach)
 
-For each task, follow these steps:
+For each task, strictly follow these steps to ensure all requirements and tests are ready:
 
-1. **Write Tests**: Implement the tests defined in the task and verify they FAIL.
-2. **Implement Code**: Write the minimum code necessary to make the tests PASS.
-3. **Refactor**: Improve code quality while keeping tests green.
-4. **Verify**: Run all relevant tests using `make test`.
-5. **Quality Check**:
+1. **Consult Reference Documents**: Before implementing, consult relevant reference documents:
+   - **For UI tasks**: Consult `ui-design.md` for component specifications, design tokens, accessibility, and layout patterns
+   - **For model tasks**: Consult `data-model.md` for model definitions and validations, and `research.md` for technology decisions
+   - **For API tasks**: Consult `contracts/` for endpoint specifications and `data-model.md` for Request/Response models
+   - **For setup tasks**: Consult `quickstart.md` for dependencies and configurations
+   - **Always**: Consult `.agent.md` for project context, active technologies, and architectural patterns
+
+2. **Write Tests**: Implement the unit tests defined in the task and verify they FAIL initially (Red). Use reference documents to ensure tests cover all specifications.
+
+3. **Implement Code**: Write the minimum code necessary to make the tests PASS (Green). Follow specifications from reference documents:
+   - Use design tokens from `ui-design.md` when implementing UI
+   - Follow models and validations from `data-model.md` when implementing data structures
+   - Implement API contracts as specified in `contracts/`
+   - Respect technology decisions documented in `research.md`
+
+4. **Refactor**: Improve code quality while keeping tests passing (Refactor). Verify compliance with patterns in `.agent.md`.
+
+5. **Verify**: Run all relevant tests using `make test` to ensure nothing was broken.
+
+6. **Quality Check**:
    - Run `make build` to ensure no compilation errors
    - Run `make test` for the affected module/target
    - Ensure compliance with `.cursor/rules/` or `.windsurf/rules/` (Swift style, concurrency, etc., depending on your IDE)
-   - **CRITICAL**: A task can only be marked as complete if the code compiles AND all tests (new and existing) pass.
+   - Verify compliance with specifications from reference documents
+   - **CRITICAL**: A task can only be marked as complete if the code compiles AND all tests (new and existing) pass AND it conforms to reference document specifications.
 
 ### 6. Progress Tracking
 
@@ -132,6 +168,21 @@ When all tasks are complete:
 - If user stories can be implemented independently, they can be done in any order
 - Polish phase tasks should run only after all user stories pass their tests
 - **IMPORTANT**: For completed tasks, ensure you mark the task as [X] in the tasks file
+- **Use reference documents as source of truth**: Consult reference documents before and during implementation to ensure compliance with technical specifications
+- **Prioritize reference documents over inferences**: If there's ambiguity in the task, consult reference documents first before making assumptions
+
+## Use of Reference Documents
+
+Reference documents created by `/specswift.create-techspec` provide essential context for implementation:
+
+- **research.md**: Technology decisions, library comparisons, and benchmarks - consult when choosing dependencies or patterns
+- **ui-design.md**: Detailed UI/UX specifications - consult to implement components, use design tokens, and ensure accessibility
+- **data-model.md**: Model definitions and validations - consult to implement data structures correctly
+- **quickstart.md**: Setup and dependencies - consult to configure environment and install necessary dependencies
+- **.agent.md**: Project context and patterns - consult to understand active technologies and architectural patterns
+- **contracts/**: API specifications - consult to implement network integrations correctly
+
+**When a reference document doesn't exist**: If `REFERENCE_DOCS_PRESENT` indicates a document is not available, use TECHSPEC and PRD as alternative context sources.
 
 ## Implementation Guidelines
 

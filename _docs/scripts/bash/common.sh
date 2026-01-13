@@ -141,8 +141,10 @@ FEATURE_SPEC='$prd'
 IMPL_PLAN='$techspec'
 TASKS='$feature_dir/tasks.md'
 RESEARCH='$feature_dir/research.md'
+UI_DESIGN='$feature_dir/ui-design.md'
 DATA_MODEL='$feature_dir/data-model.md'
 QUICKSTART='$feature_dir/quickstart.md'
+AGENT_MD='$feature_dir/.agent.md'
 CONTRACTS_DIR='$feature_dir/contracts'
 EOF
 }

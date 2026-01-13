@@ -85,9 +85,20 @@ Se precisar ler, use esta ordem de prioridade:
 
 Se apenas PRD existir, gere tarefas baseadas em histórias de usuário e requisitos. Se techspec existir, use-o para informar o breakdown técnico de tarefas.
 
+**CRÍTICO: Cobertura do TechSpec**: Todas as decisões técnicas e especificações do techspec DEVEM estar refletidas nas tarefas. Isso inclui:
+- Decisões de arquitetura (padrões, frameworks, bibliotecas)
+- Especificações de modelo de dados
+- Contratos de API e endpoints
+- Especificações de componentes UI/UX
+- Requisitos de performance
+- Considerações de segurança
+- Qualquer outra restrição técnica ou decisão documentada no techspec
+
 ### 3. Fluxo de Geração de Tarefas
 
 **CRÍTICO: Tarefas DEVEM ser organizadas por história de usuário.**
+
+**CRÍTICO: Cobertura do Fluxo Crítico**: Garanta que todos os passos do fluxo crítico definido no PRD estejam cobertos por tarefas. O fluxo crítico representa a jornada principal do usuário e deve ser totalmente implementado.
 
 Para cada história de usuário no PRD:
 
@@ -98,6 +109,7 @@ Para cada história de usuário no PRD:
    - Incluam mudanças de modelo de dados necessárias
    - Incluam integrações de API se aplicável
    - Incluam testes para a funcionalidade
+   - **Cubram todos os passos do fluxo crítico** (se a história faz parte do fluxo crítico)
 3. **Análise de Dependências e Bloqueios**:
    - **Dependências Externas**: Identifique se a história depende de tarefas da fase Foundational ou de outras histórias.
    - **Bloqueios Internos**: Dentro da história, ordene tarefas de forma lógica (ex: Model -> Service -> UI).
@@ -153,7 +165,7 @@ Cada tarefa DEVE seguir este formato estruturado para passar no gate de análise
 ```markdown
 - [ ] T001 [P] [US1] Descrição clara e acionável em [Caminho]/file.swift
   - **Critérios de Aceitação**:
-    - [ ] Critério do PRD atendido
+    - [ ] Critério do PRD atendido (referência: FR-001 ou NFR-001)
   - **Testes Unitários**:
     - [ ] `test_funcionalidade_cenario_esperado`
 ```
@@ -165,6 +177,11 @@ Cada tarefa DEVE seguir este formato estruturado para passar no gate de análise
 - Use "Depende de" apenas quando houver uma dependência bloqueante real
 - Marque com [P] se a tarefa puder rodar em paralelo com a tarefa anterior
 
+**Referências a Requisitos do PRD**:
+- **OBRIGATÓRIO**: Para validação determinística de cobertura do PRD por `/specswift.analyze`, as tarefas DEVEM referenciar IDs de requisitos do PRD (ex: `FR-001`, `NFR-001`) dentro da descrição da tarefa ou dos critérios de aceitação.
+- Inclua o ID do requisito na seção de Critérios de Aceitação: `- [ ] Critério do PRD atendido (referência: FR-001)`
+- Isso permite validação automatizada de cobertura de requisitos.
+
 **Testes Unitários**:
 - OBRIGATÓRIO incluir a seção `Testes Unitários` para todas as tarefas que envolvem código (Models, ViewModels, Logic).
 - Liste os nomes dos métodos de teste planejados.
@@ -173,8 +190,10 @@ Cada tarefa DEVE seguir este formato estruturado para passar no gate de análise
 
 Antes de salvar, verifique:
 - [ ] Todas as histórias de usuário do PRD têm seções de tarefa correspondentes
+- [ ] **Todos os passos do fluxo crítico do PRD estão cobertos por tarefas**
 - [ ] Cada tarefa tem uma descrição clara e acionável
 - [ ] Todas as tarefas de implementação possuem seções de `Critérios de Aceitação` e `Testes Unitários` preenchidas
+- [ ] **Todos os Critérios de Aceitação referenciam IDs de requisitos do PRD (FR-001, NFR-001) para validação determinística**
 - [ ] Caminhos de arquivo seguem convenções de projeto
 - [ ] Dependências são lógicas e não criam ciclos
 - [ ] Tarefas marcadas como [P] não possuem bloqueios anteriores imediatos
@@ -224,11 +243,12 @@ Toda tarefa DEVE seguir estritamente este formato aninhado:
   ```markdown
   - [ ] T012 [P] [US1] Criar modelo User em [Caminho]/Models/User.swift
     - **Critérios de Aceitação**:
-      - [ ] Campos id, name, email mapeados corretamente
+      - [ ] Campos id, name, email mapeados corretamente (referência: FR-001)
     - **Testes Unitários**:
       - [ ] `test_user_mapping_valid_json()`
   ```
 - ❌ ERRADO: `- [ ] T001 Criar modelo User` (faltando sub-seções)
+- ❌ ERRADO: Faltando referência ao ID do requisito do PRD nos Critérios de Aceitação
 
 ### Organização de Tarefas
 

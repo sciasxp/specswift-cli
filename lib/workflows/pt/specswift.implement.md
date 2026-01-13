@@ -16,7 +16,7 @@ Você **DEVE** considerar a entrada do usuário antes de prosseguir (se não est
 
 ## Objetivo
 
-Executar o plano de implementação processando e executando todas as tarefas definidas em `tasks.md`.
+Executar o plano de implementação processando e executando todas as tarefas, testes unitários e critérios de aceite definidas em `tasks.md`.
 
 ## Passos de Execução
 
@@ -51,7 +51,27 @@ Execute `_docs/scripts/bash/check-prerequisites.sh --json --require-tasks --incl
 - Caminho do PRD
 - Caminho do TECHSPEC  
 - Caminho do TASKS
+- REFERENCE_DOCS (objeto com paths dos documentos de referência)
+- REFERENCE_DOCS_PRESENT (objeto com flags de presença dos documentos)
+
 Para aspas simples em argumentos como "I'm Groot", use sintaxe de escape: ex. 'I'\''m Groot' (ou aspas duplas se possível: "I'm Groot").
+
+**Carregar Documentos de Referência** (quando disponíveis):
+- **research.md** (REFERENCE_DOCS.RESEARCH): Use para consultar decisões de tecnologia, comparações de bibliotecas e benchmarks
+- **ui-design.md** (REFERENCE_DOCS.UI_DESIGN): Use para especificações de UI/UX, componentes, tokens de design e acessibilidade
+- **data-model.md** (REFERENCE_DOCS.DATA_MODEL): Use para definições de modelos, schemas, validações e estratégias de migração
+- **quickstart.md** (REFERENCE_DOCS.QUICKSTART): Use para setup do ambiente, dependências e comandos de desenvolvimento
+- **.agent.md** (REFERENCE_DOCS.AGENT_MD): Use para contexto de implementação, tecnologias ativas e padrões do projeto
+- **contracts/** (REFERENCE_DOCS.CONTRACTS_DIR): Use para especificações de API, modelos Request/Response e estratégias de erro
+
+**Estratégia de Carregamento**:
+1. Carregue todos os documentos de referência disponíveis (verifique REFERENCE_DOCS_PRESENT)
+2. Use **progressive disclosure**: carregue apenas quando necessário para uma tarefa específica
+3. Priorize documentos relevantes para o tipo de tarefa:
+   - Tarefas de UI → ui-design.md, .agent.md
+   - Tarefas de modelo → data-model.md, research.md
+   - Tarefas de API → contracts/, data-model.md
+   - Tarefas de setup → quickstart.md, .agent.md
 
 ### 3. Verificar Setup do Projeto
 
@@ -79,22 +99,40 @@ Para cada fase em ordem (Setup → Foundational → User Stories → Polish):
 3. **Para Cada Tarefa**:
    - Anuncie ID da tarefa e descrição
    - Implemente as mudanças seguindo a Abordagem TDD (detalhada abaixo)
-   - Marque tarefa como completa em tasks.md alterando `[ ]` para `[x]` SOMENTE após sucesso em todos os testes
+   - Marque testes unitários como completa em tasks.md alterando `[ ]` para `[x]` SOMENTE após sucesso na execução dos testes
+   - Marque tarefa como completa em tasks.md alterando `[ ]` para `[x]` SOMENTE após critério de aceite confirmado.
+   - Marque tarefa como completa em tasks.md alterando `[ ]` para `[x]` SOMENTE após sucesso em todos os testes e critérios de aceite.
    - Commite mudanças com mensagem: `feat([SHORT_NAME]): [Task ID] - Breve descrição`
 
 #### Passos de Implementação da Tarefa (Abordagem TDD)
 
 Para cada tarefa, siga rigorosamente estes passos para garantir que todos os requisitos e testes estejam prontos:
 
-1. **Escrever Testes**: Implemente os testes unitários definidos na tarefa e verifique se eles FALHAM inicialmente (Red).
-2. **Implementar Código**: Escreva o código mínimo necessário para fazer os testes PASSAREM (Green).
-3. **Refatorar**: Melhore a qualidade do código mantendo os testes passando (Refactor).
-4. **Verificar**: Execute todos os testes relevantes usando `make test` para garantir que nada foi quebrado.
-5. **Checagem de Qualidade**:
+1. **Consultar Documentos de Referência**: Antes de implementar, consulte os documentos de referência relevantes:
+   - **Para tarefas de UI**: Consulte `ui-design.md` para especificações de componentes, tokens de design, acessibilidade e padrões de layout
+   - **Para tarefas de modelo**: Consulte `data-model.md` para definições de modelos, validações e `research.md` para decisões de tecnologia
+   - **Para tarefas de API**: Consulte `contracts/` para especificações de endpoints e `data-model.md` para modelos Request/Response
+   - **Para tarefas de setup**: Consulte `quickstart.md` para dependências e configurações
+   - **Sempre**: Consulte `.agent.md` para contexto do projeto, tecnologias ativas e padrões arquiteturais
+
+2. **Escrever Testes**: Implemente os testes unitários definidos na tarefa e verifique se eles FALHAM inicialmente (Red). Use os documentos de referência para garantir que os testes cobrem todas as especificações.
+
+3. **Implementar Código**: Escreva o código mínimo necessário para fazer os testes PASSAREM (Green). Siga as especificações dos documentos de referência:
+   - Use tokens de design de `ui-design.md` quando implementar UI
+   - Siga modelos e validações de `data-model.md` quando implementar estruturas de dados
+   - Implemente contratos de API conforme especificado em `contracts/`
+   - Respeite decisões de tecnologia documentadas em `research.md`
+
+4. **Refatorar**: Melhore a qualidade do código mantendo os testes passando (Refactor). Verifique conformidade com padrões em `.agent.md`.
+
+5. **Verificar**: Execute todos os testes relevantes usando `make test` para garantir que nada foi quebrado.
+
+6. **Checagem de Qualidade**:
    - Execute `make build` para garantir que não há erros de compilação
    - Execute `make test` para o módulo/target afetado
    - Garanta conformidade com `.cursor/rules/` ou `.windsurf/rules/` (estilo Swift, concorrência, etc., dependendo do seu IDE)
-   - **CRÍTICO**: Uma tarefa só pode ser marcada como completa se o código compilar E todos os testes (novos e existentes) passarem.
+   - Verifique conformidade com especificações dos documentos de referência
+   - **CRÍTICO**: Uma tarefa só pode ser marcada como completa se o código compilar E todos os testes (novos e existentes) passarem E estiver conforme as especificações dos documentos de referência.
 
 ### 6. Rastreamento de Progresso
 
@@ -130,5 +168,20 @@ Quando todas as tarefas estiverem completas:
 - Se user stories puderem ser implementadas independentemente, podem ser feitas em qualquer ordem
 - Tarefas da fase Polish devem rodar apenas após todas as user stories passarem seus testes
 - **IMPORTANTE**: Para tarefas concluídas, certifique-se de marcar a tarefa como [X] no arquivo tasks
+- **Use documentos de referência como fonte de verdade**: Consulte os documentos de referência antes e durante a implementação para garantir conformidade com especificações técnicas
+- **Priorize documentos de referência sobre inferências**: Se houver ambiguidade na tarefa, consulte primeiro os documentos de referência antes de fazer suposições
+
+## Uso de Documentos de Referência
+
+Os documentos de referência criados pelo `/specswift.create-techspec` fornecem contexto essencial para a implementação:
+
+- **research.md**: Decisões de tecnologia, comparações de bibliotecas e benchmarks - consulte ao escolher dependências ou padrões
+- **ui-design.md**: Especificações detalhadas de UI/UX - consulte para implementar componentes, usar tokens de design e garantir acessibilidade
+- **data-model.md**: Definições de modelos e validações - consulte para implementar estruturas de dados corretamente
+- **quickstart.md**: Setup e dependências - consulte para configurar ambiente e instalar dependências necessárias
+- **.agent.md**: Contexto do projeto e padrões - consulte para entender tecnologias ativas e padrões arquiteturais
+- **contracts/**: Especificações de API - consulte para implementar integrações de rede corretamente
+
+**Quando um documento de referência não existe**: Se `REFERENCE_DOCS_PRESENT` indicar que um documento não está disponível, use o TECHSPEC e PRD como fontes alternativas de contexto.
 
 Nota: Este comando assume que existe um breakdown completo de tarefas em tasks.md. Se tarefas estiverem incompletas ou faltando, sugira executar `/specswift.tasks` primeiro para regenerar a lista de tarefas.

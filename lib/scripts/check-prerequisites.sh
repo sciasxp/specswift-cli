@@ -63,6 +63,43 @@ if [[ "$JSON" == true ]]; then
         present=false
         [[ -f "$TASKS" ]] && present=true
         printf ',"TASKS_PRESENT":%s' "$present"
+        
+        # Include reference documents paths
+        printf ',"REFERENCE_DOCS":{'
+        printf '"RESEARCH":"%s",' "$RESEARCH"
+        printf '"UI_DESIGN":"%s",' "$UI_DESIGN"
+        printf '"DATA_MODEL":"%s",' "$DATA_MODEL"
+        printf '"QUICKSTART":"%s",' "$QUICKSTART"
+        printf '"AGENT_MD":"%s",' "$AGENT_MD"
+        printf '"CONTRACTS_DIR":"%s"' "$CONTRACTS_DIR"
+        printf '}'
+        
+        # Include presence flags for reference documents
+        printf ',"REFERENCE_DOCS_PRESENT":{'
+        research_present=false
+        [[ -f "$RESEARCH" ]] && research_present=true
+        printf '"RESEARCH":%s,' "$research_present"
+        
+        ui_design_present=false
+        [[ -f "$UI_DESIGN" ]] && ui_design_present=true
+        printf '"UI_DESIGN":%s,' "$ui_design_present"
+        
+        data_model_present=false
+        [[ -f "$DATA_MODEL" ]] && data_model_present=true
+        printf '"DATA_MODEL":%s,' "$data_model_present"
+        
+        quickstart_present=false
+        [[ -f "$QUICKSTART" ]] && quickstart_present=true
+        printf '"QUICKSTART":%s,' "$quickstart_present"
+        
+        agent_md_present=false
+        [[ -f "$AGENT_MD" ]] && agent_md_present=true
+        printf '"AGENT_MD":%s,' "$agent_md_present"
+        
+        contracts_dir_present=false
+        [[ -d "$CONTRACTS_DIR" && -n $(ls -A "$CONTRACTS_DIR" 2>/dev/null) ]] && contracts_dir_present=true
+        printf '"CONTRACTS_DIR":%s' "$contracts_dir_present"
+        printf '}'
     fi
 
     printf '}'

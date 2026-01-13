@@ -85,9 +85,20 @@ If you need to read, use this priority order:
 
 If only PRD exists, generate tasks based on user stories and requirements. If techspec exists, use it to inform the technical task breakdown.
 
+**CRITICAL: TechSpec Coverage**: All technical decisions and specifications from the techspec MUST be reflected in the tasks. This includes:
+- Architecture decisions (patterns, frameworks, libraries)
+- Data model specifications
+- API contracts and endpoints
+- UI/UX component specifications
+- Performance requirements
+- Security considerations
+- Any other technical constraints or decisions documented in the techspec
+
 ### 3. Task Generation Flow
 
 **CRITICAL: Tasks MUST be organized by user story.**
+
+**CRITICAL: Critical Flow Coverage**: Ensure all steps of the critical flow defined in the PRD are covered by tasks. The critical flow represents the primary user journey and must be fully implemented.
 
 For each user story in the PRD:
 
@@ -98,6 +109,7 @@ For each user story in the PRD:
    - Include necessary data model changes
    - Include API integrations if applicable
    - Include tests for the functionality
+   - **Cover all steps of the critical flow** (if the story is part of the critical flow)
 3. **Dependency and Blocking Analysis**:
    - **External Dependencies**: Identify if the story depends on Foundational phase tasks or other stories.
    - **Internal Blockers**: Within the story, order tasks logically (e.g., Model -> Service -> UI).
@@ -153,7 +165,7 @@ Each task MUST follow this structured format to pass the analysis gate:
 ```markdown
 - [ ] T001 [P] [US1] Clear and actionable description in [Path]/file.swift
   - **Acceptance Criteria**:
-    - [ ] PRD criterion met
+    - [ ] PRD criterion met (reference: FR-001 or NFR-001)
   - **Unit Tests**:
     - [ ] `test_functionality_scenario_expected`
 ```
@@ -165,6 +177,11 @@ Each task MUST follow this structured format to pass the analysis gate:
 - Use "Depends on" only when there's a real blocking dependency
 - Mark with [P] if the task can run in parallel with the previous task
 
+**PRD Requirement References**:
+- **MANDATORY**: For deterministic PRD coverage validation by `/specswift.analyze`, tasks MUST reference PRD requirement IDs (e.g., `FR-001`, `NFR-001`) inside the task description or acceptance criteria.
+- Include the requirement ID in the Acceptance Criteria section: `- [ ] PRD criterion met (reference: FR-001)`
+- This enables automated validation of requirement coverage.
+
 **Unit Tests**:
 - MANDATORY to include the `Unit Tests` section for all tasks involving code (Models, ViewModels, Logic).
 - List the names of planned test methods.
@@ -173,8 +190,10 @@ Each task MUST follow this structured format to pass the analysis gate:
 
 Before saving, verify:
 - [ ] All PRD user stories have corresponding task sections
+- [ ] **All steps of the critical flow from the PRD are covered by tasks**
 - [ ] Each task has a clear and actionable description
 - [ ] All implementation tasks have filled `Acceptance Criteria` and `Unit Tests` sections
+- [ ] **All Acceptance Criteria reference PRD requirement IDs (FR-001, NFR-001) for deterministic validation**
 - [ ] File paths follow project conventions
 - [ ] Dependencies are logical and don't create cycles
 - [ ] Tasks marked as [P] do not have immediate preceding blockers
@@ -224,11 +243,12 @@ Every task MUST strictly follow this nested format:
   ```markdown
   - [ ] T012 [P] [US1] Create User model in [Path]/Models/User.swift
     - **Acceptance Criteria**:
-      - [ ] Fields id, name, email mapped correctly
+      - [ ] Fields id, name, email mapped correctly (reference: FR-001)
     - **Unit Tests**:
       - [ ] `test_user_mapping_valid_json()`
   ```
 - ❌ WRONG: `- [ ] T001 Create User model` (missing sub-sections)
+- ❌ WRONG: Missing PRD requirement ID reference in Acceptance Criteria
 
 ### Task Organization
 
