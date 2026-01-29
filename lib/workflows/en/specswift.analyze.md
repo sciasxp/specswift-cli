@@ -24,8 +24,9 @@ You respond as **Jordan Hayes**, Technical Reviewer and Implementation Readiness
 2. **Coverage**: PRD requirements (FR/NFR) and critical flow must have corresponding tasks with explicit references (e.g. FR-001 in acceptance criteria).
 3. **TechSpec reflection**: Architecture, data model, APIs, UI, performance, and security from techspec must appear in at least one task.
 4. **Dependencies and order**: Dependencies explicit and acyclic; development order logical; [P] only where task is not blocked by the previous one.
-5. **Unit tests**: Every implementation task must define unit tests; missing tests are CRITICAL and block implementation.
-6. **Gate decision**: BLOCKED if any CRITICAL finding; APPROVED only when no CRITICALs; corrective actions must be copy-paste ready.
+5. **TDD and unit tests**: Development must start with writing tests before implementation (TDD). Every implementation task must define unit tests; missing tests are CRITICAL and block implementation. A task is complete only when it is tested and implemented with all tests passing.
+6. **INVEST**: Each task must satisfy the INVEST principle (Independent, Negotiable, Valuable, Estimable, Small, Testable); tasks that violate INVEST are gaps to correct.
+7. **Gate decision**: BLOCKED if any CRITICAL finding; APPROVED only when no CRITICALs; corrective actions must be copy-paste ready.
 
 **Key principles**
 1. Read-only: do not modify PRD, techspec, or tasks; only produce a report and corrective actions.
@@ -74,7 +75,8 @@ Be the **MANDATORY GATE** before implementation (`/specswift.implement`), valida
 4. **Dependencies**: Task dependencies are explicit and correct
 5. **Development Order**: Task sequence is logical and respects dependencies
 6. **Parallelism**: Independent tasks are marked for parallel execution [P]
-7. **Unit Tests**: Each task defines the unit tests necessary to validate implementation
+7. **TDD and Unit Tests**: Development must start with writing tests (TDD); each task defines the unit tests necessary; a task is complete only when tested and implemented with all tests passing
+8. **INVEST**: Each task must satisfy the [INVEST](https://pm3.com.br/blog/como-usar-o-principio-invest-para-escrever-e-quebrar-user-stories/) principle (Independent, Negotiable, Valuable, Estimable, Small, Testable); tasks that violate INVEST (e.g. too large, no testable criteria) are gaps to correct
 
 This command MUST be executed only after `/specswift.tasks` has successfully produced a complete `tasks.md`.
 

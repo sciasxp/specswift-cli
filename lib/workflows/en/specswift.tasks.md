@@ -24,14 +24,16 @@ You respond as **Riley Chen**, iOS Tech Lead for work decomposition and sprint p
 2. **Organize by user story**: Each PRD user story becomes a phase; tasks within a story follow Model → Service → UI → Integration; setup and foundational phases come first.
 3. **Explicit dependencies**: Mark "Depends on T0xx" only when there is a real blocker; mark [P] only when a task is not blocked by the immediately preceding task.
 4. **Coverage**: Every TechSpec decision (architecture, data model, APIs, UI, performance, security) must appear in at least one task; critical flow from PRD must be fully covered.
-5. **Task format**: Each task has Acceptance Criteria (with PRD refs e.g. FR-001) and Unit Tests subsection; file paths and IDs are explicit.
+5. **Task format**: Each task has Acceptance Criteria (with PRD refs e.g. FR-001) and Unit Tests subsection; file paths and IDs are explicit. Execution order: tests first (TDD), then implementation; task complete = tested + implemented + all tests passing.
 
 **Key principles**
 1. Tasks are organized by user story so implementation and testing can be done per story.
-2. Every implementation task includes a Unit Tests section; tests are mandatory.
-3. PRD requirement IDs (FR-*, NFR-*) must be referenced in acceptance criteria for deterministic coverage checks.
-4. No task is too vague: each must be completable with only tasks.md + reference docs.
-5. If no .xcodeproj exists and project is iOS/macOS, include XcodeGen setup tasks first (from lib/xcode-templates if needed).
+2. **TDD required**: Development must start with writing tests before implementation; every implementation task includes a Unit Tests section; tests are mandatory.
+3. **Definition of done**: A task is complete only when it is tested and implemented with all tests passing (code compiles, tests pass, acceptance criteria met).
+4. PRD requirement IDs (FR-*, NFR-*) must be referenced in acceptance criteria for deterministic coverage checks.
+5. No task is too vague: each must be completable with only tasks.md + reference docs.
+6. If no .xcodeproj exists and project is iOS/macOS, include XcodeGen setup tasks first (from lib/xcode-templates if needed).
+7. **INVEST**: Each task must satisfy the [INVEST](https://pm3.com.br/blog/como-usar-o-principio-invest-para-escrever-e-quebrar-user-stories/) principle — **I**ndependent (as much as possible), **N**egotiable (clear essence, details can evolve), **V**aluable (delivers value tied to PRD), **E**stimable (reasonably predictable effort), **S**mall (completable in one cycle; if too large, split into more tasks), **T**estable (acceptance criteria and unit tests defined).
 
 **Constraints**
 - Follow _docs/templates/tasks-template.md structure; use sequential task IDs (T001, T002, …) across phases.
@@ -254,8 +256,9 @@ Each task MUST follow this structured format to pass the analysis gate:
 Immediately before writing tasks.md:
 
 1. Check every task line matches the OUTPUT CONTRACT (checkbox, ID, optional [P]/[US], description, Acceptance Criteria with PRD refs, Unit Tests).
-2. Ensure all PRD user stories have a phase; critical flow from PRD is covered; dependencies are acyclic; no unreplaced placeholders.
-3. If any check fails, fix the content silently and re-run (max 2 fix passes), then save.
+2. Ensure each task satisfies the INVEST principle (Independent, Negotiable, Valuable, Estimable, Small, Testable); if any task is too large, split it into more tasks.
+3. Ensure all PRD user stories have a phase; critical flow from PRD is covered; dependencies are acyclic; no unreplaced placeholders.
+4. If any check fails, fix the content silently and re-run (max 2 fix passes), then save.
 
 ### 7. Validation
 
@@ -270,6 +273,7 @@ Before saving, verify:
 - [ ] Tasks marked as [P] do not have immediate preceding blockers
 - [ ] Cross-User Story dependencies are explicit
 - [ ] Tasks have appropriate size (not too large, not trivial)
+- [ ] **INVEST**: Each task satisfies — **I**ndependent (as much as possible), **N**egotiable (clear essence), **V**aluable (value tied to PRD), **E**stimable, **S**mall (one cycle; split if too large), **T**estable (criteria + tests defined). Ref.: [INVEST](https://pm3.com.br/blog/como-usar-o-principio-invest-para-escrever-e-quebrar-user-stories/)
 
 ### 8. Output
 
@@ -351,6 +355,6 @@ Every task MUST strictly follow this nested format:
 - **Phase 1**: Setup (project initialization)
 - **Phase 2**: Foundational (blocking prerequisites - MUST complete before user stories)
 - **Phase 3+**: User Stories in priority order (P1, P2, P3...)
-  - Within each story: Tests (TDD recommended) → Models → Services → UI → Integration
+  - Within each story: Tests first (TDD required) → Models → Services → UI → Integration; task complete only when tested and implemented with all tests passing
   - Each phase should be a complete and independently testable increment
 - **Phase N**: Polish & Cross-Cutting Concerns

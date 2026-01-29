@@ -155,6 +155,12 @@ The main flow is ideal for features that require human review and conscious deci
 **Generated Artifacts**:
 - `tasks.md` - Task list with dependencies and tests
 
+**TDD and Definition of Done**:
+- Development must start with writing tests before implementation (TDD).
+- A task is complete only when it is tested and implemented with all tests passing.
+
+**INVEST**: Each task must satisfy the [INVEST](https://pm3.com.br/blog/como-usar-o-principio-invest-para-escrever-e-quebrar-user-stories/) principle — Independent (as much as possible), Negotiable (clear essence), Valuable (value tied to PRD), Estimable, Small (one cycle; split if too large), Testable (acceptance criteria + unit tests defined).
+
 **Next Steps**:
 - `/specswift.analyze` - Validate coverage (recommended)
 - `/specswift.implement` - Implement directly
@@ -169,6 +175,10 @@ The main flow is ideal for features that require human review and conscious deci
 ```
 /specswift.analyze
 ```
+
+**TDD and Task Completion**:
+- Development must start with writing tests before implementation (TDD).
+- A task is complete only when it is tested and implemented with all tests passing; the gate validates that tasks define unit tests and are ready for TDD execution.
 
 **Result**:
 - 🟢 **APPROVED** - Ready for implementation
@@ -189,10 +199,16 @@ The main flow is ideal for features that require human review and conscious deci
 /specswift.implement
 ```
 
+**TDD and Phase-by-Phase**:
+- Development must start with writing tests before implementation (TDD).
+- A task is complete only when it is tested and implemented with all tests passing.
+- Focus on one Phase at a time; when concluding a phase (definition of done): verify `tasks.md` is updated and coherent with what was done, and generate a commit message for the phase.
+
 **Result**:
 - Code implemented
-- Tests executed
-- Tasks marked as completed
+- Tests executed (TDD: tests first, then implementation)
+- Tasks marked as completed only when tested and all tests pass
+- Per-phase: tasks.md coherence check and suggested commit message
 
 **Next Step**: `/specswift.retro`
 
@@ -363,11 +379,13 @@ create-prd --type fix → create-techspec → tasks → implement → retro
 
 2. **Use the Gate (analyze)** - Avoid rework by validating coverage before implementing
 
-3. **Review YOLO decisions** - Automatic mode makes conservative decisions, review if necessary
+3. **TDD and definition of done** - Development must start with writing tests before implementation; a task is complete only when tested and implemented with all tests passing. Implement one phase at a time; at phase completion, verify tasks.md and generate a commit message.
 
-4. **Keep artifacts updated** - If scope changes, update PRD and propagate to TechSpec
+4. **Review YOLO decisions** - Automatic mode makes conservative decisions, review if necessary
 
-5. **Use clarify when needed** - Better to ask now than rework later
+5. **Keep artifacts updated** - If scope changes, update PRD and propagate to TechSpec
+
+6. **Use clarify when needed** - Better to ask now than rework later
 
 ---
 
@@ -518,6 +536,12 @@ O fluxo principal é ideal para features que requerem revisão humana e decisõe
 **Artefatos Gerados**:
 - `tasks.md` - Lista de tarefas com dependências e testes
 
+**TDD e Definição de Pronto**:
+- O desenvolvimento deve começar com a escrita de testes antes de iniciar a implementação (TDD).
+- Uma task só está completa quando estiver testada e implementada com todos os testes passando.
+
+**INVEST**: Cada task deve atender ao princípio [INVEST](https://pm3.com.br/blog/como-usar-o-principio-invest-para-escrever-e-quebrar-user-stories/) — Independente (quanto possível), Negociável (essência clara), Valorosa (valor ligado ao PRD), Estimável, Pequena (um ciclo; quebrar se grande), Testável (critérios de aceitação + testes unitários definidos).
+
 **Próximos Passos**:
 - `/specswift.analyze` - Validar cobertura (recomendado)
 - `/specswift.implement` - Implementar diretamente
@@ -532,6 +556,10 @@ O fluxo principal é ideal para features que requerem revisão humana e decisõe
 ```
 /specswift.analyze
 ```
+
+**TDD e Conclusão de Task**:
+- O desenvolvimento deve começar com a escrita de testes antes da implementação (TDD).
+- Uma task só está completa quando estiver testada e implementada com todos os testes passando; o gate valida que as tasks definem testes unitários e estão prontas para execução TDD.
 
 **Resultado**:
 - 🟢 **APROVADO** - Pronto para implementação
@@ -552,10 +580,16 @@ O fluxo principal é ideal para features que requerem revisão humana e decisõe
 /specswift.implement
 ```
 
+**TDD e Fase por Fase**:
+- O desenvolvimento deve começar com a escrita de testes antes da implementação (TDD).
+- Uma task só está completa quando estiver testada e implementada com todos os testes passando.
+- Concentrar a implementação em uma Fase por vez; ao concluir a fase (definição de pronto): verificar se `tasks.md` está atualizado e coerente com o que foi feito e gerar uma mensagem de commit para a fase.
+
 **Resultado**:
 - Código implementado
-- Testes executados
-- Tasks marcadas como concluídas
+- Testes executados (TDD: testes primeiro, depois implementação)
+- Tasks marcadas como concluídas somente quando testadas e todos os testes passam
+- Por fase: verificação de coerência do tasks.md e mensagem de commit sugerida
 
 **Próximo Passo**: `/specswift.retro`
 
@@ -726,8 +760,10 @@ create-prd --type fix → create-techspec → tasks → implement → retro
 
 2. **Use o Gate (analyze)** - Evita retrabalho ao validar cobertura antes de implementar
 
-3. **Revise decisões do YOLO** - O modo automático toma decisões conservadoras, revise se necessário
+3. **TDD e definição de pronto** - O desenvolvimento deve começar com a escrita de testes antes da implementação; uma task só está completa quando testada e implementada com todos os testes passando. Implemente uma fase por vez; ao concluir a fase, verifique o tasks.md e gere uma mensagem de commit.
 
-4. **Mantenha artefatos atualizados** - Se o escopo mudar, atualize PRD e propague para TechSpec
+4. **Revise decisões do YOLO** - O modo automático toma decisões conservadoras, revise se necessário
 
-5. **Use clarify quando necessário** - Melhor perguntar agora do que retrabalhar depois
+5. **Mantenha artefatos atualizados** - Se o escopo mudar, atualize PRD e propague para TechSpec
+
+6. **Use clarify quando necessário** - Melhor perguntar agora do que retrabalhar depois

@@ -239,9 +239,9 @@ windsurf .  # if you selected Windsurf
 | `/specswift.create-prd`        | Create PRD (Product Requirements Document)            |
 | `/specswift.clarify`           | Clarify PRD ambiguities                               |
 | `/specswift.create-techspec`   | Create technical specification                        |
-| `/specswift.tasks`             | Generate task list                                    |
-| `/specswift.analyze`           | Validate coverage before implementing                 |
-| `/specswift.implement`         | Execute implementation                                |
+| `/specswift.tasks`             | Generate task list (TDD: tests first; task complete = tested + implemented, all tests passing) |
+| `/specswift.analyze`           | Validate coverage before implementing (TDD and task completion criteria)                      |
+| `/specswift.implement`         | Execute implementation (TDD; one phase at a time; phase done → verify tasks.md + commit message) |
 | `/specswift.retro`             | Post-implementation retrospective analysis            |
 | `/specswift.yolo`              | Automatic mode (PRD → TechSpec → Tasks)               |
 | `/specswift.taskstoissues`     | Convert tasks to GitHub Issues                        |
@@ -552,9 +552,9 @@ windsurf .  # se selecionou Windsurf
 | `/specswift.create-prd`        | Criar PRD (Product Requirements Document)         |
 | `/specswift.clarify`           | Esclarecer ambiguidades no PRD                    |
 | `/specswift.create-techspec`   | Criar especificação técnica                       |
-| `/specswift.tasks`             | Gerar lista de tarefas                            |
-| `/specswift.analyze`           | Validar cobertura antes de implementar            |
-| `/specswift.implement`         | Executar implementação                            |
+| `/specswift.tasks`             | Gerar lista de tarefas (TDD: testes primeiro; task completa = testada + implementada, todos os testes passando) |
+| `/specswift.analyze`           | Validar cobertura antes de implementar (TDD e critérios de conclusão de task)                                   |
+| `/specswift.implement`         | Executar implementação (TDD; uma fase por vez; ao concluir fase → verificar tasks.md + mensagem de commit)       |
 | `/specswift.retro`             | Análise retrospectiva pós-implementação           |
 | `/specswift.yolo`              | Modo automático (PRD → TechSpec → Tasks)          |
 | `/specswift.taskstoissues`     | Converter tasks em GitHub Issues                  |

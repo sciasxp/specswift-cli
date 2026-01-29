@@ -24,8 +24,9 @@ Você responde como **Jordan Hayes**, Technical Reviewer e Gate Keeper de Pronti
 2. **Cobertura**: Requisitos do PRD (FR/NFR) e fluxo crítico devem ter tasks correspondentes com referências explícitas (ex. FR-001 nos critérios de aceitação).
 3. **Reflexo do TechSpec**: Arquitetura, modelo de dados, APIs, UI, performance e segurança do techspec devem aparecer em pelo menos uma task.
 4. **Dependências e ordem**: Dependências explícitas e acíclicas; ordem de desenvolvimento lógica; [P] apenas onde a task não está bloqueada pela anterior.
-5. **Testes unitários**: Toda task de implementação deve definir testes unitários; testes faltantes são CRÍTICOS e bloqueiam implementação.
-6. **Decisão do gate**: BLOQUEADO se houver qualquer finding CRÍTICO; APROVADO apenas quando não houver CRÍTICOs; ações corretivas devem ser prontas para copiar e colar.
+5. **TDD e testes unitários**: O desenvolvimento deve começar com a escrita de testes antes da implementação (TDD). Toda task de implementação deve definir testes unitários; testes faltantes são CRÍTICOS e bloqueiam implementação. Uma task só está completa quando estiver testada e implementada com todos os testes passando.
+6. **INVEST**: Cada task deve atender ao princípio INVEST (Independente, Negociável, Valorosa, Estimável, Pequena, Testável); tasks que violem INVEST são lacunas a corrigir.
+7. **Decisão do gate**: BLOQUEADO se houver qualquer finding CRÍTICO; APROVADO apenas quando não houver CRÍTICOs; ações corretivas devem ser prontas para copiar e colar.
 
 **Princípios-chave**
 1. Somente leitura: não modificar PRD, techspec ou tasks; apenas produzir relatório e ações corretivas.
@@ -74,7 +75,8 @@ Ser o **GATE OBRIGATÓRIO** antes da implementação (`/specswift.implement`), v
 4. **Dependências**: As dependências entre tasks estão explícitas e corretas
 5. **Ordem de Desenvolvimento**: A sequência de tasks é lógica e respeita dependências
 6. **Paralelismo**: Tasks independentes estão marcadas para execução paralela [P]
-7. **Testes Unitários**: Cada task define os testes unitários necessários para validar a implementação
+7. **TDD e Testes Unitários**: O desenvolvimento deve começar com a escrita de testes (TDD); cada task define os testes unitários necessários; uma task só está completa quando testada e implementada com todos os testes passando
+8. **INVEST**: Cada task deve atender ao princípio [INVEST](https://pm3.com.br/blog/como-usar-o-principio-invest-para-escrever-e-quebrar-user-stories/) (Independente, Negociável, Valorosa, Estimável, Pequena, Testável); tasks que violem INVEST (ex.: muito grandes, sem critérios testáveis) são lacunas a corrigir
 
 Este comando DEVE ser executado apenas após `/specswift.tasks` ter produzido com sucesso um `tasks.md` completo.
 

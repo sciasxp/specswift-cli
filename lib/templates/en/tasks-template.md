@@ -25,9 +25,18 @@
 
 ---
 
+**TDD and Definition of Done**:
+- Development must start with **writing tests before implementation** (TDD).
+- A **task is complete** only when it is tested and implemented with **all tests passing** (code compiles, tests pass, acceptance criteria met).
+- Implementation should focus on **one Phase at a time**; when concluding a phase (definition of done): verify tasks.md is updated and coherent with what was done and generate a commit message for the phase.
+
+---
+
 **Prerequisites**: techspec.md (mandatory), prd.md (mandatory for user stories)
 
 **Organization**: Tasks are grouped by user story (US1, US2, US3...) to allow independent implementation and testing.
+
+**INVEST principle** ([ref.](https://pm3.com.br/blog/como-usar-o-principio-invest-para-escrever-e-quebrar-user-stories/)): Each task must be — **I**ndependent (as much as possible from others), **N**egotiable (clear essence, details can evolve), **V**aluable (delivers value tied to PRD), **E**stimable (reasonably predictable effort), **S**mall (completable in one cycle; if too large, split into more tasks), **T**estable (acceptance criteria and unit tests defined).
 
 ## Task Format
 

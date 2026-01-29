@@ -25,9 +25,18 @@
 
 ---
 
+**TDD e Definição de Pronto**:
+- O desenvolvimento deve começar com a **escrita de testes antes da implementação** (TDD).
+- Uma **task só está completa** quando estiver testada e implementada com **todos os testes passando** (código compila, testes passam, critérios de aceitação atendidos).
+- A implementação deve se concentrar em **uma Fase por vez**; ao concluir a fase (definição de pronto): verificar se tasks.md está atualizado e coerente com o que foi feito e gerar uma mensagem de commit para a fase.
+
+---
+
 **Pré-requisitos**: techspec.md (obrigatório), prd.md (obrigatório para histórias de usuário)
 
 **Organização**: Tarefas são agrupadas por história de usuário (US1, US2, US3...) para permitir implementação e teste independentes.
+
+**Princípio INVEST** ([ref.](https://pm3.com.br/blog/como-usar-o-principio-invest-para-escrever-e-quebrar-user-stories/)): Cada tarefa deve ser — **I**ndependente (quanto possível das demais), **N**egociável (essência clara, detalhes podem evoluir), **V**alorosa (entrega valor ligado ao PRD), **E**stimável (esforço razoavelmente previsível), **P**equena (completável em um ciclo; se grande demais, quebrar em mais tarefas), **T**estável (critérios de aceitação e testes unitários definidos).
 
 ## Formato da Tarefa
 
