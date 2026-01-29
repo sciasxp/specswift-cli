@@ -5,6 +5,14 @@
 **Created**: [DATE]  
 **Status**: Draft | In Review | Approved
 
+<!--
+  OUTPUT CONTRACT (do not remove; used by workflows):
+  - Section order MUST be preserved. Required sections: Critical Flow, User Scenarios & Tests, Requirements (FR/NFR), Success Criteria, Assumptions, Project Specific Considerations.
+  - Status MUST be exactly one of: Draft | In Review | Approved.
+  - When a value cannot be determined: use [NEEDS CLARIFICATION: reason] (max 3 total) or [TBD] in Assumptions; do not invent values.
+  - Main content (excluding appendices, examples, tables) ≤ 1,000 words.
+-->
+
 ---
 
 ### 📍 Workflow

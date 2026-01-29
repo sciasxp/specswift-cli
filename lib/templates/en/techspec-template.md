@@ -6,6 +6,14 @@
 **Status**: Draft | In Review | Approved  
 **PRD**: `_docs/specs/[SHORT_NAME]/prd.md`
 
+<!--
+  OUTPUT CONTRACT (do not remove; used by workflows):
+  - Section order MUST be preserved. Required: Technical Context, Constitution Check, HIG Compliance, Project Structure, Feature Artifacts.
+  - Status MUST be exactly one of: Draft | In Review | Approved.
+  - Constitution Check / HIG Compliance table cells: exactly one of ✅ | ⚠️ | ❌ plus reasoning.
+  - When a value cannot be determined: use [NEEDS CLARIFICATION] in Technical Context until answered; then use concrete value or [TBD] in Assumptions; do not invent.
+-->
+
 ---
 
 ### 📍 Workflow

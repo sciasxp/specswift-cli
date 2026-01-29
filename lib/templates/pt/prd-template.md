@@ -5,6 +5,14 @@
 **Criado**: [DATA]  
 **Status**: Rascunho | Em Revisão | Aprovado
 
+<!--
+  CONTRATO DE SAÍDA (não remover; usado pelos workflows):
+  - A ordem das seções DEVE ser preservada. Seções obrigatórias: Fluxo Crítico, Cenários e Testes de Usuário, Requisitos (FR/NFR), Critérios de Sucesso, Premissas, Considerações Específicas do Projeto.
+  - Status DEVE ser exatamente um de: Rascunho | Em Revisão | Aprovado.
+  - Quando um valor não puder ser determinado: use [NEEDS CLARIFICATION: motivo] (máx 3 no total) ou [TBD] em Premissas; não invente valores.
+  - Conteúdo principal (excluindo anexos, exemplos, tabelas) ≤ 1.000 palavras.
+-->
+
 ---
 
 ### 📍 Fluxo de Trabalho

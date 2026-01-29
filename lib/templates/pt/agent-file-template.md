@@ -4,6 +4,12 @@
 **Branch**: `feature/[SHORT_NAME]`  
 **Gerado**: [DATA]
 
+<!--
+  CONTRATO DE SAÍDA (não remover; usado por /specswift.implement):
+  - Seções obrigatórias: Documentação de Referência, Contexto da Feature, Comandos Úteis, Decisões Técnicas da Feature, Notas de Implementação.
+  - Quando caminho ou decisão não puder ser determinado: use [TBD] ou caminho de STRUCTURE.md; não invente.
+-->
+
 ---
 
 ### 📍 Fluxo de Trabalho

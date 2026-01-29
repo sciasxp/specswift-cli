@@ -258,6 +258,7 @@ specswift-cli/
 │   ├── workflows/         # Localized Windsurf workflows (en/pt)
 │   ├── templates/         # Localized document templates (en/pt)
 │   ├── rules/             # Localized code rules (en/pt)
+│   ├── skills/            # Localized skills (en/pt): PRD validation, Swift Concurrency, SwiftUI
 │   └── scripts/           # Helper scripts
 ├── docs/
 │   └── SPECSWIFT-WORKFLOWS.md
@@ -302,6 +303,7 @@ After installing in a project, see:
 
 - `docs/SPECSWIFT-WORKFLOWS.md` - Complete workflows guide (in this repository)
 - `_docs/SPECSWIFT-WORKFLOWS.md` - Complete workflows guide (after installing into a project)
+- `docs/SKILLS-INSTALLATION.md` - How skills are copied (Windsurf); available skills: **prd-quality-validation**, **swift-concurrency** (Swift Concurrency / Swift 6), **swiftui-expert** (SwiftUI best practices, Liquid Glass)
 - `.cursor/commands/` or `.windsurf/workflows/` - Detailed workflow definitions (commands for Cursor, workflows for Windsurf)
 
 ## 🤝 Contributing
@@ -569,6 +571,7 @@ specswift-cli/
 │   ├── workflows/         # Workflows do Windsurf localizados (en/pt)
 │   ├── templates/         # Templates de documentos localizados (en/pt)
 │   ├── rules/             # Rules de código localizadas (en/pt)
+│   ├── skills/            # Skills localizadas (en/pt): validação PRD, Swift Concurrency, SwiftUI
 │   └── scripts/           # Scripts auxiliares
 ├── docs/
 │   └── SPECSWIFT-WORKFLOWS.md
@@ -613,6 +616,7 @@ Após instalar em um projeto, veja:
 
 - `docs/SPECSWIFT-WORKFLOWS.md` - Guia completo dos workflows (neste repositório)
 - `_docs/SPECSWIFT-WORKFLOWS.md` - Guia completo dos workflows (após instalar no projeto)
+- `docs/SKILLS-INSTALLATION.md` - Como as skills são copiadas (Windsurf); skills disponíveis: **prd-quality-validation**, **swift-concurrency** (Swift Concurrency / Swift 6), **swiftui-expert** (boas práticas SwiftUI, Liquid Glass)
 - `.cursor/commands/` ou `.windsurf/workflows/` - Definição detalhada de cada workflow (commands para Cursor, workflows para Windsurf)
 
 ## 🤝 Contribuindo

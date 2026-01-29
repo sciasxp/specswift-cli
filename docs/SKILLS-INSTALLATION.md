@@ -97,6 +97,10 @@ lib/
 │   │   │   ├── SKILL.md
 │   │   │   └── checklists/
 │   │   │       └── prd-quality-checklist.md
+│   │   ├── swift-concurrency/
+│   │   │   └── SKILL.md
+│   │   ├── swiftui-expert/
+│   │   │   └── SKILL.md
 │   │   └── feature-setup/
 │   │       ├── SKILL.md
 │   │       └── scripts/
@@ -105,10 +109,22 @@ lib/
 │       │   ├── SKILL.md
 │       │   └── checklists/
 │       │       └── prd-quality-checklist.md
+│       ├── swift-concurrency/
+│       │   └── SKILL.md
+│       ├── swiftui-expert/
+│       │   └── SKILL.md
 │       └── feature-setup/
 │           ├── SKILL.md
 │           └── scripts/
 ```
+
+### Skills disponíveis
+
+| Skill | Descrição | Fonte |
+|-------|-----------|--------|
+| **prd-quality-validation** | Valida qualidade e completude de PRDs antes da especificação técnica. | SpecSwift |
+| **swift-concurrency** | Orientação em Swift Concurrency: async/await, actors, Sendable, migração Swift 6, data races. Integra com `lib/rules/.../swift-concurrency.md`. | [Swift-Concurrency-Agent-Skill](https://github.com/AvdLee/Swift-Concurrency-Agent-Skill) (AvdLee) |
+| **swiftui-expert** | Boas práticas SwiftUI: estado (`@Observable`), APIs modernas, performance, Liquid Glass (iOS 26+). Integra com rules de acessibilidade e UI. | [SwiftUI-Agent-Skill](https://github.com/AvdLee/SwiftUI-Agent-Skill) (AvdLee) |
 
 ### No Projeto (após instalação)
 
@@ -122,6 +138,10 @@ projeto/
 │       │   ├── SKILL.md
 │       │   └── checklists/
 │       │       └── prd-quality-checklist.md
+│       ├── swift-concurrency/
+│       │   └── SKILL.md
+│       ├── swiftui-expert/
+│       │   └── SKILL.md
 │       └── feature-setup/
 │           ├── SKILL.md
 │           └── scripts/

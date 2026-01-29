@@ -4,6 +4,12 @@
 **Branch**: `feature/[SHORT_NAME]`  
 **Generated**: [DATE]
 
+<!--
+  OUTPUT CONTRACT (do not remove; used by /specswift.implement):
+  - Required sections: Reference Documentation, Feature Context, Useful Commands, Feature Technical Decisions, Implementation Notes.
+  - When a path or decision cannot be determined: use [TBD] or path from STRUCTURE.md; do not invent.
+-->
+
 ---
 
 ### 📍 Workflow

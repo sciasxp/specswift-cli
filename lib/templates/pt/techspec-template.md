@@ -6,6 +6,14 @@
 **Status**: Rascunho | Em Revisão | Aprovado  
 **PRD**: `_docs/specs/[SHORT_NAME]/prd.md`
 
+<!--
+  CONTRATO DE SAÍDA (não remover; usado pelos workflows):
+  - A ordem das seções DEVE ser preservada. Obrigatórias: Contexto Técnico, Constitution Check, HIG Compliance, Estrutura do Projeto, Artefatos da Feature.
+  - Status DEVE ser exatamente um de: Rascunho | Em Revisão | Aprovado.
+  - Células das tabelas Constitution Check / HIG Compliance: exatamente um de ✅ | ⚠️ | ❌ mais justificativa.
+  - Quando um valor não puder ser determinado: use [NEEDS CLARIFICATION] no Contexto Técnico até respondido; depois use valor concreto ou [TBD] em Premissas; não invente.
+-->
+
 ---
 
 ### 📍 Fluxo de Trabalho

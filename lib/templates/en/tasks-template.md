@@ -6,6 +6,13 @@
 **PRD**: `_docs/specs/[SHORT_NAME]/prd.md`  
 **TechSpec**: `_docs/specs/[SHORT_NAME]/techspec.md`
 
+<!--
+  OUTPUT CONTRACT (do not remove; used by workflows and /specswift.analyze):
+  - Each task line MUST match: - [ ] T<ID> [P?] [US<N>?] <description> in `path`
+  - Sub-blocks: **Acceptance Criteria**: (at least one, with PRD ref FR-xxx/NFR-xxx when applicable); **Unit Tests**: (list of test method names; MANDATORY for implementation tasks).
+  - When path or dependency cannot be determined: use path/to/... and "Depends on T0xx" in description; do not invent paths not in STRUCTURE.md.
+-->
+
 ---
 
 ### 📍 Workflow

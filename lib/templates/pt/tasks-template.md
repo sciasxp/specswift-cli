@@ -6,6 +6,13 @@
 **PRD**: `_docs/specs/[SHORT_NAME]/prd.md`  
 **TechSpec**: `_docs/specs/[SHORT_NAME]/techspec.md`
 
+<!--
+  CONTRATO DE SAÍDA (não remover; usado pelos workflows e /specswift.analyze):
+  - Cada linha de task DEVE seguir: - [ ] T<ID> [P?] [US<N>?] <descrição> em `caminho`
+  - Sub-blocos: **Critérios de Aceitação**: (pelo menos um, com ref PRD FR-xxx/NFR-xxx quando aplicável); **Testes Unitários**: (lista de nomes de métodos; OBRIGATÓRIO para tasks de implementação).
+  - Quando caminho ou dependência não puder ser determinado: use path/to/... e "Depends on T0xx" na descrição; não invente caminhos fora de STRUCTURE.md.
+-->
+
 ---
 
 ### 📍 Fluxo de Trabalho
