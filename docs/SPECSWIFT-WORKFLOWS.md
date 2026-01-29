@@ -85,6 +85,8 @@ The main flow is ideal for features that require human review and conscious deci
 
 **Purpose**: Create product requirements document from natural language description.
 
+**EARS (Easy Approach to Requirements Syntax)**: Requirements are written using [EARS](https://alistairmavin.com/ears/) patterns—Ubiquitous, State driven (While), Event driven (When), Optional feature (Where), Unwanted behaviour (If-Then), and Complex—so each requirement has a clear structure and one system response, reducing ambiguity and improving readability.
+
 **Input**: Feature description
 ```
 /specswift.create-prd Add text search functionality to publications
@@ -465,6 +467,8 @@ O fluxo principal é ideal para features que requerem revisão humana e decisõe
 ### 1. `/specswift.create-prd` - Criar PRD
 
 **Propósito**: Criar documento de requisitos de produto a partir de descrição em linguagem natural.
+
+**EARS (Easy Approach to Requirements Syntax)**: Os requisitos são escritos com os padrões [EARS](https://alistairmavin.com/ears/)—Ubíquo, Dirigido por estado (Enquanto), Dirigido por evento (Quando), Feature opcional (Onde), Comportamento indesejado (Se-Então) e Complexo—de modo que cada requisito tenha estrutura clara e uma resposta do sistema, reduzindo ambiguidade e melhorando legibilidade.
 
 **Entrada**: Descrição da feature
 ```

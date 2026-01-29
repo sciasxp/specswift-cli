@@ -236,7 +236,7 @@ windsurf .  # if you selected Windsurf
 | Workflow                       | Description                                           |
 | ------------------------------ | ----------------------------------------------------- |
 | `/specswift.constitution`      | Create project base documentation                     |
-| `/specswift.create-prd`        | Create PRD (Product Requirements Document)            |
+| `/specswift.create-prd`        | Create PRD (Product Requirements Document); requirements use [EARS](https://alistairmavin.com/ears/) syntax |
 | `/specswift.clarify`           | Clarify PRD ambiguities                               |
 | `/specswift.create-techspec`   | Create technical specification                        |
 | `/specswift.tasks`             | Generate task list (TDD: tests first; task complete = tested + implemented, all tests passing) |
@@ -549,7 +549,7 @@ windsurf .  # se selecionou Windsurf
 | Workflow                       | Descrição                                         |
 | ------------------------------ | ------------------------------------------------- |
 | `/specswift.constitution`      | Criar documentação base do projeto                |
-| `/specswift.create-prd`        | Criar PRD (Product Requirements Document)         |
+| `/specswift.create-prd`        | Criar PRD (Product Requirements Document); requisitos usam sintaxe [EARS](https://alistairmavin.com/ears/) |
 | `/specswift.clarify`           | Esclarecer ambiguidades no PRD                    |
 | `/specswift.create-techspec`   | Criar especificação técnica                       |
 | `/specswift.tasks`             | Gerar lista de tarefas (TDD: testes primeiro; task completa = testada + implementada, todos os testes passando) |

@@ -155,15 +155,22 @@ graph TD
 <!--
   REQUIRED ACTION: The content of this section represents placeholders.
   Fill them with the correct functional requirements.
+  EARS: Write each requirement using [EARS](https://alistairmavin.com/ears/) patterns:
+  - Ubiquitous: "The <system> shall <response>"
+  - State: "While <precondition>, the <system> shall <response>"
+  - Event: "When <trigger>, the <system> shall <response>"
+  - Optional: "Where <feature is included>, the <system> shall <response>"
+  - Unwanted: "If <trigger>, then the <system> shall <response>"
+  - Complex: "While <precondition>, When <trigger>, the <system> shall <response>"
 -->
 
 ### Functional Requirements
 
-- **FR-001**: System MUST [specific capability, e.g., "allow users to create accounts"]
-- **FR-002**: System MUST [specific capability, e.g., "validate email addresses"]  
-- **FR-003**: Users MUST be able to [key interaction, e.g., "reset their passwords"]
-- **FR-004**: System MUST [data requirement, e.g., "persist user preferences"]
-- **FR-005**: System MUST [behavior, e.g., "log all security events"]
+- **FR-001**: The system shall [specific capability, e.g., "allow users to create accounts"]
+- **FR-002**: When [trigger, e.g., "the user submits the form"], the system shall [response, e.g., "validate email addresses"]
+- **FR-003**: The system shall [key interaction, e.g., "allow users to reset their passwords"]
+- **FR-004**: The system shall [data requirement, e.g., "persist user preferences"]
+- **FR-005**: The system shall [behavior, e.g., "log all security events"]
 
 *Project Considerations for requirements:*
 
@@ -171,10 +178,10 @@ graph TD
 - If navigation changes, specify the navigation pattern (e.g., Coordinators, Router, etc.).
 - If there is an offline flow or sync, specify the expected behavior.
 
-*Example of marking unclear requirements:*
+*Example of marking unclear requirements (still EARS-style):*
 
-- **FR-006**: System MUST authenticate users via [NEEDS CLARIFICATION: authentication method not specified - email/password, SSO, OAuth?]
-- **FR-007**: System MUST retain user data for [NEEDS CLARIFICATION: retention period not specified]
+- **FR-006**: The system shall authenticate users via [NEEDS CLARIFICATION: authentication method not specified - email/password, SSO, OAuth?]
+- **FR-007**: The system shall retain user data for [NEEDS CLARIFICATION: retention period not specified]
 
 ### Key Entities *(include if the feature involves data)*
 
@@ -187,9 +194,11 @@ graph TD
 
 ### Non-Functional Requirements *(include if applicable)*
 
-- **NFR-001**: Performance - [e.g., "Screen must load in less than 2 seconds"]
-- **NFR-002**: Accessibility - [e.g., "Full support for VoiceOver and Dynamic Type"]
-- **NFR-003**: Security - [e.g., "Sensitive data must be stored in Keychain"]
+*(Use EARS patterns: "The system shall …" / "When … the system shall …" etc.)*
+
+- **NFR-001**: Performance - The system shall [e.g., "present the screen in less than 2 seconds"]
+- **NFR-002**: Accessibility - The system shall [e.g., "support VoiceOver and Dynamic Type"]
+- **NFR-003**: Security - The system shall [e.g., "store sensitive data in Keychain"]
 
 ## Success Criteria *(mandatory)*
 

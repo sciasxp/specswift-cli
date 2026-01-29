@@ -155,15 +155,22 @@ graph TD
 <!--
   AÇÃO REQUERIDA: O conteúdo desta seção representa placeholders.
   Preencha-os com os requisitos funcionais corretos.
+  EARS: Escreva cada requisito usando os padrões [EARS](https://alistairmavin.com/ears/):
+  - Ubíquo: "O <sistema> deve <resposta>"
+  - Estado: "Enquanto <pré-condição>, o <sistema> deve <resposta>"
+  - Evento: "Quando <gatilho>, o <sistema> deve <resposta>"
+  - Opcional: "Onde <feature está incluída>, o <sistema> deve <resposta>"
+  - Indesejado: "Se <gatilho>, então o <sistema> deve <resposta>"
+  - Complexo: "Enquanto <pré-condição>, Quando <gatilho>, o <sistema> deve <resposta>"
 -->
 
 ### Requisitos Funcionais
 
-- **FR-001**: Sistema DEVE [capacidade específica, e.g., "permitir que os usuários criem contas"]
-- **FR-002**: Sistema DEVE [capacidade específica, e.g., "validar endereços de e-mail"]  
-- **FR-003**: Usuários DEVEM ser capazes de [interação-chave, e.g., "redefinir suas senhas"]
-- **FR-004**: Sistema DEVE [requisito de dados, e.g., "persistir preferências do usuário"]
-- **FR-005**: Sistema DEVE [comportamento, e.g., "registrar todos os eventos de segurança"]
+- **FR-001**: O sistema deve [capacidade específica, ex., "permitir que os usuários criem contas"]
+- **FR-002**: Quando [gatilho, ex., "o usuário enviar o formulário"], o sistema deve [resposta, ex., "validar endereços de e-mail"]
+- **FR-003**: O sistema deve [interação-chave, ex., "permitir que os usuários redefinam suas senhas"]
+- **FR-004**: O sistema deve [requisito de dados, ex., "persistir preferências do usuário"]
+- **FR-005**: O sistema deve [comportamento, ex., "registrar todos os eventos de segurança"]
 
 *Considerações do Projeto para requisitos:*
 
@@ -171,10 +178,10 @@ graph TD
 - Se a navegação muda, especifique o padrão de navegação (ex: Coordinators, Router, etc).
 - Se houver fluxo offline ou sincronização, especifique o comportamento esperado.
 
-*Exemplo de marcação de requisitos não claros:*
+*Exemplo de marcação de requisitos não claros (mantendo estilo EARS):*
 
-- **FR-006**: Sistema DEVE autenticar usuários via [PRECISA ESCLARECIMENTO: método de autenticação não especificado - e-mail/senha, SSO, OAuth?]
-- **FR-007**: Sistema DEVE reter dados do usuário por [PRECISA ESCLARECIMENTO: período de retenção não especificado]
+- **FR-006**: O sistema deve autenticar usuários via [PRECISA ESCLARECIMENTO: método de autenticação não especificado - e-mail/senha, SSO, OAuth?]
+- **FR-007**: O sistema deve reter dados do usuário por [PRECISA ESCLARECIMENTO: período de retenção não especificado]
 
 ### Entidades-Chave *(inclua se a feature envolve dados)*
 
@@ -187,9 +194,11 @@ graph TD
 
 ### Requisitos Não-Funcionais *(inclua se aplicável)*
 
-- **NFR-001**: Performance - [ex., "Tela deve carregar em menos de 2 segundos"]
-- **NFR-002**: Acessibilidade - [ex., "Suporte completo a VoiceOver e Dynamic Type"]
-- **NFR-003**: Segurança - [ex., "Dados sensíveis devem ser armazenados no Keychain"]
+*(Use padrões EARS: "O sistema deve …" / "Quando … o sistema deve …" etc.)*
+
+- **NFR-001**: Performance - O sistema deve [ex., "apresentar a tela em menos de 2 segundos"]
+- **NFR-002**: Acessibilidade - O sistema deve [ex., "suportar VoiceOver e Dynamic Type"]
+- **NFR-003**: Segurança - O sistema deve [ex., "armazenar dados sensíveis no Keychain"]
 
 ## Critérios de Sucesso *(obrigatório)*
 
